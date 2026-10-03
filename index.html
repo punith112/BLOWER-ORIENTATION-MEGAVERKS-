@@ -1,0 +1,1676 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Megaverks Blower Selector</title>
+<meta name="theme-color" content="#16325C">
+<meta name="description" content="Megaverks Technologies – industrial centrifugal blower selection, PDF and WhatsApp share">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+<script src="config.js"></script>
+<style>
+:root{
+  --navy:#16325C;--navy-2:#1F4378;--orange:#E8641B;--orange-soft:#FFF1E8;--teal:#0E7C66;--teal-soft:#E5F4F0;
+  --ink:#1E2A38;--muted:#5B6675;--line:#D9E0EA;--bg:#F3F5F9;--card:#FFFFFF;--soft:#EEF2F7;
+  --ok:#14804A;--warn:#B7791F;--bad:#C53030;--radius:12px;--shadow:0 1px 2px rgba(22,50,92,.06),0 4px 14px rgba(22,50,92,.06);
+  --cond:"Barlow Condensed","Arial Narrow",Barlow,system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font-family:Barlow,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:15px;color:var(--ink);background:var(--bg);line-height:1.4;padding-bottom:calc(84px + env(safe-area-inset-bottom))}
+button,input,select,textarea{font:inherit;color:inherit}
+h1,h2,h3{font-family:var(--cond);letter-spacing:.02em;margin:0}
+.wrap{max-width:980px;margin:0 auto;padding:0 14px}
+/* header */
+.top{background:var(--navy);color:#fff;position:sticky;top:0;z-index:30;box-shadow:0 2px 0 var(--orange)}
+.top .wrap{display:flex;align-items:center;gap:12px;height:58px}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.brand svg{flex:none}
+.brand b{display:block;font-family:var(--cond);font-size:21px;line-height:1;letter-spacing:.04em}
+.brand small{display:block;font-size:9.5px;letter-spacing:.32em;color:#C9D6EA;margin-top:3px}
+.brand .app{font-size:12px;color:#FFC9A6;letter-spacing:.04em;margin-left:6px;padding-left:10px;border-left:1px solid rgba(255,255,255,.25);white-space:nowrap}
+.pill{margin-left:auto;display:flex;align-items:center;gap:7px;border:1px solid rgba(255,255,255,.25);border-radius:99px;padding:5px 11px;font-size:12.5px;background:rgba(255,255,255,.06);cursor:pointer;white-space:nowrap;color:#fff}
+.dot{width:9px;height:9px;border-radius:50%;background:#9AA5B5;flex:none}
+.dot.ok{background:#3DDC84}.dot.bad{background:#FF6B6B}.dot.warn{background:#F6C343}
+.tabs{background:var(--navy-2)}
+.tabs .wrap{display:flex;gap:2px;overflow-x:auto}
+.tab{flex:1;min-width:max-content;background:none;border:0;color:#C9D6EA;padding:11px 14px;font-weight:600;font-size:14.5px;border-bottom:3px solid transparent;cursor:pointer}
+.tab[aria-selected=true]{color:#fff;border-bottom-color:var(--orange)}
+.tab .count{background:rgba(255,255,255,.15);border-radius:99px;padding:1px 7px;font-size:11.5px;margin-left:5px}
+@media(max-width:620px){.brand .app{display:none}.tab .long{display:none}}
+/* layout */
+main{padding-top:14px}
+.recbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:10px 12px;margin-bottom:12px;box-shadow:var(--shadow)}
+.recbar .id{font-family:var(--cond);font-size:18px;color:var(--navy);letter-spacing:.03em}
+.badge{display:inline-flex;align-items:center;gap:5px;border-radius:99px;padding:2px 9px;font-size:12px;font-weight:600;background:var(--soft);color:var(--muted)}
+.badge.ok{background:#E6F4EC;color:var(--ok)}.badge.warn{background:#FDF3E1;color:var(--warn)}.badge.bad{background:#FDEBEB;color:var(--bad)}
+.badge.ex{background:var(--orange-soft);color:var(--orange)}.badge.fa{background:var(--teal-soft);color:var(--teal)}
+.recbar .sp{flex:1}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px;margin-bottom:12px;box-shadow:var(--shadow)}
+.card h2{font-size:19px;color:var(--navy);display:flex;align-items:center;flex-wrap:wrap;gap:9px;margin-bottom:12px}
+.card h2 .n{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:7px;background:var(--orange);color:#fff;font-size:14px}
+.card h2 .hint{margin-left:auto;font-family:Barlow,system-ui,sans-serif;font-size:12.5px;color:var(--muted);font-weight:500;letter-spacing:0}
+@media(max-width:620px){.card h2 .hint{flex-basis:100%;margin-left:0}}
+.grid{display:grid;gap:10px 12px;grid-template-columns:repeat(12,1fr)}
+.c12{grid-column:span 12}.c6{grid-column:span 6}.c4{grid-column:span 4}.c3{grid-column:span 3}.c8{grid-column:span 8}
+@media(max-width:700px){.c6,.c4,.c3,.c8{grid-column:span 12}.c3.half,.c4.half,.c6.half{grid-column:span 6}}
+label.f{display:flex;flex-direction:column;gap:4px;font-size:12.5px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.req{color:var(--orange)}
+.in,select.in,textarea.in{width:100%;border:1px solid var(--line);background:#fff;border-radius:9px;padding:10px 11px;font-size:15.5px;font-weight:500;color:var(--ink);text-transform:none;letter-spacing:0;outline:none;min-height:44px}
+textarea.in{min-height:64px;resize:vertical}
+.in:focus{border-color:var(--navy-2);box-shadow:0 0 0 3px rgba(31,67,120,.15)}
+.in.err{border-color:var(--bad);box-shadow:0 0 0 3px rgba(197,48,48,.12)}
+.errmsg{color:var(--bad);font-size:12px;font-weight:600;text-transform:none;letter-spacing:0}
+.unit{position:relative;display:block}.unit .in{padding-right:58px}.unit span{position:absolute;right:11px;top:50%;transform:translateY(-50%);font-size:12.5px;color:var(--muted);font-weight:600;pointer-events:none}
+.calc{font-size:12.5px;color:var(--teal);font-weight:600;text-transform:none;letter-spacing:0}
+.rowlabel{font-size:12px;font-weight:700;color:var(--orange);letter-spacing:.06em;margin:4px 0 6px}
+.note{font-size:12.5px;color:var(--muted);margin:8px 0 0}
+/* segmented */
+.seg{display:flex;gap:8px;flex-wrap:wrap}
+.seg label{flex:1;min-width:120px;cursor:pointer}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg .opt{display:flex;align-items:center;justify-content:center;gap:8px;border:1.5px solid var(--line);border-radius:10px;padding:11px 10px;font-weight:600;background:#fff;min-height:46px;text-align:center}
+.seg input:checked+.opt{border-color:var(--navy);background:#EAF0F9;color:var(--navy)}
+.seg input:focus-visible+.opt{outline:3px solid rgba(31,67,120,.35)}
+.seg.app .opt{font-size:17px;padding:13px}
+.seg.app input[value=Exhaust]:checked+.opt{border-color:var(--orange);background:var(--orange-soft);color:#B54708}
+.seg.app input[value="Fresh Air"]:checked+.opt{border-color:var(--teal);background:var(--teal-soft);color:var(--teal)}
+/* models */
+.models{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.model{position:relative;cursor:pointer}
+.model input{position:absolute;opacity:0;pointer-events:none}
+.model .box{border:1.5px solid var(--line);border-radius:11px;padding:10px 11px;background:#fff;height:100%;display:flex;flex-direction:column;gap:2px}
+.model .hp{font-family:var(--cond);font-size:22px;color:var(--navy);line-height:1}
+.model .rpm{font-weight:600;font-size:13.5px}
+.model .meta{font-size:12.5px;color:var(--muted)}
+.model .meta b{color:var(--ink)}
+.model .tag{align-self:flex-start;font-size:10.5px;font-weight:700;border-radius:99px;padding:1px 7px;margin-bottom:3px}
+.tag.low{background:#E6F4EC;color:var(--ok)}.tag.std{background:var(--soft);color:var(--muted)}.tag.hi{background:#FDF3E1;color:var(--warn)}
+.model input:checked+.box{border-color:var(--orange);box-shadow:0 0 0 3px rgba(232,100,27,.15);background:#FFFBF8}
+.model input:focus-visible+.box{outline:3px solid rgba(31,67,120,.35)}
+/* dimension box */
+.dimbox{margin-top:14px;border:1.5px solid var(--navy-2);border-radius:12px;padding:12px;background:#F7F9FC}
+.dimbox h3{font-size:17px;color:var(--navy);margin-bottom:10px}
+.dims{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:10px 0 4px}
+.dims .t{min-width:0;background:#fff;border:1px solid var(--line);border-radius:10px;padding:9px 11px;border-top:3px solid var(--navy)}
+.dims .t.duct{border-top-color:var(--orange)}
+.dims .t span{display:block;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.dims .t b{display:block;font-family:var(--cond);font-size:23px;line-height:1.15;color:var(--navy);overflow-wrap:anywhere}
+.dims .t small{display:block;font-size:11.5px;color:var(--muted)}
+.dims .empty{grid-column:1/-1;background:#fff;border:1.5px dashed var(--line);border-radius:10px;padding:14px;color:var(--muted);font-size:14px;text-align:center}
+@media(max-width:620px){.dims{grid-template-columns:repeat(2,minmax(0,1fr))}.dims .t{padding:8px 9px}.dims .t b{font-size:18px}}
+details.chart{margin-top:12px}
+details.chart summary{cursor:pointer;font-weight:700;color:var(--navy-2);font-size:14px}
+table.ct{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:8px;background:#fff}
+table.ct th{text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);padding:6px 8px;border-bottom:1.5px solid var(--line)}
+table.ct td{padding:7px 8px;border-bottom:1px solid var(--soft);white-space:nowrap}
+table.ct tr.sel td{background:var(--orange-soft);font-weight:700}
+/* forms */
+.forms{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+@media(max-width:520px){.forms{gap:5px}}
+.form{cursor:pointer;position:relative}
+.form input{position:absolute;opacity:0;pointer-events:none}
+.form .box{display:block;border:1.5px solid var(--line);border-radius:10px;background:#fff;padding:4px 2px 6px;text-align:center}
+.form svg{width:100%;height:auto;display:block;max-height:92px}
+.form b{display:block;font-family:var(--cond);font-size:16px;color:var(--navy);line-height:1}
+.form small{display:block;font-size:10px;color:var(--muted);line-height:1.15;min-height:23px;padding:0 2px}
+.form input:checked+.box{border-color:var(--orange);background:#FFFBF8;box-shadow:0 0 0 3px rgba(232,100,27,.15)}
+.form input:focus-visible+.box{outline:3px solid rgba(31,67,120,.35)}
+/* checks */
+.checks{display:flex;flex-wrap:wrap;gap:8px}
+.chk{display:flex;align-items:center;gap:8px;border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;cursor:pointer;font-weight:600;background:#fff;min-height:44px}
+.chk input{width:18px;height:18px;accent-color:var(--navy)}
+/* engineering check */
+.eng{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px;margin-top:12px}
+.eng .it{border-radius:10px;padding:9px 11px;background:var(--soft);font-size:13px}
+.eng .it b{display:block;font-size:16px;color:var(--ink)}
+.eng .it.ok{background:#E6F4EC}.eng .it.warn{background:#FDF3E1}.eng .it.bad{background:#FDEBEB}
+.eng .it span{color:var(--muted)}
+/* buttons + action bar */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;border-radius:10px;border:1.5px solid var(--line);background:#fff;padding:10px 14px;font-weight:700;cursor:pointer;min-height:46px;font-size:14.5px;white-space:nowrap;text-decoration:none;color:var(--ink)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.btn.primary{background:var(--navy);border-color:var(--navy);color:#fff}
+.btn.orange{background:var(--orange);border-color:var(--orange);color:#fff}
+.btn.wa{background:#1FA855;border-color:#1FA855;color:#fff}
+.btn.ghost{background:transparent}
+.btn.sm{min-height:36px;padding:6px 10px;font-size:13px}
+.btn.danger{color:var(--bad);border-color:#F1C6C6}
+.actions{position:fixed;left:0;right:0;bottom:0;z-index:25;background:rgba(255,255,255,.96);backdrop-filter:blur(6px);border-top:1px solid var(--line);padding:9px 0 calc(9px + env(safe-area-inset-bottom))}
+.actions .wrap{display:flex;gap:8px;align-items:stretch}
+.actions .btn{flex:1;min-width:0}
+.wa-group{flex:1.4;display:flex;border-radius:10px;overflow:hidden;min-width:0}
+.wa-group .btn{border-radius:0;flex:1}
+.wa-group select{border:0;background:#178A46;color:#fff;font-weight:600;padding:0 6px;flex:none;width:112px;font-size:13px}
+@media(max-width:560px){.actions .btn .long{display:none}.actions .wrap{gap:6px}.actions #btnSave,.actions #btnPdf{flex:.8}.wa-group{flex:1.8}.wa-group select{width:84px;font-size:12.5px}.btn{padding:9px 10px}}
+/* history */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:12px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:12px;box-shadow:var(--shadow)}
+.kpi span{display:block;font-size:12px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.05em}
+.kpi b{font-family:var(--cond);font-size:28px;color:var(--navy);line-height:1.1}
+.kpi.o b{color:var(--orange)}.kpi.t b{color:var(--teal)}
+.lb{display:flex;flex-direction:column;gap:8px}
+.lbrow{display:grid;grid-template-columns:30px 1fr auto;gap:10px;align-items:center}
+.lbrow .rank{display:grid;place-items:center;width:28px;height:28px;border-radius:8px;background:var(--soft);font-weight:700;color:var(--navy)}
+.lbrow:nth-child(1) .rank{background:#F6C343;color:#5A3E00}.lbrow:nth-child(2) .rank{background:#D5DBE3}.lbrow:nth-child(3) .rank{background:#E9B98F;color:#5A2E0B}
+.lbrow .nm{font-weight:700}
+.lbrow .bar{height:7px;border-radius:9px;background:var(--soft);margin-top:4px;overflow:hidden}
+.lbrow .bar i{display:block;height:100%;background:var(--orange);border-radius:9px}
+.lbrow .val{text-align:right;font-size:13px;color:var(--muted)}
+.lbrow .val b{display:block;font-size:16px;color:var(--ink)}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+.toolbar .in{flex:1;min-width:180px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{border:1.5px solid var(--line);background:#fff;border-radius:99px;padding:6px 12px;font-weight:600;font-size:13px;cursor:pointer}
+.chip[aria-pressed=true]{background:var(--navy);border-color:var(--navy);color:#fff}
+.hist{display:flex;flex-direction:column;gap:8px}
+.hrow{background:#fff;border:1px solid var(--line);border-radius:11px;padding:11px 12px;display:grid;grid-template-columns:1fr auto;gap:6px 10px;cursor:pointer}
+.hrow:hover{border-color:var(--navy-2)}
+.hrow.active{border-color:var(--orange);box-shadow:0 0 0 2px rgba(232,100,27,.15)}
+.hrow .t{font-weight:700;font-size:15.5px}
+.hrow .s{font-size:12.5px;color:var(--muted);display:flex;gap:6px 12px;flex-wrap:wrap}
+.hrow .r{text-align:right;font-size:12.5px;color:var(--muted)}
+.hrow .r b{display:block;font-size:15px;color:var(--ink)}
+.hrow .acts{grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap}
+.empty{text-align:center;color:var(--muted);padding:26px 10px;border:1.5px dashed var(--line);border-radius:12px;background:#fff}
+/* settings */
+.steps{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+.step{display:flex;gap:9px;align-items:flex-start;font-size:14px;padding:8px 10px;border-radius:9px;background:var(--soft)}
+.step i{font-style:normal;font-weight:700;width:20px;text-align:center;flex:none}
+.step.ok{background:#E6F4EC}.step.ok i{color:var(--ok)}.step.bad{background:#FDEBEB}.step.bad i{color:var(--bad)}.step.run i{color:var(--warn)}
+.step small{display:block;color:var(--muted)}
+table.pt{width:100%;border-collapse:collapse;font-size:13.5px}
+table.pt th{text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);padding:6px 4px;border-bottom:1px solid var(--line);white-space:nowrap}
+table.pt td{padding:4px;border-bottom:1px solid var(--soft)}
+table.pt .in{min-height:36px;padding:6px 7px;font-size:14px}
+.scroll{overflow-x:auto}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12.5px;word-break:break-all}
+/* toast + overlay */
+.toasts{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(80px + env(safe-area-inset-bottom));z-index:60;display:flex;flex-direction:column;gap:8px;width:min(94vw,480px)}
+.toast{background:var(--ink);color:#fff;border-radius:10px;padding:11px 14px;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,.2);font-size:14px}
+.toast.ok{background:#14804A}.toast.warn{background:#9A5B00}.toast.bad{background:#B42318}
+.busy{position:fixed;inset:0;background:rgba(22,50,92,.35);z-index:70;display:grid;place-items:center}
+.busy div{background:#fff;border-radius:12px;padding:16px 20px;font-weight:700;display:flex;align-items:center;gap:12px}
+.spin{width:22px;height:22px;border:3px solid var(--soft);border-top-color:var(--orange);border-radius:50%;animation:sp .8s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.banner{display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:#EAF0F9;border:1px solid #C7D5EA;border-radius:10px;padding:9px 12px;font-size:13.5px;margin-top:10px}
+[hidden]{display:none!important}
+.lock{position:fixed;inset:0;z-index:90;background:linear-gradient(160deg,#16325C 0%,#0F2443 100%);display:grid;place-items:center;padding:20px}
+.lockcard{background:#fff;border-radius:16px;padding:26px 22px;width:min(100%,380px);box-shadow:0 20px 50px rgba(0,0,0,.35);text-align:center}
+.lockcard .lb2{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:6px}
+.lockcard .lb2 b{font-family:var(--cond);font-size:26px;color:var(--navy);letter-spacing:.04em}
+.lockcard h1{font-size:20px;color:var(--orange);margin:2px 0 14px}
+.lockcard p{color:var(--muted);font-size:14px;margin:0 0 14px}
+.lockcard .in{text-align:center;font-size:24px;letter-spacing:.3em;font-weight:700}
+.lockcard .btn{width:100%;margin-top:12px}
+a{color:var(--navy-2)}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand">
+      <svg width="30" height="34" viewBox="0 0 12 14" aria-hidden="true"><polygon points="0,14 0,0 6,7 12,0 12,14" fill="#E8641B"/></svg>
+      <div><b>MEGAVERKS</b><small>TECHNOLOGIES</small></div>
+      <span class="app">Blower Selector</span>
+    </div>
+    <button class="pill" id="connPill" type="button" title="Cloud connection"><span class="dot" id="connDot"></span><span id="connText">Not connected</span></button>
+  </div>
+  <nav class="tabs" role="tablist">
+    <div class="wrap">
+      <button class="tab" role="tab" data-tab="form" aria-selected="true">Selection</button>
+      <button class="tab" role="tab" data-tab="history" aria-selected="false">History<span class="long"> &amp; Leaderboard</span> <span class="count" id="histCount">0</span></button>
+      <button class="tab" role="tab" data-tab="settings" aria-selected="false">Settings</button>
+    </div>
+  </nav>
+</header>
+
+<main class="wrap">
+<!-- ============================ SELECTION ============================ -->
+<section class="panel" id="tab-form">
+  <div class="recbar">
+    <span class="id" id="recId">—</span>
+    <span class="badge" id="recState">New</span>
+    <span class="badge" id="recApp" hidden></span>
+    <span class="sp"></span>
+    <button class="btn sm ghost" type="button" id="btnCopyLink" hidden>🔗 Copy link</button>
+    <a class="btn sm ghost" id="pdfLink" target="_blank" rel="noopener" hidden>Cloud PDF</a>
+    <button class="btn sm" type="button" id="btnDup">Duplicate</button>
+    <button class="btn sm" type="button" id="btnNew">+ New</button>
+  </div>
+
+  <form id="mainForm" autocomplete="off" novalidate onsubmit="return false">
+  <!-- 1 customer -->
+  <div class="card">
+    <h2><span class="n">1</span>Customer &amp; Site<span class="hint">Type a name or phone to reuse past details</span></h2>
+    <div class="grid">
+      <label class="f c6"><span>Customer name <span class="req">*</span></span>
+        <input class="in" data-k="customer.name" list="dlCustomers" maxlength="120" placeholder="Company / person name">
+        <span class="errmsg"></span></label>
+      <label class="f c6"><span>Customer phone <span class="req">*</span></span>
+        <input class="in" data-k="customer.phone" data-v="phone" inputmode="tel" maxlength="20" list="dlPhones" placeholder="98450 12345">
+        <span class="errmsg"></span></label>
+      <label class="f c6"><span>Email ID</span>
+        <input class="in" data-k="customer.email" data-v="email" type="email" inputmode="email" maxlength="120" placeholder="name@company.com">
+        <span class="errmsg"></span></label>
+      <label class="f c6"><span>Megaverks engineer <span class="req">*</span></span>
+        <input class="in" data-k="ourEngineer" list="dlEngineers" maxlength="60" placeholder="Our engineer name">
+        <span class="errmsg"></span></label>
+      <label class="f c6"><span>Customer address</span>
+        <textarea class="in" data-k="customer.address" maxlength="400" placeholder="Billing / office address"></textarea></label>
+      <label class="f c6"><span>Site address</span>
+        <textarea class="in" data-k="site.address" maxlength="400" placeholder="Installation site"></textarea>
+        <button type="button" class="btn sm ghost" id="btnSameAddr" style="align-self:flex-start;margin-top:2px">Same as customer address</button></label>
+      <label class="f c6"><span>Site electrician number</span>
+        <input class="in" data-k="site.electrician" data-v="phone" inputmode="tel" maxlength="20" placeholder="Number">
+        <span class="errmsg"></span></label>
+      <label class="f c6"><span>Site engineer number</span>
+        <input class="in" data-k="site.engineer" data-v="phone" inputmode="tel" maxlength="20" placeholder="Number">
+        <span class="errmsg"></span></label>
+    </div>
+    <div class="banner" id="custBanner" hidden>
+      <span id="custBannerText"></span>
+      <button type="button" class="btn sm primary" id="btnCustFill">Fill details</button>
+      <button type="button" class="btn sm ghost" id="btnCustDismiss">Dismiss</button>
+    </div>
+  </div>
+
+  <!-- 2 application & blower -->
+  <div class="card">
+    <h2><span class="n">2</span>Application &amp; Blower</h2>
+    <div class="seg app" role="radiogroup" aria-label="Application">
+      <label><input type="radio" name="application" data-k="application" value="Exhaust"><span class="opt">⬆ Exhaust</span></label>
+      <label><input type="radio" name="application" data-k="application" value="Fresh Air"><span class="opt">⬇ Fresh Air</span></label>
+    </div>
+    <span class="errmsg" id="errApp"></span>
+    <div class="rowlabel" style="margin-top:14px">SELECT BLOWER <span class="req">*</span></div>
+    <div class="models" id="models" role="radiogroup" aria-label="Blower model"></div>
+    <span class="errmsg" id="errModel"></span>
+    <p class="note">960 RPM = low noise · 1440 RPM = common noise. Noise factor is high in blowers from 7.5 HP to 15 HP — prefer 960 RPM where noise matters.</p>
+
+    <div class="dimbox">
+      <h3>Blower size &amp; connections</h3>
+      <div class="grid">
+        <label class="f c4"><span>Casing size <span class="req">*</span></span>
+          <select class="in" id="selCasing"></select>
+          <span class="errmsg" id="errCasing"></span></label>
+        <label class="f c4" id="casingOtherWrap" hidden><span>Other casing size</span>
+          <input class="in" id="casingOther" type="number" min="10" max="300" step="1" inputmode="numeric" placeholder="e.g. 65">
+          <span class="errmsg" id="errCasingOther"></span></label>
+      </div>
+      <div class="dims" id="dimTable" aria-live="polite"></div>
+
+      <div class="rowlabel" style="margin-top:12px">DUCT OUTLET SIZE (EDITABLE)</div>
+      <div class="seg" style="margin-bottom:10px">
+        <label><input type="radio" name="duct" data-k="acc.ductShape" value="Rectangular"><span class="opt">Square / Rectangular</span></label>
+        <label><input type="radio" name="duct" data-k="acc.ductShape" value="Round"><span class="opt">Round</span></label>
+      </div>
+      <div class="grid">
+        <label class="f c4 half duct-rect"><span>Width W</span><span class="unit"><input class="in" data-k="acc.ductW" data-type="num" type="number" min="0" inputmode="numeric" placeholder="500"><span>mm</span></span><span class="errmsg"></span></label>
+        <label class="f c4 half duct-rect"><span>Height H</span><span class="unit"><input class="in" data-k="acc.ductH" data-type="num" type="number" min="0" inputmode="numeric" placeholder="500"><span>mm</span></span><span class="errmsg"></span></label>
+        <label class="f c4 half duct-round" hidden><span>Diameter</span><span class="unit"><input class="in" data-k="acc.ductDia" data-type="num" type="number" min="0" inputmode="numeric" placeholder="500"><span>mm</span></span><span class="errmsg"></span></label>
+        <div class="c4" style="align-self:end;display:flex;flex-direction:column;gap:6px;padding-bottom:2px">
+          <span class="calc" id="ductStd" style="color:var(--muted)"></span>
+          <button type="button" class="btn sm" id="btnDuctStd" hidden>Use standard size</button>
+        </div>
+      </div>
+      <span class="calc" id="calcVel"></span>
+
+      <details class="chart">
+        <summary>Casing size chart (all sizes, mm)</summary>
+        <div class="scroll"><table class="ct" id="casingChart"></table></div>
+        <p class="note">Inlet Ø = casing × 10 mm · Blower outlet W = 75 % and D = 100 % of casing Ø · Duct outlet = standard square duct.</p>
+      </details>
+    </div>
+  </div>
+
+  <!-- 3 duty -->
+  <div class="card">
+    <h2><span class="n">3</span>Duty &amp; Construction</h2>
+    <div class="grid">
+      <label class="f c4 half"><span>Airflow</span>
+        <span class="unit"><input class="in" data-k="fan.cfm" data-type="num" type="number" min="0" step="10" inputmode="decimal" placeholder="6300"><span>CFM</span></span>
+        <span class="calc" id="calcCmh"></span></label>
+      <label class="f c4 half"><span>Static pressure</span>
+        <span class="unit"><input class="in" data-k="fan.sp" data-type="num" type="number" min="0" step="1" inputmode="decimal" placeholder="40"><span>mmWC</span></span>
+        <span class="calc" id="calcPa"></span></label>
+      <label class="f c4 half"><span>Air temperature</span>
+        <span class="unit"><input class="in" data-k="fan.temp" data-type="num" type="number" step="1" inputmode="decimal" placeholder="40"><span>°C</span></span></label>
+      <label class="f c4 half"><span>Medium</span>
+        <select class="in" data-k="fan.medium">
+          <option value="">Select…</option><option>Clean air</option><option>Kitchen exhaust (grease fumes)</option><option>Dust laden air</option><option>Smoke / fumes</option><option>Chemical fumes</option><option>Hot air</option><option>Other</option>
+        </select></label>
+      <label class="f c4 half"><span>Motor HP</span>
+        <select class="in" data-k="fan.hp" data-type="num" id="selHp"></select></label>
+      <label class="f c4 half"><span>Motor RPM</span>
+        <select class="in" data-k="fan.rpm" data-type="num"><option value="">Select…</option><option value="960">960 · low noise</option><option value="1440">1440 · common</option><option value="2880">2880</option></select></label>
+      <label class="f c4 half"><span>Quantity</span>
+        <input class="in" data-k="fan.qty" data-type="num" type="number" min="1" step="1" inputmode="numeric" value="1">
+        <span class="errmsg"></span></label>
+      <label class="f c4 half"><span>Motor make</span>
+        <input class="in" data-k="fan.motorMake" maxlength="40" placeholder="e.g. Crompton / ABB"></label>
+      <label class="f c4 half"><span>Voltage</span>
+        <select class="in" data-k="fan.voltage"><option value="415 V, 3-Ph, 50 Hz">415 V 3-Ph</option><option value="230 V, 1-Ph, 50 Hz">230 V 1-Ph</option></select></label>
+      <label class="f c4 half"><span>Motor efficiency</span>
+        <select class="in" data-k="fan.ieClass"><option>IE2</option><option>IE3</option><option>IE4</option></select></label>
+      <label class="f c4 half"><span>Material</span>
+        <select class="in" data-k="fan.material"><option>MS powder coated</option><option>MS painted</option><option>GI</option><option>SS 304</option></select></label>
+    </div>
+
+    <div class="rowlabel" style="margin-top:16px">DISCHARGE FORM (VIEWED FROM DRIVE SIDE)</div>
+    <div class="forms" id="formsR" role="radiogroup" aria-label="Clockwise discharge forms"></div>
+    <div style="height:8px"></div>
+    <div class="forms" id="formsL" role="radiogroup" aria-label="Anti-clockwise discharge forms"></div>
+    <p class="note">R = clockwise · L = anti-clockwise rotation. Orange arrow = air discharge.</p>
+
+    <div class="rowlabel" style="margin-top:12px">DRIVE ARRANGEMENT</div>
+    <div class="seg">
+      <label><input type="radio" name="arr" data-k="fan.arrangement" value="Arr-A"><span class="opt">Arr-A · Direct drive</span></label>
+      <label><input type="radio" name="arr" data-k="fan.arrangement" value="Arr-B"><span class="opt">Arr-B · Belt / coupling</span></label>
+    </div>
+
+    <div class="eng" id="engCheck"></div>
+  </div>
+
+  <!-- 4 accessories -->
+  <div class="card">
+    <h2><span class="n">4</span>Accessories</h2>
+    <div class="grid">
+      <label class="f c6"><span>Damper</span>
+        <select class="in" data-k="acc.damper"><option>None</option><option>Manual volume control damper (VCD)</option><option>Motorised damper</option><option>Gravity / back-draft damper</option><option>Fire damper</option></select></label>
+      <label class="f c6"><span>Canvas connector</span>
+        <select class="in" data-k="acc.canvas"><option>None</option><option>Inlet</option><option>Outlet</option><option>Inlet &amp; Outlet</option></select></label>
+      <div class="c12 checks">
+        <label class="chk"><input type="checkbox" data-k="acc.vfd"> VFD panel</label>
+        <label class="chk"><input type="checkbox" data-k="acc.avm"> Anti-vibration mounts</label>
+        <label class="chk"><input type="checkbox" data-k="acc.guard"> Inlet / belt guard</label>
+      </div>
+      <div class="c12 fresh-only" hidden>
+        <div class="rowlabel">FRESH AIR FILTERS</div>
+        <div class="grid">
+          <label class="f c4 half"><span>Number of filters <span class="req">*</span></span>
+            <input class="in" data-k="acc.filters" data-type="num" type="number" min="0" step="1" inputmode="numeric" placeholder="4">
+            <span class="errmsg"></span></label>
+          <label class="f c4 half"><span>Filter type</span>
+            <select class="in" data-k="acc.filterType"><option>Pre-filter G4 (washable)</option><option>Fine filter F7</option><option>Pre G4 + Fine F7</option><option>HEPA H13</option><option>Aluminium mesh</option></select></label>
+          <label class="f c4"><span>Filter size</span>
+            <input class="in" data-k="acc.filterSize" maxlength="40" placeholder="610 x 610 x 50 mm"></label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5 remarks -->
+  <div class="card">
+    <h2><span class="n">5</span>Remarks</h2>
+    <label class="f"><span>Remarks</span>
+      <textarea class="in" data-k="remarks" maxlength="1000" placeholder="Site conditions, delivery, special notes…"></textarea></label>
+  </div>
+  </form>
+</section>
+
+<!-- ============================ HISTORY ============================ -->
+<section class="panel" id="tab-history" hidden>
+  <div class="toolbar">
+    <div class="chips" id="periodChips">
+      <button type="button" class="chip" data-period="all" aria-pressed="true">All time</button>
+      <button type="button" class="chip" data-period="month" aria-pressed="false">This month</button>
+      <button type="button" class="chip" data-period="30" aria-pressed="false">Last 30 days</button>
+    </div>
+    <span style="flex:1"></span>
+    <span class="badge" id="lastSync">Not synced</span>
+    <button type="button" class="btn sm primary" id="btnRefresh">↻ Refresh</button>
+  </div>
+  <div class="kpis" id="kpis"></div>
+  <div class="card">
+    <h2>🏆 Engineer Leaderboard<span class="hint">by selections saved</span></h2>
+    <div class="lb" id="leaderboard"></div>
+  </div>
+  <div class="card">
+    <h2>Saved Selections</h2>
+    <div class="toolbar">
+      <input class="in" id="search" type="search" placeholder="Search customer, phone, ID, engineer, site, casing…">
+      <div class="chips" id="appChips">
+        <button type="button" class="chip" data-app="" aria-pressed="true">All</button>
+        <button type="button" class="chip" data-app="Exhaust" aria-pressed="false">Exhaust</button>
+        <button type="button" class="chip" data-app="Fresh Air" aria-pressed="false">Fresh Air</button>
+      </div>
+    </div>
+    <div class="hist" id="histList"></div>
+  </div>
+</section>
+
+<!-- ============================ SETTINGS ============================ -->
+<section class="panel" id="tab-settings" hidden>
+  <div class="card">
+    <h2>☁ Cloud connection (Google Sheets)</h2>
+    <p class="note" id="connInfo" style="margin:0 0 10px"></p>
+    <div class="toolbar">
+      <button type="button" class="btn orange" id="btnTest">▶ Test connection</button>
+      <button type="button" class="btn" id="btnCopyApp">🔗 Copy app link</button>
+      <button type="button" class="btn danger" id="btnLockNow">🔒 Lock this device</button>
+    </div>
+    <div class="steps" id="testSteps"></div>
+    <details class="chart" style="margin-top:14px">
+      <summary>Advanced (admin)</summary>
+      <div class="grid" style="margin-top:10px">
+        <label class="f c12"><span>Apps Script Web App URL</span>
+          <input class="in mono" id="setApi" placeholder="https://script.google.com/macros/s/XXXX/exec" spellcheck="false">
+          <span class="errmsg" id="apiErr"></span></label>
+        <div class="c12"><button type="button" class="btn primary sm" id="btnSaveConn">Save URL on this device</button></div>
+      </div>
+      <p class="note">The passcode and admin PIN are kept only in the “App Settings” tab of the Google Sheet. Change them there; every phone is asked for the new passcode.</p>
+    </details>
+  </div>
+
+  <div class="card">
+    <h2>Options</h2>
+    <div class="grid">
+      <label class="chk c12" style="justify-self:start"><input type="checkbox" id="optPdf"> Store PDF in Google Drive when saving (link goes in the sheet &amp; WhatsApp)</label>
+      <label class="f c12"><span>Megaverks engineers (comma separated)</span>
+        <input class="in" id="optEngineers" placeholder="Hemant, Raju, Bhagwan"></label>
+    </div>
+    <div class="banner" id="pendingBox" hidden>
+      <span id="pendingText" style="flex:1"></span>
+      <button type="button" class="btn sm orange" id="btnSyncNow">Sync now</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Blower list<span class="hint">Admin PIN needed to save to cloud</span></h2>
+    <div class="scroll">
+      <table class="pt" id="blowerTable">
+        <thead><tr><th>Label</th><th>HP</th><th>RPM</th><th>Casing</th><th>On</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div class="toolbar" style="margin-top:10px"><button type="button" class="btn sm" id="btnAddBlower">+ Add blower</button></div>
+
+    <h2 style="margin-top:14px">Casing sizes</h2>
+    <div class="scroll">
+      <table class="pt" id="casingTable">
+        <thead><tr><th>Casing</th><th>Inlet Ø mm</th><th>Outlet W mm</th><th>Outlet D mm</th><th>Duct W mm</th><th>Duct H mm</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <p class="note">Inlet Ø = casing × 10 mm · Blower outlet W = 75 % and D = 100 % of casing Ø. Duct W × H is the standard square duct offered by default (editable in each selection).</p>
+    <div class="toolbar" style="margin-top:10px">
+      <button type="button" class="btn sm" id="btnAddCasing">+ Add casing</button>
+      <button type="button" class="btn sm" id="btnRecalc">Recalculate inlet &amp; outlet</button>
+      <button type="button" class="btn sm" id="btnReloadMaster">↻ Reload from cloud</button>
+      <button type="button" class="btn sm ghost" id="btnResetMaster">Reset to standard list</button>
+      <span style="flex:1"></span>
+      <button type="button" class="btn sm primary" id="btnSaveMaster">Save blower &amp; casing list</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>This device</h2>
+    <div class="toolbar">
+      <button type="button" class="btn sm" id="btnExport">Export history (CSV)</button>
+      <button type="button" class="btn sm danger" id="btnClearCache">Clear local cache</button>
+    </div>
+    <p class="note" id="aboutText"></p>
+  </div>
+</section>
+</main>
+
+<div class="actions" id="actionBar">
+  <div class="wrap">
+    <button type="button" class="btn primary" id="btnSave">☁ <span>Save<span class="long"> to cloud</span></span></button>
+    <button type="button" class="btn orange" id="btnPdf">⬇ PDF</button>
+    <div class="wa-group">
+      <button type="button" class="btn wa" id="btnWa">WhatsApp</button>
+      <select id="waTo" aria-label="Send WhatsApp to">
+        <option value="customer">Customer</option>
+        <option value="engineer">Site engineer</option>
+        <option value="electrician">Electrician</option>
+        <option value="pick">Choose…</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<datalist id="dlCustomers"></datalist>
+<datalist id="dlPhones"></datalist>
+<datalist id="dlEngineers"></datalist>
+<datalist id="dlCasings"></datalist>
+<div class="lock" id="lock" hidden>
+  <form class="lockcard" id="lockForm" onsubmit="return false" autocomplete="off">
+    <div class="lb2"><svg width="26" height="30" viewBox="0 0 12 14" aria-hidden="true"><polygon points="0,14 0,0 6,7 12,0 12,14" fill="#E8641B"/></svg><b>MEGAVERKS</b></div>
+    <h1>Blower Selector</h1>
+    <p id="lockMsg">Enter the team passcode to open the app and saved selections.</p>
+    <input class="in" id="lockPass" type="password" inputmode="numeric" maxlength="20" placeholder="••••••" aria-label="Passcode">
+    <span class="errmsg" id="lockErr" style="display:block;margin-top:6px"></span>
+    <button type="submit" class="btn primary" id="btnUnlock">Unlock</button>
+    <button type="button" class="btn ghost sm" id="btnLockOffline" hidden>Continue offline with saved data</button>
+  </form>
+</div>
+<div class="toasts" id="toasts" aria-live="polite"></div>
+<div class="busy" id="busy" hidden><div><span class="spin"></span><span id="busyText">Working…</span></div></div>
+
+<script>
+'use strict';
+/* =====================================================================
+   CONFIG — the Google Apps Script web-app URL comes from config.js, so the
+   app link connects by itself. Settings on a device can override it.
+   ===================================================================== */
+const CONFIG = {
+  API_URL: String((window.MV_CONFIG && window.MV_CONFIG.API_URL) || '').trim(),   // set in config.js
+  COMPANY: 'MEGAVERKS TECHNOLOGIES',
+  ADDRESS: 'Rajajinagar Industrial Estate, Bengaluru',
+  COUNTRY_CODE: '91',
+  APP_VERSION: '1.2.0'
+};
+
+/* Casing rules: inlet Ø = casing x 10 mm, outlet W = 75 % and D = 100 % of casing Ø.
+   Standard square duct outlet per casing (others default to casing Ø square). */
+const OUTLET_W_PCT = 0.75, OUTLET_D_PCT = 1.0;
+const STD_DUCT = { 50:500, 55:550, 60:700 };
+function casingFormula(c){
+  c = Number(c); const d = Math.round(c * 10), duct = STD_DUCT[c] || d;
+  return { casing:c, inlet:d, outW:Math.round(d * OUTLET_W_PCT), outD:Math.round(d * OUTLET_D_PCT), ductW:duct, ductH:duct };
+}
+const DEFAULT_MASTER = {
+  blowers: [
+    { id:'2HP-1440',   label:'2 HP',   hp:2,   rpm:1440, casing:30, active:true },
+    { id:'3HP-1440',   label:'3 HP',   hp:3,   rpm:1440, casing:40, active:true },
+    { id:'3HP-960',    label:'3 HP',   hp:3,   rpm:960,  casing:45, active:true },
+    { id:'5HP-1440',   label:'5 HP',   hp:5,   rpm:1440, casing:45, active:true },
+    { id:'5HP-960',    label:'5 HP',   hp:5,   rpm:960,  casing:50, active:true },
+    { id:'7.5HP-1440', label:'7.5 HP', hp:7.5, rpm:1440, casing:50, active:true },
+    { id:'7.5HP-960',  label:'7.5 HP', hp:7.5, rpm:960,  casing:55, active:true },
+    { id:'10HP-1440',  label:'10 HP',  hp:10,  rpm:1440, casing:60, active:true },
+    { id:'10HP-960',   label:'10 HP',  hp:10,  rpm:960,  casing:70, active:true }
+  ],
+  casings: [30,40,45,50,55,60,70].map(casingFormula)
+};
+const HP_OPTIONS = [0.5,1,1.5,2,3,5,7.5,10,12.5,15,20,25];
+const FORM_INFO = { 1:'Bottom horizontal', 2:'Top vertical (up-blast)', 3:'Top horizontal', 4:'Bottom vertical (down-blast)' };
+const LS = { settings:'mv.settings', cache:'mv.cache', pending:'mv.pending', master:'mv.master', draft:'mv.draft' };
+
+/* ------------------------------------------------------------ utilities */
+const $ = (s, el=document) => el.querySelector(s);
+const $$ = (s, el=document) => Array.from(el.querySelectorAll(s));
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const clone = o => JSON.parse(JSON.stringify(o));
+const num = v => { const n = parseFloat(v); return isFinite(n) ? n : 0; };
+const fmt = (n, d=0) => num(n).toLocaleString('en-IN', { maximumFractionDigits:d, minimumFractionDigits:0 });
+const digits = s => String(s || '').replace(/\D/g, '');
+function lsGet(k, d){ try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch(e){ return d; } }
+function lsSet(k, v){ try { if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, JSON.stringify(v)); return true; } catch(e){ console.warn('storage', e); return false; } }
+function getPath(o, p){ return p.split('.').reduce((a,k) => (a == null ? undefined : a[k]), o); }
+function setPath(o, p, v){ const ks = p.split('.'); let c = o; ks.slice(0,-1).forEach(k => { if (typeof c[k] !== 'object' || c[k] === null) c[k] = {}; c = c[k]; }); c[ks[ks.length-1]] = v; }
+function fmtDate(iso, withTime=true){ const d = new Date(iso); if (!iso || isNaN(d)) return ''; const p = n => String(n).padStart(2,'0'); return `${p(d.getDate())}-${p(d.getMonth()+1)}-${d.getFullYear()}` + (withTime ? ` ${p(d.getHours())}:${p(d.getMinutes())}` : ''); }
+function newId(){ const d = new Date(), p = n => String(n).padStart(2,'0'); const r = Math.random().toString(36).slice(2,5).toUpperCase().padEnd(3,'X'); return `MVB-${String(d.getFullYear()).slice(2)}${p(d.getMonth()+1)}${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}-${r}`; }
+const isMobile = () => /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+const mm = (w, h) => (w && h) ? `${fmt(w)} × ${fmt(h)} mm` : '';
+
+function toast(msg, type='', ms=3200){
+  const t = document.createElement('div'); t.className = 'toast ' + type; t.textContent = msg;
+  $('#toasts').appendChild(t); setTimeout(() => t.remove(), ms);
+}
+function busy(on, text='Working…'){ $('#busy').hidden = !on; $('#busyText').textContent = text; }
+
+/* ------------------------------------------------------------- settings */
+let settings = Object.assign({ api:'', pass:'', storePdf:true, engineers:'' }, lsGet(LS.settings, {}));
+delete settings.token;
+const apiUrl = () => (settings.api || CONFIG.API_URL || '').trim();
+const apiPass = () => String(settings.pass || '').trim();
+const appUrl = () => /^https?:$/.test(location.protocol) ? location.origin + location.pathname : '';
+function saveSettings(){ lsSet(LS.settings, settings); }
+
+/* ------------------------------------------------------- blower master */
+function validMaster(m){ return !!(m && Array.isArray(m.blowers) && m.blowers.length && Array.isArray(m.casings) && m.casings.length); }
+function normMaster(m){
+  const casings = m.casings.filter(c => num(c.casing) > 0).map(c => { const f = casingFormula(c.casing);
+    return { casing:num(c.casing), inlet:num(c.inlet) || f.inlet, outW:num(c.outW) || f.outW, outD:num(c.outD) || f.outD, ductW:num(c.ductW) || f.ductW, ductH:num(c.ductH) || f.ductH }; })
+    .sort((a,b) => a.casing - b.casing);
+  const blowers = m.blowers.filter(b => b && b.label).map(b => ({ id:String(b.id || `${b.hp}HP-${b.rpm}`), label:String(b.label), hp:num(b.hp), rpm:num(b.rpm), casing:num(b.casing) || '', active:b.active !== false }));
+  return { blowers, casings };
+}
+let master = validMaster(lsGet(LS.master, null)) ? normMaster(lsGet(LS.master, null)) : clone(DEFAULT_MASTER);
+function dims(c){
+  c = num(c); if (!(c > 0)) return null;
+  const row = master.casings.find(x => num(x.casing) === c);
+  return row ? { ...row } : casingFormula(c);
+}
+
+/* ------------------------------------------------------------------ API */
+function checkUrl(u){
+  if (!u) return 'Enter the Web App URL';
+  let x; try { x = new URL(u); } catch(e) { return 'Not a valid URL'; }
+  if (x.protocol !== 'https:' && x.hostname !== 'localhost') return 'URL must start with https://';
+  if (/\/dev\/?$/.test(x.pathname)) return 'This is the /dev test URL — use the deployed /exec URL';
+  if (!/\/exec\/?$/.test(x.pathname)) return 'URL must end with /exec (Deploy → Manage deployments → Web app URL)';
+  return '';
+}
+function friendlyError(e){
+  const m = String(e && e.message || e);
+  if (e && e.name === 'AbortError') return 'Timed out — the network or Google is slow. Try again.';
+  if (/Failed to fetch|NetworkError|Load failed/i.test(m)) return navigator.onLine ? 'Could not reach the script — check the /exec URL and that access is set to "Anyone".' : 'You are offline.';
+  return m;
+}
+async function fetchT(url, opts={}, ms=30000){
+  const ctrl = new AbortController(); const tm = setTimeout(() => ctrl.abort(), ms);
+  try { return await fetch(url, { ...opts, signal: ctrl.signal, redirect:'follow', cache:'no-store' }); }
+  finally { clearTimeout(tm); }
+}
+async function parseRes(res){
+  const text = await res.text();
+  if (!res.ok) throw new Error(`Server returned HTTP ${res.status}`);
+  let j; try { j = JSON.parse(text); }
+  catch(e) { throw new Error(/<html/i.test(text) ? 'Got a Google sign-in page instead of data — set "Who has access" to Anyone and redeploy.' : 'Unexpected reply from script (not JSON).'); }
+  if (!j.ok) { const err = new Error(j.error || 'Script error'); err.code = j.code; throw err; }
+  return j;
+}
+async function apiGet(params, ms){
+  const u = apiUrl(); const bad = checkUrl(u); if (bad) throw new Error(bad);
+  const url = new URL(u);
+  Object.entries({ ...params, pass: apiPass(), _: Date.now() }).forEach(([k,v]) => url.searchParams.set(k, v));
+  let lastErr;
+  for (let attempt = 0; attempt < 2; attempt++) {           // one automatic retry for flaky mobile networks
+    try { return await parseRes(await fetchT(url.toString(), { method:'GET' }, ms)); }
+    catch(e) { lastErr = e; if (e.code || /HTTP 4/.test(e.message)) break; await new Promise(r => setTimeout(r, 900)); }
+  }
+  throw lastErr;
+}
+async function apiPost(body, ms=60000){
+  const u = apiUrl(); const bad = checkUrl(u); if (bad) throw new Error(bad);
+  // text/plain keeps this a "simple" request so Google Apps Script works without CORS preflight
+  return parseRes(await fetchT(u, { method:'POST', headers:{ 'Content-Type':'text/plain;charset=utf-8' }, body: JSON.stringify({ ...body, pass: apiPass(), appUrl: appUrl() }) }, ms));
+}
+
+/* --------------------------------------------------------------- state */
+let records = (lsGet(LS.cache, {}).records) || [];
+let pending = lsGet(LS.pending, {});
+let current = null;
+let dirty = false;
+let conn = { state:'none', text:'Not connected' };
+let lastSync = lsGet(LS.cache, {}).at || '';
+let custSuggestion = null;
+let filter = { period:'all', app:'', q:'' };
+
+function blankRecord(){
+  return {
+    id: newId(), createdAt:'', updatedAt:'', application:'Exhaust',
+    customer:{ name:'', phone:'', email:'', address:'' },
+    site:{ address:'', electrician:'', engineer:'' },
+    ourEngineer: settings.lastEngineer || '',
+    fan:{ modelId:'', modelLabel:'', hp:'', kw:'', rpm:'', casing:'', inletDia:'', outletW:'', outletD:'', cfm:'', cmh:'', sp:'', temp:'', medium:'', form:'R3', arrangement:'Arr-A', material:'MS powder coated', voltage:'415 V, 3-Ph, 50 Hz', ieClass:'IE3', motorMake:'', qty:1 },
+    acc:{ damper:'None', canvas:'None', ductShape:'Rectangular', ductW:'', ductH:'', ductDia:'', vfd:false, avm:false, guard:false, filters:'', filterType:'Pre-filter G4 (washable)', filterSize:'' },
+    remarks:'', pdfUrl:''
+  };
+}
+
+/* ------------------------------------------------- discharge form drawing */
+function formGeom(form){
+  const L = form[0] === 'L', k = +form[1] || 3;
+  const base = { 1:Math.PI, 2:Math.PI/2, 3:0, 4:-Math.PI/2 }[k];
+  const m = L ? -1 : 1, rot = (L ? -1 : 1) * base, c = Math.cos(rot), s = Math.sin(rot);
+  const tf = ([x,y]) => { x *= m; return [x*c - y*s, x*s + y*c]; };
+  const pts = [], a0 = Math.PI/3, tr = 11*Math.PI/6;
+  for (let i = 0; i <= 90; i++) { const t = tr*i/90, a = a0 - t, r = 1 + 0.42*t/tr; pts.push([r*Math.cos(a), r*Math.sin(a)]); }
+  const c0 = pts[0]; pts.push([1.6, 1.42], [1.6, c0[1]]);
+  return { poly: pts.map(tf), arrow: [tf([1.6,1.14]), tf([2.4,1.14])], L };
+}
+function arrowHead(tip, dir, size){
+  const len = Math.hypot(dir[0], dir[1]) || 1, d = [dir[0]/len, dir[1]/len], p = [-d[1], d[0]];
+  const b = [tip[0] - d[0]*size, tip[1] - d[1]*size];
+  return [tip, [b[0] + p[0]*size*0.55, b[1] + p[1]*size*0.55], [b[0] - p[0]*size*0.55, b[1] - p[1]*size*0.55]];
+}
+function rotArc(L){
+  const r = 0.82, a1 = L ? 40 : 140, a2 = L ? 140 : 40, rad = x => x*Math.PI/180;
+  const p1 = [r*Math.cos(rad(a1)), r*Math.sin(rad(a1))], p2 = [r*Math.cos(rad(a2)), r*Math.sin(rad(a2))];
+  const t = L ? [-Math.sin(rad(a2)), Math.cos(rad(a2))] : [Math.sin(rad(a2)), -Math.cos(rad(a2))];
+  return { p1, p2, r, tangent:t };
+}
+function formSVG(form){
+  const g = formGeom(form), P = p => `${p[0].toFixed(3)},${(-p[1]).toFixed(3)}`;
+  const [a, b] = g.arrow, head = arrowHead(b, [b[0]-a[0], b[1]-a[1]], 0.42);
+  const arc = rotArc(g.L), ah = arrowHead(arc.p2, arc.tangent, 0.22);
+  return `<svg viewBox="-2.75 -2.75 5.5 5.15" aria-hidden="true">
+    <rect x="-0.65" y="0.45" width="1.3" height="1.7" fill="#fff" stroke="#1E2A38" stroke-width="0.07"/>
+    <line x1="-0.95" y1="2.15" x2="0.95" y2="2.15" stroke="#1E2A38" stroke-width="0.14"/>
+    <path d="M${g.poly.map(P).join(' L')} Z" fill="#EEF2F7" stroke="#1E2A38" stroke-width="0.09" stroke-linejoin="round"/>
+    <circle r="0.6" fill="#fff" stroke="#1E2A38" stroke-width="0.06"/><circle r="0.13" fill="#16325C"/>
+    <path d="M${P(arc.p1)} A${arc.r} ${arc.r} 0 0 ${g.L ? 0 : 1} ${P(arc.p2)}" fill="none" stroke="#16325C" stroke-width="0.07"/>
+    <polygon points="${ah.map(P).join(' ')}" fill="#16325C"/>
+    <line x1="${a[0].toFixed(3)}" y1="${(-a[1]).toFixed(3)}" x2="${(b[0]-(b[0]-a[0])*0.3).toFixed(3)}" y2="${(-(b[1]-(b[1]-a[1])*0.3)).toFixed(3)}" stroke="#E8641B" stroke-width="0.16"/>
+    <polygon points="${head.map(P).join(' ')}" fill="#E8641B"/>
+  </svg>`;
+}
+
+/* -------------------------------------------------------- build the UI */
+function buildForms(){
+  ['R','L'].forEach(h => {
+    $('#forms' + h).innerHTML = [1,2,3,4].map(k => `
+      <label class="form" title="${h}${k} – ${FORM_INFO[k]}">
+        <input type="radio" name="form" data-k="fan.form" value="${h}${k}">
+        <span class="box">${formSVG(h + k)}<b>${h}${k}</b><small>${FORM_INFO[k]}</small></span>
+      </label>`).join('');
+  });
+}
+function noiseTag(p){ if (num(p.rpm) && num(p.rpm) <= 960) return ['low','Low noise']; if (num(p.hp) >= 7.5) return ['hi','High noise']; return ['std','Common']; }
+function buildModels(){
+  const act = master.blowers.filter(p => p.active !== false);
+  $('#models').innerHTML = act.map(p => {
+    const [cls, txt] = noiseTag(p), d = dims(p.casing);
+    return `<label class="model"><input type="radio" name="model" data-k="fan.modelId" value="${esc(p.id)}">
+      <span class="box"><span class="tag ${cls}">${txt}</span>
+        <span class="hp">${esc(p.label)}</span><span class="rpm">${esc(p.rpm)} RPM</span>
+        <span class="meta">Casing <b>${d ? esc(d.casing) : '—'}</b>${d ? ` · Inlet Ø${esc(d.inlet)}` : ''}</span>
+      </span></label>`;
+  }).join('') + `<label class="model"><input type="radio" name="model" data-k="fan.modelId" value="CUSTOM">
+      <span class="box"><span class="tag std">Other</span><span class="hp">Custom</span><span class="rpm">Other size</span><span class="meta">Choose HP, RPM &amp; casing</span></span></label>`;
+}
+function buildCasingSelect(){
+  const sel = $('#selCasing'), keep = getCasing();
+  sel.innerHTML = '<option value="">Select…</option>' + master.casings.map(c => `<option value="${c.casing}">${c.casing} — Inlet Ø${c.inlet} mm</option>`).join('') + '<option value="OTHER">Other size…</option>';
+  $('#dlCasings').innerHTML = master.casings.map(c => `<option value="${c.casing}">`).join('');
+  setCasing(keep);
+}
+function buildHp(){ $('#selHp').innerHTML = '<option value="">Select…</option>' + HP_OPTIONS.map(h => `<option value="${h}">${h} HP (${(h*0.746).toFixed(2)} kW)</option>`).join(''); }
+function ensureHp(v){ if (v === '' || v == null) return; if (!$$('#selHp option').some(o => o.value !== '' && num(o.value) === num(v))) { const o = document.createElement('option'); o.value = v; o.textContent = v + ' HP'; $('#selHp').appendChild(o); } }
+function setRadio(k, v){ $$(`[data-k="${k}"]`).forEach(el => el.checked = el.value === v); }
+
+/* ---------------------------------------------------------- casing input */
+function getCasing(){
+  const sel = $('#selCasing'); if (!sel) return '';
+  if (sel.value === 'OTHER') { const v = num($('#casingOther').value); return v > 0 ? v : ''; }
+  return sel.value === '' ? '' : num(sel.value);
+}
+function setCasing(c){
+  const sel = $('#selCasing'), other = $('#casingOther');
+  c = num(c);
+  if (!(c > 0)) { sel.value = ''; other.value = ''; }
+  else if (master.casings.some(x => num(x.casing) === c)) { sel.value = String(c); other.value = ''; }
+  else { sel.value = 'OTHER'; other.value = c; }
+  $('#casingOtherWrap').hidden = sel.value !== 'OTHER';
+}
+function applyCasingDefaults(){
+  const d = dims(getCasing()); if (!d) return;
+  $('[data-k="acc.ductW"]').value = d.ductW; $('[data-k="acc.ductH"]').value = d.ductH;
+  if (!num($('[data-k="acc.ductDia"]').value)) $('[data-k="acc.ductDia"]').value = d.inlet;
+  setRadio('acc.ductShape', 'Rectangular');
+  ['acc.ductW','acc.ductH','acc.ductDia'].forEach(k => setErr($(`[data-k="${k}"]`), ''));
+}
+
+/* ----------------------------------------------- form <-> record binding */
+function fill(rec){
+  const src = clone(rec || {});
+  delete src.price; delete src._pending; delete src._manual;
+  const r = Object.assign(blankRecord(), src);
+  ['customer','site','fan','acc'].forEach(k => r[k] = Object.assign(blankRecord()[k], src[k] || {}));
+  if (r.fan.modelId && r.fan.modelId !== 'CUSTOM' && !master.blowers.some(p => p.id === r.fan.modelId && p.active !== false)) r.fan.modelId = 'CUSTOM';
+  ensureHp(r.fan.hp);
+  $$('[data-k]').forEach(el => {
+    const v = getPath(r, el.dataset.k);
+    if (el.type === 'radio') el.checked = String(v) === el.value;
+    else if (el.type === 'checkbox') el.checked = !!v;
+    else el.value = (v === undefined || v === null) ? '' : v;
+  });
+  setCasing(r.fan.casing);
+  $$('.errmsg').forEach(e => e.textContent = '');
+  $$('.err').forEach(e => e.classList.remove('err'));
+  current = r; dirty = false;
+  refreshDerived(); renderRecBar();
+}
+function collect(){
+  const r = clone(current || blankRecord());
+  delete r.price;
+  $$('[data-k]').forEach(el => {
+    const k = el.dataset.k;
+    if (el.type === 'radio') { if (el.checked) setPath(r, k, el.value); return; }
+    if (el.type === 'checkbox') { setPath(r, k, el.checked); return; }
+    let v = el.value.trim();
+    if (el.dataset.type === 'num') v = v === '' ? '' : num(v);
+    setPath(r, k, v);
+  });
+  const f = r.fan, model = master.blowers.find(p => p.id === f.modelId);
+  f.casing = getCasing();
+  const d = dims(f.casing);
+  f.inletDia = d ? d.inlet : ''; f.outletW = d ? d.outW : ''; f.outletD = d ? d.outD : '';
+  f.kw = f.hp !== '' ? +(num(f.hp) * 0.746).toFixed(2) : '';
+  f.cmh = f.cfm !== '' ? Math.round(num(f.cfm) * 1.699) : '';
+  f.qty = Math.max(1, Math.round(num(f.qty) || 1));
+  f.noise = !f.rpm ? '' : num(f.rpm) <= 960 ? 'Low noise' : (num(f.hp) >= 7.5 ? 'High noise' : 'Common noise');
+  f.modelLabel = (f.modelId === 'CUSTOM' || !model)
+    ? (f.hp !== '' ? `${f.hp} HP` : 'Custom') + (f.rpm ? ` @ ${f.rpm} RPM` : '') + ' (custom)'
+    : `${model.label} @ ${f.rpm || model.rpm} RPM`;
+  return r;
+}
+function selectModel(id){
+  const p = master.blowers.find(x => x.id === id);
+  if (!p) return; // custom: leave fields as they are
+  ensureHp(p.hp);
+  $('[data-k="fan.hp"]').value = p.hp;
+  $('[data-k="fan.rpm"]').value = p.rpm;
+  if (p.casing) { setCasing(p.casing); applyCasingDefaults(); }
+}
+
+/* ------------------------------------------------------ live calculations */
+function engineering(r){
+  const f = r.fan, a = r.acc, out = [];
+  const q = num(f.cfm) * 1.699 / 3600, dp = num(f.sp) * 9.80665;
+  if (q > 0 && dp > 0) {
+    const air = q * dp / 1000, need = air / (0.6 * (f.arrangement === 'Arr-B' ? 0.95 : 1)) * 1.15, have = num(f.hp) * 0.746;
+    out.push({ k:'Air power', v:`${air.toFixed(2)} kW`, s:'' });
+    out.push({ k:'Motor required (est.)', v:`${need.toFixed(2)} kW · ${(need/0.746).toFixed(1)} HP`, s: !have ? '' : have >= need ? 'ok' : 'bad',
+      short: `${need.toFixed(2)} kW · ${(need/0.746).toFixed(1)} HP` + (!have ? '' : have >= need ? ' — OK' : ' — undersized'),
+      note: !have ? 'select motor HP' : have >= need ? `${f.hp} HP selected — OK` : `${f.hp} HP may be undersized` });
+  }
+  const outArea = num(f.outletW) * num(f.outletD) / 1e6;
+  if (q > 0 && outArea > 0) out.push({ k:'Blower outlet velocity', v:`${(q / outArea).toFixed(1)} m/s`, s:'', note:`at ${f.outletW} × ${f.outletD} mm outlet`, short:`${(q / outArea).toFixed(1)} m/s` });
+  const area = a.ductShape === 'Round' ? (num(a.ductDia) ? Math.PI * Math.pow(num(a.ductDia)/1000, 2) / 4 : 0) : (num(a.ductW) * num(a.ductH) / 1e6);
+  if (q > 0 && area > 0) {
+    const v = q / area;
+    out.push({ k:'Duct velocity', v:`${v.toFixed(1)} m/s · ${Math.round(v*196.85)} fpm`, s: v > 12.5 ? 'bad' : v < 5 ? 'warn' : 'ok',
+      note: v > 12.5 ? 'High — noisy, enlarge duct' : v < 5 ? 'Low — duct oversized' : 'Within 5–12.5 m/s',
+      short: `${v.toFixed(1)} m/s · ${Math.round(v*196.85)} fpm` + (v > 12.5 ? ' — high' : v < 5 ? ' — low' : ' — OK') });
+  }
+  if (f.rpm) {
+    const hi = num(f.hp) >= 7.5 && num(f.rpm) >= 1440;
+    out.push({ k:'Noise', v: num(f.rpm) <= 960 ? 'Low noise (960 RPM)' : hi ? 'High noise' : 'Common (1440 RPM)', s: num(f.rpm) <= 960 ? 'ok' : hi ? 'warn' : '',
+      note: hi ? '7.5–15 HP at 1440 RPM — prefer 960 RPM' : '',
+      short: num(f.rpm) <= 960 ? 'Low noise (960 RPM)' : hi ? 'High noise — prefer 960 RPM' : 'Common (1440 RPM)' });
+  }
+  return out;
+}
+function ductText(a){ return a.ductShape === 'Round' ? (num(a.ductDia) ? `Round Ø${fmt(a.ductDia)} mm` : '') : mm(num(a.ductW), num(a.ductH)); }
+function refreshDerived(){
+  const r = collect(), f = r.fan, a = r.acc, d = dims(f.casing);
+  $('#calcCmh').textContent = f.cfm !== '' ? `≈ ${fmt(f.cmh)} m³/h` : '';
+  $('#calcPa').textContent = f.sp !== '' ? `≈ ${fmt(num(f.sp) * 9.81)} Pa` : '';
+  $$('.fresh-only').forEach(e => e.hidden = r.application !== 'Fresh Air');
+  const round = a.ductShape === 'Round';
+  $$('.duct-rect').forEach(e => e.hidden = round); $$('.duct-round').forEach(e => e.hidden = !round);
+  $('#casingOtherWrap').hidden = $('#selCasing').value !== 'OTHER';
+  $('#dimTable').innerHTML = d
+    ? `<div class="t"><span>Casing size</span><b>${esc(d.casing)}</b><small>${esc(f.modelLabel)}</small></div>
+       <div class="t"><span>Inlet (round)</span><b>Ø ${fmt(d.inlet)} mm</b><small>casing × 10</small></div>
+       <div class="t"><span>Blower outlet</span><b>${mm(d.outW, d.outD)}</b><small>W × D · 75 % × 100 % of Ø</small></div>
+       <div class="t duct"><span>Duct outlet</span><b>${esc(ductText(a) || '—')}</b><small>${round ? 'round · editable' : 'W × H · editable'}</small></div>`
+    : `<div class="empty">Select a blower or casing size to see inlet, outlet and duct sizes.</div>`;
+  $('#ductStd').textContent = d ? `Standard for casing ${d.casing}: ${mm(d.ductW, d.ductH)}` : '';
+  $('#btnDuctStd').hidden = !d || (!round && num(a.ductW) === d.ductW && num(a.ductH) === d.ductH);
+  const x = (w, h) => `${fmt(w)} × ${fmt(h)}`;
+  $('#casingChart').innerHTML = '<thead><tr><th>Casing</th><th>Inlet Ø</th><th>Outlet W × D</th><th>Std duct</th></tr></thead><tbody>' +
+    master.casings.map(c => `<tr class="${d && num(c.casing) === num(d.casing) ? 'sel' : ''}"><td>${esc(c.casing)}</td><td>${fmt(c.inlet)}</td><td>${x(c.outW, c.outD)}</td><td>${x(c.ductW, c.ductH)}</td></tr>`).join('') + '</tbody>';
+  const eng = engineering(r);
+  const vel = eng.find(e => e.k === 'Duct velocity');
+  $('#calcVel').textContent = vel ? 'Duct velocity: ' + vel.v : '';
+  $('#engCheck').innerHTML = eng.length ? eng.map(e => `<div class="it ${e.s}"><span>${esc(e.k)}</span><b>${esc(e.v)}</b>${e.note ? `<span>${esc(e.note)}</span>` : ''}</div>`).join('')
+    : '<div class="it"><span>Engineering check</span><b>Enter airflow &amp; static pressure</b><span>to verify motor size and velocities</span></div>';
+  return r;
+}
+function renderRecBar(){
+  if (!current) return;
+  $('#recId').textContent = current.id;
+  const st = $('#recState');
+  if (pending[current.id]) { st.className = 'badge warn'; st.textContent = 'Pending sync'; }
+  else if (dirty) { st.className = 'badge warn'; st.textContent = 'Unsaved changes'; }
+  else if (current.updatedAt) { st.className = 'badge ok'; st.textContent = 'Saved ' + fmtDate(current.updatedAt); }
+  else { st.className = 'badge'; st.textContent = 'New'; }
+  const app = $('[data-k="application"]:checked')?.value || current.application;
+  const ab = $('#recApp'); ab.hidden = !app; ab.className = 'badge ' + (app === 'Fresh Air' ? 'fa' : 'ex'); ab.textContent = app;
+  const pl = $('#pdfLink'); pl.hidden = !current.pdfUrl; if (current.pdfUrl) pl.href = current.pdfUrl;
+  $('#btnCopyLink').hidden = !(current.updatedAt && apiUrl() && !pending[current.id] && appUrl());
+  const u = new URL(location.href);
+  if (current.updatedAt) u.searchParams.set('id', current.id); else u.searchParams.delete('id');
+  history.replaceState(null, '', u.toString());
+}
+
+/* ----------------------------------------------------------- validation */
+function phoneOk(v){ const d = digits(v); return !v || (d.length >= 10 && d.length <= 13); }
+function emailOk(v){ return !v || /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v); }
+function setErr(el, msg){ if (!el) return; el.classList.toggle('err', !!msg); const m = el.closest('label')?.querySelector('.errmsg'); if (m) m.textContent = msg || ''; }
+function validate(scroll=true){
+  const r = collect(); let first = null;
+  const need = (k, msg, ok) => { const el = $(`[data-k="${k}"]`); const bad = !ok; setErr(el, bad ? msg : ''); if (bad && !first) first = el; };
+  need('customer.name', 'Customer name is required', r.customer.name.length >= 2);
+  need('customer.phone', r.customer.phone ? 'Enter a valid 10-digit number' : 'Customer phone is required', !!r.customer.phone && phoneOk(r.customer.phone));
+  need('customer.email', 'Enter a valid email', emailOk(r.customer.email));
+  need('site.electrician', 'Enter a valid number', phoneOk(r.site.electrician));
+  need('site.engineer', 'Enter a valid number', phoneOk(r.site.engineer));
+  need('ourEngineer', 'Enter the Megaverks engineer', !!r.ourEngineer);
+  $('#errApp').textContent = r.application ? '' : 'Select Exhaust or Fresh Air';
+  if (!r.application && !first) first = $('.seg.app');
+  const modelOk = !!r.fan.modelId && (r.fan.modelId !== 'CUSTOM' || (r.fan.hp !== '' && r.fan.rpm !== ''));
+  $('#errModel').textContent = modelOk ? '' : (r.fan.modelId === 'CUSTOM' ? 'For a custom blower select Motor HP and RPM in section 3' : 'Select a blower');
+  if (!modelOk && !first) first = $('#models');
+  const sel = $('#selCasing'), isOther = sel.value === 'OTHER', casOk = num(r.fan.casing) > 0;
+  $('#errCasing').textContent = casOk || isOther ? '' : 'Select the casing size';
+  $('#errCasingOther').textContent = isOther && !casOk ? 'Enter the casing size' : '';
+  sel.classList.toggle('err', !casOk && !isOther); $('#casingOther').classList.toggle('err', isOther && !casOk);
+  if (!casOk && !first) first = isOther ? $('#casingOther') : sel;
+  const a = r.acc;
+  if (a.ductShape === 'Round') { need('acc.ductDia', 'Enter the duct diameter', num(a.ductDia) > 0); setErr($('[data-k="acc.ductW"]'), ''); setErr($('[data-k="acc.ductH"]'), ''); }
+  else { need('acc.ductW', 'Enter duct width', num(a.ductW) > 0); need('acc.ductH', 'Enter duct height', num(a.ductH) > 0); setErr($('[data-k="acc.ductDia"]'), ''); }
+  need('fan.qty', 'Quantity must be at least 1', num($('[data-k="fan.qty"]').value) >= 1);
+  if (r.application === 'Fresh Air') need('acc.filters', 'Enter number of filters', num(a.filters) >= 1);
+  else setErr($('[data-k="acc.filters"]'), '');
+  if (first && scroll) {
+    first.scrollIntoView({ behavior:'smooth', block:'center' });
+    const before = document.activeElement;   // only move focus if the user has not tapped elsewhere meanwhile
+    if (first.focus) setTimeout(() => { if (document.activeElement === before) first.focus({ preventScroll:true }); }, 350);
+    toast('Please complete the highlighted fields', 'bad');
+  }
+  return !first;
+}
+
+/* --------------------------------------------------------- local store */
+function cacheRecords(){ lsSet(LS.cache, { records: records.slice(0, 1500), at: lastSync }); }
+function upsertLocal(rec){
+  const i = records.findIndex(x => x.id === rec.id);
+  if (i >= 0) records[i] = rec; else records.unshift(rec);
+  records.sort((a,b) => String(b.updatedAt || '').localeCompare(String(a.updatedAt || '')));
+  cacheRecords(); renderHistory(); buildDatalists();
+}
+function setPending(rec){ pending[rec.id] = rec; lsSet(LS.pending, pending); updatePendingUI(); }
+function clearPending(id){ delete pending[id]; lsSet(LS.pending, pending); updatePendingUI(); }
+function updatePendingUI(){
+  const n = Object.keys(pending).length;
+  $('#pendingBox').hidden = !n;
+  $('#pendingText').textContent = n ? `${n} selection${n>1?'s':''} saved on this device, waiting to sync to Google Sheets.` : '';
+  setConn(conn.state, conn.text);
+}
+function setConn(state, text){
+  conn = { state, text };
+  const n = Object.keys(pending).length;
+  $('#connDot').className = 'dot ' + (n && state !== 'none' ? 'warn' : state === 'ok' ? 'ok' : state === 'bad' ? 'bad' : '');
+  $('#connText').textContent = n ? `${text} · ${n} pending` : text;
+}
+
+/* -------------------------------------------------------------- cloud */
+function applyMaster(m){
+  if (!validMaster(m)) return;
+  const keep = current ? collect() : null, wasDirty = dirty;
+  master = normMaster(m); lsSet(LS.master, master);
+  buildModels(); buildCasingSelect(); renderMasterTables();
+  if (keep) { fill(keep); dirty = wasDirty; renderRecBar(); }
+}
+async function loadCloud({ quiet=false } = {}){
+  if (!apiUrl()) { setConn('none', 'Not connected'); renderHistory(); return false; }
+  if (checkUrl(apiUrl())) { setConn('bad', 'Check URL'); return false; }
+  if (!apiPass()) { showLock(); return false; }
+  setConn(conn.state === 'ok' ? 'ok' : 'none', 'Syncing…');
+  try {
+    const [list, ms] = await Promise.all([ apiGet({ action:'list' }, 30000), apiGet({ action:'master' }, 30000).catch(() => null) ]);
+    records = (list.records || []).filter(r => r && r.id);
+    Object.values(pending).forEach(p => { const i = records.findIndex(x => x.id === p.id); const pr = { ...p, _pending:true }; if (i >= 0) records[i] = pr; else records.unshift(pr); });
+    lastSync = new Date().toISOString(); cacheRecords();
+    if (ms && ms.master) applyMaster(ms.master);
+    setConn('ok', 'Connected'); renderHistory(); buildDatalists();
+    return true;
+  } catch(e) {
+    if (e.code === 'AUTH') { authFailed(e.message); return false; }
+    setConn('bad', 'Offline'); renderHistory();
+    if (!quiet) toast('Cloud: ' + friendlyError(e), 'bad', 5000);
+    return false;
+  }
+}
+function pdfBase64(rec){ try { return makePdf(rec).output('datauristring').split(',')[1] || ''; } catch(e){ console.warn('pdf', e); return ''; } }
+async function saveCloud({ quiet=false } = {}){
+  if (!validate(true)) return null;
+  const rec = collect();
+  const now = new Date().toISOString();
+  rec.createdAt = rec.createdAt || now;
+  if (!apiUrl()) {
+    rec.updatedAt = now; current = rec; dirty = false; lsSet(LS.draft, null);
+    setPending(rec); upsertLocal({ ...rec, _pending:true }); renderRecBar();
+    toast('Saved on this device. Add the cloud URL in Settings to sync.', 'warn', 4500);
+    return rec;
+  }
+  busy(true, settings.storePdf ? 'Saving to Google Sheets & Drive…' : 'Saving to Google Sheets…');
+  try {
+    const res = await apiPost({ action:'save', record: rec, pdfBase64: settings.storePdf ? pdfBase64(rec) : '' });
+    rec.createdAt = res.createdAt || rec.createdAt; rec.updatedAt = res.updatedAt || now; rec.pdfUrl = res.pdfUrl || rec.pdfUrl || '';
+    current = rec; dirty = false; lsSet(LS.draft, null); clearPending(rec.id); upsertLocal(rec); renderRecBar();
+    setConn('ok', 'Connected'); lastSync = now; renderHistory();
+    if (!quiet) toast('Saved to cloud ✓', 'ok');
+    if (res.warning) toast(res.warning, 'warn', 5000);
+    return rec;
+  } catch(e) {
+    if (e.code === 'AUTH') { setPending(rec); upsertLocal({ ...rec, _pending:true }); current = rec; dirty = false; renderRecBar(); authFailed(e.message); return null; }
+    rec.updatedAt = now; current = rec; dirty = false; lsSet(LS.draft, null);
+    setPending(rec); upsertLocal({ ...rec, _pending:true }); renderRecBar(); setConn('bad', 'Offline');
+    toast('Could not reach cloud — saved on this device and will sync automatically. (' + friendlyError(e) + ')', 'warn', 5500);
+    return rec;
+  } finally { busy(false); }
+}
+let syncing = false;
+async function syncPending(){
+  if (syncing || !apiUrl() || !Object.keys(pending).length) return;
+  syncing = true; let okN = 0;
+  try {
+    for (const rec of Object.values(pending)) {
+      try {
+        const cleanRec = { ...rec }; delete cleanRec._pending; delete cleanRec.price;
+        const res = await apiPost({ action:'save', record: cleanRec, pdfBase64: settings.storePdf ? pdfBase64(cleanRec) : '' });
+        cleanRec.createdAt = res.createdAt; cleanRec.updatedAt = res.updatedAt; cleanRec.pdfUrl = res.pdfUrl || cleanRec.pdfUrl || '';
+        clearPending(rec.id); upsertLocal(cleanRec); okN++;
+        if (current && current.id === cleanRec.id && !dirty) { current = cleanRec; renderRecBar(); }
+      } catch(e) { if (e.code === 'AUTH') authFailed(e.message); break; }   // stop on first failure; retried later
+    }
+  } finally { syncing = false; }
+  if (okN) { toast(`${okN} pending selection${okN>1?'s':''} synced ✓`, 'ok'); setConn('ok', 'Connected'); }
+}
+
+/* ------------------------------------------------------------------- PDF */
+function makePdf(r){
+  if (!window.jspdf || !window.jspdf.jsPDF) throw new Error('PDF library not loaded — check internet connection and reload.');
+  const doc = new window.jspdf.jsPDF({ unit:'mm', format:'a4', compress:true });
+  const NAVY=[22,50,92], OR=[232,100,27], TEAL=[14,124,102], GR=[91,102,117], LG=[238,242,247], INK=[30,42,56], LINE=[217,224,234];
+  const W = 210, M = 12, CW = W - 2*M, BOTTOM = 282;
+  const fresh = r.application === 'Fresh Air', f = r.fan || {}, a = r.acc || {};
+  const appCol = fresh ? TEAL : OR;
+  let y = 0;
+  const T = v => (v === undefined || v === null || v === '' ? '—' : String(v)).replace(/×/g, 'x').replace(/≈/g, '~').replace(/³/g, '3').replace(/[^\x09\x0A\x0D\x20-\x7E\xA0-\xFF–—‘’“”•]/g, '?');
+  const fill = c => doc.setFillColor(c[0],c[1],c[2]), draw = c => doc.setDrawColor(c[0],c[1],c[2]), color = c => doc.setTextColor(c[0],c[1],c[2]);
+  function logo(x, yb, h){ fill(OR); const w = h*12/14; doc.lines([[0,-h],[w/2,h/2],[w/2,-h/2],[0,h]], x, yb, [1,1], 'F', true); }
+  function header(first){
+    const h = first ? 30 : 16;
+    fill(NAVY); doc.rect(0, 0, W, h, 'F'); fill(OR); doc.rect(0, h, W, 1.3, 'F');
+    if (first) {
+      logo(M, 22, 14);
+      color([255,255,255]); doc.setFont('helvetica','bold'); doc.setFontSize(19); doc.text('MEGAVERKS', M + 16, 15.5);
+      doc.setFont('helvetica','normal'); doc.setFontSize(7.5); color([201,214,234]); doc.text('T E C H N O L O G I E S', M + 16.3, 21.5);
+      color([255,255,255]); doc.setFont('helvetica','bold'); doc.setFontSize(12.5); doc.text('BLOWER SELECTION SHEET', W - M, 13, { align:'right' });
+      doc.setFont('helvetica','normal'); doc.setFontSize(8.5); color([255,201,166]);
+      doc.text(`Ref: ${T(r.id)}   |   Date: ${fmtDate(r.updatedAt || new Date().toISOString(), false)}`, W - M, 20, { align:'right' });
+      y = h + 7.5;
+    } else {
+      logo(M, 12, 8); color([255,255,255]); doc.setFont('helvetica','bold'); doc.setFontSize(11); doc.text('MEGAVERKS', M + 10, 10.5);
+      doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.text(`Blower Selection  |  ${T(r.id)}`, W - M, 10.5, { align:'right' });
+      y = h + 7;
+    }
+  }
+  function ensure(h){ if (y + h > BOTTOM) { doc.addPage(); header(false); } }
+  function section(title){
+    ensure(16);
+    color(NAVY); doc.setFont('helvetica','bold'); doc.setFontSize(10.5); doc.text(title.toUpperCase(), M, y);
+    draw(OR); doc.setLineWidth(0.6); doc.line(M, y + 1.8, M + 18, y + 1.8); draw(LINE); doc.setLineWidth(0.2); doc.line(M + 18, y + 1.8, W - M, y + 1.8);
+    y += 5.5;
+  }
+  function grid(pairs){
+    const rows = []; let buf = [];
+    pairs.filter(Boolean).forEach(p => { if (p[2]) { if (buf.length) { rows.push(buf); buf = []; } rows.push([p]); } else { buf.push(p); if (buf.length === 2) { rows.push(buf); buf = []; } } });
+    if (buf.length) rows.push(buf);
+    const LW = 31, half = CW / 2;
+    rows.forEach((row, i) => {
+      doc.setFontSize(8.8); doc.setFont('helvetica','bold');
+      const cells = row.map((p, j) => { const full = row.length === 1 && p[2]; const vw = (full ? CW : half) - LW - 3; return { p, x: M + j*half, lines: doc.splitTextToSize(T(p[1]), vw) }; });
+      const h = Math.max(...cells.map(c => c.lines.length)) * 3.9 + 2.5;
+      ensure(h);
+      if (i % 2 === 0) { fill(LG); doc.rect(M, y, CW, h, 'F'); }
+      cells.forEach(c => {
+        doc.setFont('helvetica','normal'); doc.setFontSize(7.6); color(GR); doc.text(T(c.p[0]), c.x + 2, y + 4);
+        doc.setFont('helvetica','bold'); doc.setFontSize(8.8); color(INK); doc.text(c.lines, c.x + LW, y + 4);
+      });
+      y += h;
+    });
+    y += 4;
+  }
+  function table(head, rows, widths){
+    const rh = 7.5, top = y; ensure(rh * (rows.length + 1) + 4);
+    const y0 = y;
+    fill(NAVY); doc.rect(M, y, CW, rh, 'F');
+    doc.setFont('helvetica','bold'); doc.setFontSize(8); color([255,255,255]);
+    let x = M; head.forEach((h, i) => { doc.text(T(h), x + 2.5, y + 4.9); x += widths[i]; });
+    y += rh;
+    rows.forEach((row, ri) => {
+      fill(ri % 2 ? [255,255,255] : LG); doc.rect(M, y, CW, rh + 1, 'F');
+      x = M; doc.setFontSize(10); color(INK); doc.setFont('helvetica','bold');
+      row.forEach((c, i) => { doc.text(T(c), x + 2.5, y + 5.6); x += widths[i]; });
+      y += rh + 1;
+    });
+    draw(LINE); doc.setLineWidth(0.3); doc.rect(M, y0, CW, y - y0, 'S');
+    y += 4;
+  }
+  function drawForm(form, cx, cy, s){
+    const g = formGeom(form), X = p => cx + p[0]*s, Y = p => cy - p[1]*s;
+    draw(INK); doc.setLineWidth(0.25); fill([255,255,255]);
+    doc.rect(cx - 0.65*s, cy + 0.45*s, 1.3*s, 1.7*s, 'FD');
+    doc.setLineWidth(0.7); doc.line(cx - 0.95*s, cy + 2.15*s, cx + 0.95*s, cy + 2.15*s);
+    doc.setLineWidth(0.35); fill(LG);
+    const segs = []; for (let i = 1; i < g.poly.length; i++) segs.push([X(g.poly[i]) - X(g.poly[i-1]), Y(g.poly[i]) - Y(g.poly[i-1])]);
+    doc.lines(segs, X(g.poly[0]), Y(g.poly[0]), [1,1], 'FD', true);
+    fill([255,255,255]); doc.setLineWidth(0.2); doc.circle(cx, cy, 0.6*s, 'FD'); fill(NAVY); doc.circle(cx, cy, 0.13*s, 'F');
+    const [p1, p2] = g.arrow; const tip = [X(p2), Y(p2)], dir = [X(p2) - X(p1), Y(p2) - Y(p1)], hd = arrowHead(tip, dir, 0.45*s);
+    draw(OR); doc.setLineWidth(0.9); doc.line(X(p1), Y(p1), X(p2) - dir[0]*0.3, Y(p2) - dir[1]*0.3);
+    fill(OR); doc.triangle(hd[0][0], hd[0][1], hd[1][0], hd[1][1], hd[2][0], hd[2][1], 'F');
+  }
+  const mmT = (w, h) => (num(w) && num(h)) ? `${fmt(w)} x ${fmt(h)} mm` : '';
+  const ductT = a.ductShape === 'Round' ? (num(a.ductDia) ? `Round Ø${fmt(a.ductDia)} mm` : '') : mmT(a.ductW, a.ductH);
+
+  header(true);
+  fill(appCol); doc.roundedRect(M, y - 5, 40, 11, 2, 2, 'F');
+  color([255,255,255]); doc.setFont('helvetica','bold'); doc.setFontSize(11); doc.text(fresh ? 'FRESH AIR' : 'EXHAUST', M + 20, y + 2.2, { align:'center' });
+  color(NAVY); doc.setFontSize(15); doc.text(T(f.modelLabel), M + 45, y + 1);
+  doc.setFont('helvetica','normal'); doc.setFontSize(8.8); color(GR);
+  const sub = [f.casing ? 'Casing ' + f.casing : '', f.noise, f.form ? 'Form ' + f.form : '', f.arrangement, 'Qty ' + (f.qty || 1)].filter(Boolean).join('   |   ');
+  doc.text(T(sub), M + 45, y + 6);
+  y += 12.5;
+
+  section('1. Customer & Site');
+  grid([
+    ['Customer', r.customer?.name], ['Phone', r.customer?.phone],
+    ['Email', r.customer?.email], ['Megaverks engineer', r.ourEngineer],
+    ['Customer address', r.customer?.address, true],
+    ['Site address', r.site?.address, true],
+    ['Site electrician', r.site?.electrician], ['Site engineer', r.site?.engineer]
+  ]);
+
+  section('2. Blower Selection');
+  grid([
+    ['Application', r.application], ['Blower', f.modelLabel],
+    ['Motor', f.hp !== '' ? `${f.hp} HP (${f.kw} kW)` : ''], ['Speed', f.rpm ? `${f.rpm} RPM — ${f.noise}` : ''],
+    ['Airflow', f.cfm !== '' ? `${fmt(f.cfm)} CFM (${fmt(f.cmh)} m³/h)` : ''], ['Static pressure', f.sp !== '' ? `${f.sp} mmWC (${fmt(num(f.sp)*9.81)} Pa)` : ''],
+    ['Air temperature', f.temp !== '' ? `${f.temp} °C` : ''], ['Medium', f.medium],
+    ['Material', f.material], ['Quantity', f.qty],
+    ['Voltage', f.voltage], ['Motor efficiency', f.ieClass],
+    ['Motor make', f.motorMake]
+  ]);
+
+  section('3. Blower Size & Connections');
+  table(['Casing size', 'Inlet (round)', 'Blower outlet W x D', 'Duct outlet'],
+        [[f.casing || '—', f.inletDia ? `Ø ${fmt(f.inletDia)} mm` : '—', mmT(f.outletW, f.outletD) || '—', ductT || '—']], [36, 42, 54, 54]);
+
+  ensure(31);
+  draw(LINE); doc.setLineWidth(0.3); doc.roundedRect(M, y, CW, 28, 2, 2, 'S');
+  drawForm(f.form || 'R3', M + 24, y + 12.5, 4.8);
+  const L = (f.form || 'R3')[0] === 'L', fk = +(f.form || 'R3')[1];
+  color(NAVY); doc.setFont('helvetica','bold'); doc.setFontSize(12); doc.text(`Discharge form ${T(f.form)}`, M + 52, y + 7);
+  doc.setFont('helvetica','normal'); doc.setFontSize(9); color(INK);
+  doc.text(`Rotation: ${L ? 'Anti-clockwise (left hand)' : 'Clockwise (right hand)'} — viewed from drive side`, M + 52, y + 12.5);
+  doc.text(`Outlet position: ${FORM_INFO[fk] || '—'}`, M + 52, y + 17.5);
+  doc.text(`Drive: ${f.arrangement === 'Arr-B' ? 'Arr-B — Belt / coupling drive, impeller on separate shaft' : 'Arr-A — Direct drive, impeller on motor shaft'}`, M + 52, y + 22.5);
+  y += 33;
+
+  section('4. Accessories');
+  const yn = v => v ? 'Yes' : 'No';
+  grid([
+    ['Damper', a.damper], ['Canvas connector', a.canvas],
+    ['VFD panel', yn(a.vfd)], ['Anti-vibration mounts', yn(a.avm)],
+    ['Guard', yn(a.guard)], fresh ? ['No. of filters', a.filters] : null,
+    fresh ? ['Filter type', a.filterType] : null, fresh ? ['Filter size', a.filterSize] : null
+  ]);
+
+  let sn = 5;
+  const eng = engineering(r);
+  const engP = eng.filter(e => e.k !== 'Air power');   // air power is implied by the motor estimate; keeps the sheet to one page
+  if (engP.length) { section(`${sn++}. Engineering Check`); grid(engP.map(e => [e.k, e.short || e.v])); }
+  if (r.remarks) { section(`${sn++}. Remarks`); grid([['Remarks', r.remarks, true]]); }
+
+  ensure(18);
+  draw(LINE); doc.setLineWidth(0.3);
+  [['Prepared by — ' + (r.ourEngineer || 'Megaverks engineer'), M], ['Customer acceptance', M + CW/2 + 3]].forEach(([t, x]) => {
+    doc.roundedRect(x, y, CW/2 - 3, 18, 2, 2, 'S');
+    color(GR); doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.text(T(t), x + 3, y + 5);
+    doc.line(x + 3, y + 13, x + CW/2 - 9, y + 13); doc.setFontSize(7); doc.text('Signature & date', x + 3, y + 16.3);
+  });
+  y += 21;
+
+  const n = doc.getNumberOfPages();
+  for (let i = 1; i <= n; i++) {
+    doc.setPage(i);
+    draw(NAVY); doc.setLineWidth(0.4); doc.line(M, 284, W - M, 284);
+    doc.setFont('helvetica','normal'); doc.setFontSize(7.5); color(GR);
+    doc.text(`${CONFIG.COMPANY}  |  ${CONFIG.ADDRESS}`, M, 288.5);
+    doc.text('Schematic for selection only. Final dimensions as per approved GA drawing.', M, 292.5);
+    doc.text(`Generated ${fmtDate(new Date().toISOString())}`, W - M, 288.5, { align:'right' });
+    color(NAVY); doc.setFont('helvetica','bold'); doc.text(`Page ${i} of ${n}`, W - M, 292.5, { align:'right' });
+  }
+  doc.setProperties({ title:`Blower Selection ${r.id}`, subject:'Megaverks Technologies blower selection', author: r.ourEngineer || 'Megaverks Technologies', creator:'Megaverks Blower Selector' });
+  return doc;
+}
+function pdfName(r){ return `${r.id}_${String(r.customer?.name || 'Customer').replace(/[^A-Za-z0-9]+/g, '_').slice(0, 40)}.pdf`; }
+
+/* -------------------------------------------------------------- WhatsApp */
+function recordLink(r){ const u = new URL(location.href); u.search = ''; u.hash = ''; u.searchParams.set('id', r.id); return u.toString(); }
+function waText(r, withLinks=true){
+  const f = r.fan, a = r.acc, lines = [];
+  lines.push(`*${CONFIG.COMPANY} – Blower Selection*`);
+  lines.push(`Ref: ${r.id}`);
+  lines.push(`Customer: ${r.customer.name}`);
+  if (r.site.address) lines.push(`Site: ${r.site.address.replace(/\s+/g, ' ')}`);
+  lines.push(`Application: *${r.application}*`);
+  lines.push(`Blower: ${f.modelLabel}${f.noise ? ' | ' + f.noise : ''}`);
+  if (f.casing) lines.push(`Casing: ${f.casing} | Inlet Ø${fmt(f.inletDia)} mm | Outlet ${fmt(f.outletW)} x ${fmt(f.outletD)} mm`);
+  const duct = ductText(a); if (duct) lines.push(`Duct outlet: ${duct.replace('×', 'x')}`);
+  if (f.cfm !== '') lines.push(`Airflow: ${fmt(f.cfm)} CFM (${fmt(f.cmh)} m³/h)${f.sp !== '' ? ` @ ${f.sp} mmWC` : ''}`);
+  lines.push(`Form: ${f.form} | ${f.arrangement} | ${f.material}`);
+  const acc = [];
+  if (a.damper && a.damper !== 'None') acc.push('Damper: ' + a.damper);
+  if (a.canvas && a.canvas !== 'None') acc.push('Canvas: ' + a.canvas);
+  if (a.vfd) acc.push('VFD'); if (a.avm) acc.push('AVM'); if (a.guard) acc.push('Guard');
+  if (r.application === 'Fresh Air' && a.filters) acc.push(`Filters: ${a.filters} x ${a.filterType}${a.filterSize ? ' (' + a.filterSize + ')' : ''}`);
+  if (acc.length) lines.push('Accessories: ' + acc.join('; '));
+  lines.push(`Qty: ${f.qty}`);
+  if (r.ourEngineer) lines.push(`Megaverks engineer: ${r.ourEngineer}`);
+  if (withLinks && r.pdfUrl) lines.push(`PDF: ${r.pdfUrl}`);
+  if (withLinks && r.updatedAt && apiUrl() && appUrl() && !pending[r.id]) lines.push(`View online: ${recordLink(r)}`);
+  return lines.join('\n');
+}
+function waNumber(raw){
+  let d = digits(raw);
+  if (d.length === 11 && d[0] === '0') d = d.slice(1);
+  if (d.length === 10) d = CONFIG.COUNTRY_CODE + d;
+  return d;
+}
+async function shareWhatsApp(){
+  if (!validate()) return;
+  const to = $('#waTo').value;
+  const r0 = collect();
+  const rawNum = to === 'customer' ? r0.customer.phone : to === 'engineer' ? r0.site.engineer : to === 'electrician' ? r0.site.electrician : '';
+  if (to !== 'pick' && !digits(rawNum)) { toast(`No ${to === 'engineer' ? 'site engineer' : to === 'electrician' ? 'electrician' : 'customer'} number entered`, 'bad'); return; }
+  if (to === 'pick' && navigator.canShare && isMobile()) {
+    try {
+      const file = new File([makePdf(r0).output('blob')], pdfName(r0), { type:'application/pdf' });
+      if (navigator.canShare({ files:[file] })) {
+        await navigator.share({ files:[file], title:'Blower selection ' + r0.id, text: waText(r0, false) });
+        if (dirty || !current.updatedAt) saveCloud({ quiet:true });
+        return;
+      }
+    } catch(e) { if (e.name === 'AbortError') return; console.warn('share', e); }
+  }
+  const win = !isMobile() ? window.open('about:blank', '_blank') : null;   // open now so the popup is not blocked
+  let r = current;
+  if (dirty || !current.updatedAt || (settings.storePdf && apiUrl() && !current.pdfUrl)) r = await saveCloud({ quiet:true }) || collect();
+  const url = `https://wa.me/${to === 'pick' ? '' : waNumber(rawNum)}?text=${encodeURIComponent(waText(r))}`;
+  if (win) win.location.href = url; else location.href = url;
+}
+
+/* -------------------------------------------------------------- history */
+function inPeriod(r){
+  if (filter.period === 'all') return true;
+  const d = new Date(r.updatedAt || r.createdAt); if (isNaN(d)) return false;
+  const now = new Date();
+  if (filter.period === 'month') return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+  return (now - d) <= 30 * 86400000;
+}
+function renderHistory(){
+  $('#histCount').textContent = records.length;
+  $('#lastSync').textContent = lastSync ? 'Synced ' + fmtDate(lastSync) : (apiUrl() ? 'Not synced yet' : 'Cloud not set');
+  const scope = records.filter(inPeriod);
+  const ex = scope.filter(r => r.application !== 'Fresh Air').length, fa = scope.length - ex;
+  const units = scope.reduce((s, r) => s + (num(r.fan?.qty) || 1), 0);
+  const custs = new Set(scope.map(r => digits(r.customer?.phone).slice(-10) || (r.customer?.name || '').toLowerCase()).filter(Boolean)).size;
+  $('#kpis').innerHTML = `
+    <div class="kpi"><span>Selections</span><b>${scope.length}</b></div>
+    <div class="kpi o"><span>Exhaust</span><b>${ex}</b></div>
+    <div class="kpi t"><span>Fresh Air</span><b>${fa}</b></div>
+    <div class="kpi"><span>Blowers (qty)</span><b>${fmt(units)}</b></div>
+    <div class="kpi"><span>Customers</span><b>${custs}</b></div>`;
+  const by = {};
+  scope.forEach(r => { const k = (r.ourEngineer || 'Unassigned').trim(); const e = by[k] || (by[k] = { n:0, q:0 }); e.n++; e.q += num(r.fan?.qty) || 1; });
+  const lb = Object.entries(by).sort((a,b) => b[1].n - a[1].n || b[1].q - a[1].q).slice(0, 10), max = lb.length ? lb[0][1].n : 1;
+  $('#leaderboard').innerHTML = lb.length ? lb.map(([nm, e], i) => `
+    <div class="lbrow"><span class="rank">${i+1}</span>
+      <div><div class="nm">${esc(nm)}</div><div class="bar"><i style="width:${Math.max(6, e.n/max*100)}%"></i></div></div>
+      <div class="val"><b>${e.n}</b>${e.q} blower${e.q === 1 ? '' : 's'}</div></div>`).join('')
+    : '<div class="empty">No saved selections in this period yet.</div>';
+  const q = filter.q.toLowerCase();
+  const list = scope.filter(r => !filter.app || r.application === filter.app)
+    .filter(r => !q || [r.id, r.customer?.name, r.customer?.phone, r.customer?.email, r.ourEngineer, r.site?.address, r.fan?.modelLabel, 'casing ' + (r.fan?.casing || '')].join(' ').toLowerCase().includes(q));
+  $('#histList').innerHTML = list.length ? list.slice(0, 300).map(r => `
+    <div class="hrow ${current && current.id === r.id ? 'active' : ''}" data-id="${esc(r.id)}" tabindex="0" role="button" aria-label="Open ${esc(r.customer?.name)}">
+      <div><div class="t">${esc(r.customer?.name || '—')}</div>
+        <div class="s"><span class="badge ${r.application === 'Fresh Air' ? 'fa' : 'ex'}">${esc(r.application)}</span><span>${esc(r.fan?.modelLabel || '')}</span>${r.fan?.casing ? `<span>Casing ${esc(r.fan.casing)}</span>` : ''}<span>${esc(r.customer?.phone || '')}</span><span>👷 ${esc(r.ourEngineer || '—')}</span>${r._pending || pending[r.id] ? '<span class="badge warn">Pending sync</span>' : ''}</div></div>
+      <div class="r"><b>Qty ${esc(r.fan?.qty || 1)}</b>${esc(fmtDate(r.updatedAt))}<br><span class="mono">${esc(r.id)}</span></div>
+      <div class="acts">
+        <button type="button" class="btn sm primary" data-act="open">Open</button>
+        <button type="button" class="btn sm" data-act="dup">Duplicate</button>
+        ${r.pdfUrl ? `<a class="btn sm" href="${esc(r.pdfUrl)}" target="_blank" rel="noopener" data-act="link">Cloud PDF</a>` : ''}
+        <button type="button" class="btn sm danger" data-act="del" style="margin-left:auto">Delete</button>
+      </div>
+    </div>`).join('') : `<div class="empty">${records.length ? 'No selections match the filter.' : (apiUrl() ? 'No saved selections yet. Fill the form and tap Save.' : 'Connect Google Sheets in Settings to see the team’s history.')}</div>`;
+}
+function confirmDiscard(){ return !dirty || confirm('You have unsaved changes on the current selection. Discard them?'); }
+function openRecord(id, { dup=false, force=false } = {}){
+  const r = records.find(x => x.id === id) || pending[id];
+  if (!r) { toast('Record not found', 'bad'); return; }
+  if (!force && !confirmDiscard()) return;
+  const rec = clone(r); delete rec._pending;
+  if (dup) { rec.id = newId(); rec.createdAt = ''; rec.updatedAt = ''; rec.pdfUrl = ''; }
+  lsSet(LS.draft, null); fill(rec); if (dup) { dirty = true; renderRecBar(); }
+  renderHistory(); showTab('form'); window.scrollTo({ top:0, behavior:'smooth' });
+  toast(dup ? 'Copied as a new selection — edit and save' : `Loaded ${rec.customer?.name || rec.id}`, 'ok', 2200);
+}
+async function deleteRecord(id){
+  if (!confirm(`Delete selection ${id}? This removes it from Google Sheets for everyone.`)) return;
+  if (pending[id] && !records.find(r => r.id === id && !r._pending)) { clearPending(id); records = records.filter(r => r.id !== id); cacheRecords(); renderHistory(); return; }
+  const pin = prompt('Admin PIN'); if (!pin) return;
+  busy(true, 'Deleting…');
+  try {
+    await apiPost({ action:'delete', id, pin });
+    clearPending(id); records = records.filter(r => r.id !== id); cacheRecords(); renderHistory(); toast('Deleted', 'ok');
+    if (current && current.id === id) fill(blankRecord());
+  } catch(e) { toast(friendlyError(e), 'bad', 5000); }
+  finally { busy(false); }
+}
+
+/* ------------------------------------------------- customer autofill */
+function buildDatalists(){
+  const seenN = new Set(), seenP = new Set(), eng = new Set(String(settings.engineers || '').split(',').map(s => s.trim()).filter(Boolean));
+  let hN = '', hP = '';
+  records.forEach(r => {
+    const n = r.customer?.name, p = r.customer?.phone;
+    if (n && !seenN.has(n.toLowerCase())) { seenN.add(n.toLowerCase()); hN += `<option value="${esc(n)}">`; }
+    if (p && !seenP.has(digits(p))) { seenP.add(digits(p)); hP += `<option value="${esc(p)}">${esc(n || '')}</option>`; }
+    if (r.ourEngineer) eng.add(r.ourEngineer.trim());
+  });
+  $('#dlCustomers').innerHTML = hN; $('#dlPhones').innerHTML = hP;
+  $('#dlEngineers').innerHTML = [...eng].map(e => `<option value="${esc(e)}">`).join('');
+}
+function checkCustomerMatch(){
+  const name = $('[data-k="customer.name"]').value.trim().toLowerCase(), ph = digits($('[data-k="customer.phone"]').value).slice(-10);
+  if (!name && ph.length < 10) { $('#custBanner').hidden = true; return; }
+  const m = records.find(r => r.id !== current.id && ((ph.length === 10 && digits(r.customer?.phone).slice(-10) === ph) || (name.length > 2 && (r.customer?.name || '').trim().toLowerCase() === name)));
+  if (!m) { $('#custBanner').hidden = true; return; }
+  const cur = collect();
+  const same = ['name','phone','email','address'].every(k => (cur.customer[k] || '') === (m.customer?.[k] || '')) && (cur.site.address || '') === (m.site?.address || '');
+  if (same) { $('#custBanner').hidden = true; return; }
+  custSuggestion = m;
+  $('#custBannerText').textContent = `Previous customer found: ${m.customer?.name} (${m.customer?.phone}) — last selection ${fmtDate(m.updatedAt, false)}.`;
+  $('#custBanner').hidden = false;
+}
+function applyCustomer(){
+  const m = custSuggestion; if (!m) return;
+  const set = (k, v) => { const el = $(`[data-k="${k}"]`); if (el && v) el.value = v; };
+  set('customer.name', m.customer?.name); set('customer.phone', m.customer?.phone); set('customer.email', m.customer?.email); set('customer.address', m.customer?.address);
+  set('site.address', m.site?.address); set('site.electrician', m.site?.electrician); set('site.engineer', m.site?.engineer);
+  $('#custBanner').hidden = true; markDirty(); toast('Customer & site details filled', 'ok', 1800);
+}
+
+/* ------------------------------------------------- settings: master tables */
+function blowerRowHtml(b){
+  return `<td><input class="in" data-p="label" value="${esc(b.label)}" placeholder="e.g. 15 HP" style="min-width:90px"></td>
+    <td><input class="in" data-p="hp" type="number" step="0.5" min="0" value="${esc(b.hp)}" style="width:70px"></td>
+    <td><select class="in" data-p="rpm" style="width:86px">${[960,1440,2880].map(v => `<option ${num(b.rpm) === v ? 'selected' : ''}>${v}</option>`).join('')}</select></td>
+    <td><input class="in" data-p="casing" type="number" min="0" list="dlCasings" value="${esc(b.casing)}" style="width:80px"></td>
+    <td><input type="checkbox" data-p="active" ${b.active !== false ? 'checked' : ''} style="width:18px;height:18px"></td>
+    <td><button type="button" class="btn sm danger" data-del-row aria-label="Remove">✕</button></td>`;
+}
+function casingRowHtml(c){
+  return `<td><input class="in" data-c="casing" type="number" min="1" value="${esc(c.casing)}" placeholder="e.g. 65" style="width:72px;font-weight:700"></td>` +
+    ['inlet','outW','outD','ductW','ductH'].map(k => `<td><input class="in" data-c="${k}" type="number" min="0" value="${esc(c[k])}" style="width:84px"></td>`).join('') +
+    `<td><button type="button" class="btn sm danger" data-del-row aria-label="Remove">✕</button></td>`;
+}
+function renderMasterTables(m=master){
+  $('#blowerTable tbody').innerHTML = m.blowers.map(b => `<tr data-id="${esc(b.id)}">${blowerRowHtml(b)}</tr>`).join('');
+  $('#casingTable tbody').innerHTML = m.casings.map(c => `<tr>${casingRowHtml(c)}</tr>`).join('');
+}
+function readMasterTables(){
+  const casings = [], seen = new Set();
+  $$('#casingTable tbody tr').forEach((tr, i) => {
+    const g = k => num(tr.querySelector(`[data-c="${k}"]`).value);
+    const c = g('casing'); if (!(c > 0)) throw new Error(`Casing row ${i + 1}: enter the casing size`);
+    if (seen.has(c)) throw new Error(`Casing ${c} is listed twice`); seen.add(c);
+    const f = casingFormula(c);
+    casings.push({ casing:c, inlet:g('inlet') || f.inlet, outW:g('outW') || f.outW, outD:g('outD') || f.outD, ductW:g('ductW') || f.ductW, ductH:g('ductH') || f.ductH });
+  });
+  if (!casings.length) throw new Error('Add at least one casing size');
+  const blowers = [], ids = new Set();
+  $$('#blowerTable tbody tr').forEach((tr, i) => {
+    const g = k => tr.querySelector(`[data-p="${k}"]`);
+    const label = g('label').value.trim(), hp = num(g('hp').value), rpm = num(g('rpm').value), casing = num(g('casing').value);
+    if (!label) throw new Error(`Blower row ${i + 1}: enter a label`);
+    if (!(hp > 0)) throw new Error(`Blower row ${i + 1}: enter HP`);
+    if (casing && !seen.has(casing)) throw new Error(`Blower “${label} @ ${rpm}” uses casing ${casing}, which is not in the casing table`);
+    let id = tr.dataset.id || `${hp}HP-${rpm}`; if (ids.has(id)) id = `${hp}HP-${rpm}-${i + 1}`; ids.add(id);
+    blowers.push({ id, label, hp, rpm, casing: casing || '', active: g('active').checked });
+  });
+  if (!blowers.length) throw new Error('Add at least one blower');
+  casings.sort((a,b) => a.casing - b.casing);
+  return { blowers, casings };
+}
+
+/* -------------------------------------------------------------- settings UI */
+function loadSettingsUI(){
+  $('#setApi').value = settings.api || CONFIG.API_URL || '';
+  $('#connInfo').textContent = !apiUrl() ? 'Not connected — an admin must add the Web App URL under Advanced.'
+    : apiPass() ? 'This device is unlocked and syncs with the Megaverks Google Sheet.' : 'Locked — enter the team passcode to sync.';
+  $('#optPdf').checked = settings.storePdf !== false;
+  $('#optEngineers').value = settings.engineers || '';
+  $('#aboutText').textContent = `Blower Selector v${CONFIG.APP_VERSION} · ${records.length} records cached on this device · ${Object.keys(pending).length} pending sync.`;
+  renderMasterTables(); updatePendingUI();
+}
+async function runTest(){
+  const box = $('#testSteps'); box.innerHTML = '';
+  const step = (txt) => { const d = document.createElement('div'); d.className = 'step run'; d.innerHTML = `<i>…</i><div>${esc(txt)}<small></small></div>`; box.appendChild(d);
+    return { ok(m){ d.className = 'step ok'; d.querySelector('i').textContent = '✓'; d.querySelector('small').textContent = m || ''; }, bad(m){ d.className = 'step bad'; d.querySelector('i').textContent = '✕'; d.querySelector('small').textContent = m || ''; } }; };
+  saveConn(false);
+  const s1 = step('Web App URL format');
+  const bad = checkUrl(apiUrl()); if (bad) { s1.bad(bad); setConn('bad', 'Check URL'); return; } s1.ok(apiUrl());
+  const s2 = step('Reach script & check passcode (GET)');
+  const t0 = performance.now(); let ping;
+  try { ping = await apiGet({ action:'ping' }, 25000); s2.ok(`${ping.app} v${ping.version} · “${ping.spreadsheet}” · ${Math.round(performance.now()-t0)} ms`); }
+  catch(e) { s2.bad(e.code === 'AUTH' ? e.message : friendlyError(e)); if (e.code === 'AUTH') authFailed(e.message); else setConn('bad', 'Offline'); return; }
+  const s3 = step('Read selections & blower / casing list');
+  try { const ms = await apiGet({ action:'master' }); s3.ok(`${ping.records} record(s) · ${ms.master.blowers.length} blowers · ${ms.master.casings.length} casing sizes`); }
+  catch(e) { s3.bad(friendlyError(e)); return; }
+  const s4 = step('Write test (POST)' + (settings.storePdf ? ' + Google Drive access' : ''));
+  try {
+    const st = await apiPost({ action:'selftest', checkDrive: !!settings.storePdf }, 40000);
+    if (!st.write) throw new Error('Write did not read back');
+    if (settings.storePdf && st.drive === false) { s4.bad('Sheet write OK, but Drive failed: ' + st.driveError + ' — run setup() in the script editor to authorise Drive.'); return; }
+    s4.ok('Sheet write OK' + (st.driveFolder ? ` · Drive folder “${st.driveFolder}”` : ''));
+  } catch(e) { s4.bad(friendlyError(e)); return; }
+  setConn('ok', 'Connected'); toast('Connection test passed ✓', 'ok');
+  await loadCloud({ quiet:true }); await syncPending();
+}
+function saveConn(showToast=true){
+  const api = $('#setApi').value.trim();
+  const bad = api ? checkUrl(api) : '';
+  $('#apiErr').textContent = bad; $('#setApi').classList.toggle('err', !!bad);
+  settings.api = api === CONFIG.API_URL ? '' : api; saveSettings();
+  if (showToast) { toast(bad ? 'Saved — but the URL looks wrong' : 'Connection settings saved', bad ? 'warn' : 'ok'); if (!bad && api) loadCloud().then(ok => ok && syncPending()); }
+}
+
+/* -------------------------------------------------------------- passcode lock */
+let wantedId = '';
+function showLock(msg){
+  const box = $('#lock'); const wasHidden = box.hidden; box.hidden = false;
+  $('#lockMsg').textContent = msg || 'Enter the team passcode to open the app and saved selections.';
+  $('#lockErr').textContent = '';
+  $('#btnLockOffline').hidden = !records.length;
+  if (wasHidden) { $('#lockPass').value = ''; setTimeout(() => $('#lockPass').focus(), 60); }
+  setConn('bad', 'Locked');
+}
+function authFailed(msg){
+  settings.pass = ''; saveSettings();
+  showLock(/No passcode set/i.test(msg || '') ? msg : 'The passcode has changed. Enter the new team passcode.');
+}
+async function unlock(){
+  const v = $('#lockPass').value.trim();
+  if (!v) { $('#lockErr').textContent = 'Enter the passcode'; return; }
+  const btn = $('#btnUnlock'); btn.disabled = true; btn.textContent = 'Checking…'; $('#lockErr').textContent = '';
+  const prev = settings.pass; settings.pass = v;
+  try {
+    await apiGet({ action:'ping' }, 25000);
+    saveSettings(); $('#lock').hidden = true; toast('Unlocked ✓', 'ok', 1500);
+    const ok = await loadCloud();
+    if (ok) { await syncPending(); openWanted(); }
+  } catch(e) {
+    settings.pass = prev;
+    $('#lockErr').textContent = e.code === 'AUTH' ? (/No passcode set/i.test(e.message) ? e.message : 'Wrong passcode — try again') : friendlyError(e);
+    $('#lockPass').select();
+  } finally { btn.disabled = false; btn.textContent = 'Unlock'; }
+}
+async function openWanted(){
+  if (!wantedId) return;
+  const id = wantedId; wantedId = '';
+  let r = records.find(x => x.id === id);
+  if (!r && apiUrl() && apiPass()) { try { r = (await apiGet({ action:'get', id })).record; if (r) upsertLocal(r); } catch(e) { toast(friendlyError(e), 'bad'); } }
+  if (r) openRecord(r.id, { force:true }); else toast('Selection ' + id + ' was not found', 'bad', 4000);
+}
+
+/* -------------------------------------------------------------- tabs */
+function showTab(t){
+  $$('.tab').forEach(b => b.setAttribute('aria-selected', String(b.dataset.tab === t)));
+  $$('.panel').forEach(p => p.hidden = p.id !== 'tab-' + t);
+  $('#actionBar').hidden = t !== 'form';
+  if (t === 'settings') loadSettingsUI();
+  if (t === 'history') { renderHistory(); if (apiUrl() && (!lastSync || Date.now() - new Date(lastSync) > 60000)) loadCloud({ quiet:true }); }
+}
+function markDirty(){
+  dirty = true; const r = refreshDerived(); renderRecBar();
+  if (r.ourEngineer && r.ourEngineer !== settings.lastEngineer) { settings.lastEngineer = r.ourEngineer; saveSettings(); }
+  lsSet(LS.draft, r);
+}
+
+/* -------------------------------------------------------------- events */
+function wire(){
+  $$('.tab').forEach(b => b.addEventListener('click', () => showTab(b.dataset.tab)));
+  $('#connPill').addEventListener('click', () => showTab('settings'));
+  const form = $('#mainForm');
+  form.addEventListener('input', e => { if (e.target.matches('[data-k]')) { setErr(e.target, ''); markDirty(); } });
+  form.addEventListener('change', e => {
+    const k = e.target.dataset.k;
+    if (k === 'fan.modelId') { selectModel(e.target.value); $('#errModel').textContent = ''; $('#errCasing').textContent = ''; $('#selCasing').classList.remove('err'); }
+    if (k === 'application') $('#errApp').textContent = '';
+    if (k === 'acc.ductShape' && e.target.value === 'Round') { const d = dims(getCasing()); const el = $('[data-k="acc.ductDia"]'); if (d && !num(el.value)) el.value = d.inlet; }
+    if (k === 'customer.name' || k === 'customer.phone') checkCustomerMatch();
+    if (e.target.dataset.v === 'phone' && e.target.value && !phoneOk(e.target.value)) setErr(e.target, 'Enter a valid 10-digit number');
+    if (e.target.dataset.v === 'email' && !emailOk(e.target.value)) setErr(e.target, 'Enter a valid email');
+    if (k) markDirty();
+  });
+  $('#selCasing').addEventListener('change', () => {
+    const other = $('#selCasing').value === 'OTHER';
+    $('#casingOtherWrap').hidden = !other;
+    $('#errCasing').textContent = ''; $('#selCasing').classList.remove('err');
+    if (other) setTimeout(() => $('#casingOther').focus(), 50); else applyCasingDefaults();
+    markDirty();
+  });
+  $('#casingOther').addEventListener('input', () => { $('#errCasingOther').textContent = ''; $('#casingOther').classList.remove('err'); markDirty(); });
+  $('#casingOther').addEventListener('change', () => { applyCasingDefaults(); markDirty(); });
+  $('#btnDuctStd').addEventListener('click', () => { applyCasingDefaults(); markDirty(); toast('Standard duct size applied', 'ok', 1500); });
+  $('[data-k="customer.phone"]').addEventListener('blur', checkCustomerMatch);
+  $('#btnCustFill').addEventListener('click', applyCustomer);
+  $('#btnCustDismiss').addEventListener('click', () => $('#custBanner').hidden = true);
+  $('#btnSameAddr').addEventListener('click', () => { $('[data-k="site.address"]').value = $('[data-k="customer.address"]').value; markDirty(); });
+  $('#btnNew').addEventListener('click', () => { if (!confirmDiscard()) return; lsSet(LS.draft, null); fill(blankRecord()); renderHistory(); window.scrollTo({ top:0, behavior:'smooth' }); });
+  $('#btnDup').addEventListener('click', () => { const r = collect(); r.id = newId(); r.createdAt = ''; r.updatedAt = ''; r.pdfUrl = ''; fill(r); dirty = true; renderRecBar(); toast('Duplicated as a new selection', 'ok', 1800); });
+  $('#btnSave').addEventListener('click', () => saveCloud());
+  $('#btnPdf').addEventListener('click', () => {
+    if (!validate()) return;
+    try { const r = collect(); makePdf(r).save(pdfName(r)); toast('PDF downloaded', 'ok', 1800); if (dirty || !current.updatedAt) toast('Tip: tap Save so this selection appears in History', '', 3500); }
+    catch(e) { toast(e.message, 'bad', 5000); }
+  });
+  $('#btnWa').addEventListener('click', () => shareWhatsApp().catch(e => toast(friendlyError(e), 'bad', 5000)));
+  // history
+  $('#btnRefresh').addEventListener('click', async () => { if (!apiUrl()) { showTab('settings'); toast('Add the cloud URL first', 'warn'); return; } busy(true, 'Loading from Google Sheets…'); const ok = await loadCloud(); busy(false); if (ok) { toast('History updated', 'ok', 1500); syncPending(); } });
+  $('#search').addEventListener('input', e => { filter.q = e.target.value; renderHistory(); });
+  $('#periodChips').addEventListener('click', e => { const b = e.target.closest('[data-period]'); if (!b) return; filter.period = b.dataset.period; $$('#periodChips .chip').forEach(c => c.setAttribute('aria-pressed', String(c === b))); renderHistory(); });
+  $('#appChips').addEventListener('click', e => { const b = e.target.closest('[data-app]'); if (!b) return; filter.app = b.dataset.app; $$('#appChips .chip').forEach(c => c.setAttribute('aria-pressed', String(c === b))); renderHistory(); });
+  $('#histList').addEventListener('click', e => {
+    const row = e.target.closest('.hrow'); if (!row) return; const id = row.dataset.id, act = e.target.closest('[data-act]')?.dataset.act;
+    if (act === 'link') return; if (act === 'del') return deleteRecord(id); openRecord(id, { dup: act === 'dup' });
+  });
+  $('#histList').addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.matches('.hrow')) openRecord(e.target.dataset.id); });
+  // settings
+  $('#btnSaveConn').addEventListener('click', () => saveConn(true));
+  $('#btnTest').addEventListener('click', () => runTest().catch(e => toast(friendlyError(e), 'bad')));
+  const copy = async (text, label) => { try { await navigator.clipboard.writeText(text); toast(label + ' copied', 'ok', 1800); } catch(e) { prompt('Copy this link:', text); } };
+  $('#btnCopyApp').addEventListener('click', () => { const u = new URL(location.href); u.search = ''; u.hash = ''; if (settings.api && settings.api !== CONFIG.API_URL) u.searchParams.set('api', settings.api); copy(u.toString(), 'App link'); });
+  $('#btnCopyLink').addEventListener('click', () => copy(recordLink(current), 'Selection link'));
+  $('#btnLockNow').addEventListener('click', () => {
+    if (!confirm('Lock this device? Saved history is hidden until the passcode is entered again.' + (Object.keys(pending).length ? ' Unsynced selections stay on this device.' : ''))) return;
+    settings.pass = ''; saveSettings(); records = []; lastSync = ''; lsSet(LS.cache, null); renderHistory(); buildDatalists(); showLock();
+  });
+  $('#lockForm').addEventListener('submit', unlock);
+  $('#btnLockOffline').addEventListener('click', () => { $('#lock').hidden = true; setConn('bad', 'Offline · locked'); toast('Working offline — unlock to sync', 'warn', 3000); });
+  $('#optPdf').addEventListener('change', e => { settings.storePdf = e.target.checked; saveSettings(); });
+  $('#optEngineers').addEventListener('change', e => { settings.engineers = e.target.value; saveSettings(); buildDatalists(); });
+  $('#btnSyncNow').addEventListener('click', async () => { busy(true, 'Syncing…'); await syncPending(); busy(false); if (Object.keys(pending).length) toast('Still offline — will retry automatically', 'warn'); });
+  // master tables
+  $('#casingTable').addEventListener('change', e => {   // new casing number → fill blank sizes from the formula
+    if (e.target.dataset.c !== 'casing') return;
+    const tr = e.target.closest('tr'), c = num(e.target.value); if (!(c > 0)) return;
+    const f = casingFormula(c);
+    ['inlet','outW','outD','ductW','ductH'].forEach(k => { const el = tr.querySelector(`[data-c="${k}"]`); if (!num(el.value)) el.value = f[k]; });
+  });
+  ['#casingTable','#blowerTable'].forEach(s => $(s).addEventListener('click', e => { const b = e.target.closest('[data-del-row]'); if (b) b.closest('tr').remove(); }));
+  $('#btnAddBlower').addEventListener('click', () => {
+    const tr = document.createElement('tr'); tr.dataset.id = '';
+    tr.innerHTML = blowerRowHtml({ label:'', hp:'', rpm:1440, casing:'', active:true });
+    $('#blowerTable tbody').appendChild(tr); tr.querySelector('input').focus();
+  });
+  $('#btnAddCasing').addEventListener('click', () => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = casingRowHtml({ casing:'', inlet:'', outW:'', outD:'', ductW:'', ductH:'' });
+    $('#casingTable tbody').appendChild(tr); tr.querySelector('input').focus();
+  });
+  $('#btnRecalc').addEventListener('click', () => {
+    if (!confirm('Recalculate inlet Ø (casing × 10) and blower outlet (W 75 %, D 100 %) for every casing? Duct sizes are kept.')) return;
+    $$('#casingTable tbody tr').forEach(tr => { const c = num(tr.querySelector('[data-c="casing"]').value); if (!(c > 0)) return; const f = casingFormula(c);
+      ['inlet','outW','outD'].forEach(k => tr.querySelector(`[data-c="${k}"]`).value = f[k]); });
+    toast('Recalculated — tap Save to keep', 'ok');
+  });
+  $('#btnResetMaster').addEventListener('click', () => { if (confirm('Reset blower and casing tables to the standard list? (Not saved until you tap Save)')) renderMasterTables(clone(DEFAULT_MASTER)); });
+  $('#btnReloadMaster').addEventListener('click', async () => {
+    if (!apiUrl()) return toast('Add the cloud URL first', 'warn');
+    try { const r = await apiGet({ action:'master' }); applyMaster(r.master); toast('Blower & casing list loaded', 'ok'); } catch(e) { toast(friendlyError(e), 'bad'); }
+  });
+  $('#btnSaveMaster').addEventListener('click', async () => {
+    let m; try { m = readMasterTables(); } catch(e) { return toast(e.message, 'bad', 4500); }
+    if (!apiUrl()) { applyMaster(m); return toast('Saved on this device only (cloud not set)', 'warn'); }
+    const pin = prompt('Admin PIN'); if (!pin) return;
+    busy(true, 'Saving blower & casing list…');
+    try { const r = await apiPost({ action:'saveMaster', pin, master: m }); applyMaster(r.master); toast('Blower & casing list saved for everyone ✓', 'ok'); }
+    catch(e) { toast(friendlyError(e), 'bad', 5000); } finally { busy(false); }
+  });
+  $('#btnExport').addEventListener('click', exportCsv);
+  $('#btnClearCache').addEventListener('click', () => {
+    const n = Object.keys(pending).length;
+    if (!confirm(n ? `${n} selection(s) are NOT yet synced and will be lost. Clear anyway?` : 'Clear cached history and lists on this device? Cloud data is not affected.')) return;
+    [LS.cache, LS.pending, LS.master, LS.draft].forEach(k => lsSet(k, null));
+    records = []; pending = {}; lastSync = ''; applyMaster(clone(DEFAULT_MASTER)); renderHistory(); loadSettingsUI(); toast('Local cache cleared', 'ok'); loadCloud({ quiet:true });
+  });
+  window.addEventListener('online', () => { loadCloud({ quiet:true }).then(ok => ok && syncPending()); });
+  window.addEventListener('offline', () => setConn('bad', 'Offline'));
+  document.addEventListener('visibilitychange', () => { if (!document.hidden && apiUrl() && (!lastSync || Date.now() - new Date(lastSync) > 60000)) loadCloud({ quiet:true }).then(ok => ok && syncPending()); });
+  window.addEventListener('beforeunload', e => { if (dirty) { e.preventDefault(); e.returnValue = ''; } });
+}
+function exportCsv(){
+  if (!records.length) return toast('Nothing to export', 'warn');
+  const cols = [['ID','id'],['Updated','updatedAt'],['Application','application'],['Customer','customer.name'],['Phone','customer.phone'],['Email','customer.email'],['Customer address','customer.address'],['Site address','site.address'],['Site electrician','site.electrician'],['Site engineer','site.engineer'],['Megaverks engineer','ourEngineer'],['Blower','fan.modelLabel'],['HP','fan.hp'],['RPM','fan.rpm'],['Casing','fan.casing'],['Inlet dia mm','fan.inletDia'],['Outlet W mm','fan.outletW'],['Outlet D mm','fan.outletD'],['Duct W mm','acc.ductW'],['Duct H mm','acc.ductH'],['CFM','fan.cfm'],['Static mmWC','fan.sp'],['Form','fan.form'],['Arrangement','fan.arrangement'],['Material','fan.material'],['Damper','acc.damper'],['Canvas','acc.canvas'],['Filters','acc.filters'],['Qty','fan.qty'],['PDF','pdfUrl']];
+  const q = v => { let s = String(v ?? ''); if (/^[=+\-@]/.test(s)) s = "'" + s; return '"' + s.replace(/"/g, '""') + '"'; };
+  const csv = [cols.map(c => q(c[0])).join(',')].concat(records.map(r => cols.map(c => q(getPath(r, c[1]))).join(','))).join('\r\n');
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob(['﻿' + csv], { type:'text/csv' })); a.download = `megaverks_blowers_${new Date().toISOString().slice(0,10)}.csv`; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+}
+
+/* -------------------------------------------------------------- start */
+async function init(){
+  try { localStorage.removeItem('mv.pricing'); } catch(e) {}
+  const u = new URL(location.href);
+  if (u.searchParams.get('api')) {           // admin override link: ?api=<another /exec URL>
+    settings.api = u.searchParams.get('api'); saveSettings();
+    u.searchParams.delete('api'); history.replaceState(null, '', u.toString());
+  }
+  if (u.searchParams.has('token')) { u.searchParams.delete('token'); history.replaceState(null, '', u.toString()); }
+  const wantId = u.searchParams.get('id');
+  wantedId = wantId || '';
+  buildHp(); buildForms(); buildModels(); buildCasingSelect(); wire();
+  const draft = lsGet(LS.draft, null);
+  if (draft && draft.id && !wantId) { fill(draft); dirty = true; renderRecBar(); toast('Restored your unsaved selection', '', 2500); }
+  else fill(blankRecord());
+  renderHistory(); buildDatalists(); updatePendingUI();
+  if (!apiUrl()) { setConn('none', 'Not connected'); wantedId = ''; return; }
+  if (!apiPass()) { showLock(wantId ? 'Enter the team passcode to open this selection.' : ''); return; }
+  const ok = await loadCloud({ quiet: !wantId });
+  if (ok) { syncPending(); openWanted(); }
+  else if (wantId && $('#lock').hidden) {
+    const r = records.find(x => x.id === wantId); wantedId = '';
+    if (r) openRecord(r.id, { force:true }); else toast('Could not load ' + wantId + ' — offline', 'bad');
+  }
+}
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

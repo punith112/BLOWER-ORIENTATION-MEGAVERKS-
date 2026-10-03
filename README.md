@@ -1,91 +1,70 @@
 # Megaverks Blower Selector
 
-Single-page blower selection tool for Megaverks Technologies. It does the following:
+Blower selection app for Megaverks Technologies, covering Exhaust and Fresh Air. It does the following:
 
-- Captures customer, site and engineer details.
-- Selects the blower: Exhaust or Fresh Air, model, discharge form and accessories.
-- Generates an A4 PDF and shares it on WhatsApp in one tap.
-- Saves every selection to Google Sheets, so the whole team sees the same history and leaderboard.
+- Shows casing sizes with the inlet, outlet and an editable duct outlet.
+- Generates a PDF and shares it on WhatsApp in one tap.
+- Saves every selection to Google Sheets.
+- Shows a history and an engineer leaderboard.
+- Each saved selection has its own link that reopens it with every detail filled in.
 
 | File | Where it goes |
 |---|---|
-| `index.html` | GitHub repository (served by GitHub Pages) |
+| `index.html` | GitHub repo (the app) |
+| `config.js` | GitHub repo: holds the Google script URL (one line) |
 | `Code.gs` | Google Sheet → Extensions → Apps Script |
+| `README.md` | GitHub repo (these instructions) |
 
 ---
 
-## 1. Google Sheet + Apps Script (about 5 minutes)
+## Step 1: Google Sheet + script (about 5 minutes)
 
-1. Create a new Google Sheet, for example **Megaverks Blower DB**.
-2. Open **Extensions → Apps Script**. Delete the sample code and paste all of `Code.gs`.
-3. At the top of the script, change these two values:
-   - `API_TOKEN`: any secret word. The same word goes into `index.html`.
-   - `ADMIN_PIN`: needed to edit the blower / casing list or delete records.
-4. Click **Save**. Choose `setup` in the function dropdown and click **Run**. Approve the Google permissions; the script needs Sheets and Drive.
-   - This creates four tabs: *Blower Selections*, *Blower Master*, *Casing Sizes* and *_Health*.
-   - It also creates the Drive folder *Megaverks Blower Selections*, where the PDFs are stored.
-5. Click **Deploy → New deployment**, then the ⚙ icon, then **Web app**.
-   - Execute as: **Me**
-   - Who has access: **Anyone**
-   - Click **Deploy** and copy the **Web app URL**. It ends in `/exec`.
+The sheet **Megaverks Blower DB** already exists in punith.r111@gmail.com's Google Drive, and its script editor already contains the code.
 
-> **Updating the script later:** use **Deploy → Manage deployments → ✎ Edit → Version: New version → Deploy**.
-> The URL stays the same. If you create a *new* deployment instead, you get a new URL.
+1. Open **Megaverks Blower DB** in Google Sheets, then **Extensions → Apps Script**.
+2. Check that the editor shows the code starting with `MEGAVERKS TECHNOLOGIES — Blower Selector backend … v1.2`.
+   - If it doesn't, select everything, delete it and paste the whole of `Code.gs`.
+3. Click **💾 Save**.
+4. Choose **setup** in the function dropdown next to *Debug*, then click **▶ Run**.
+5. Google asks for permission:
+   - Click **Review permissions** and choose your account.
+   - Click **Advanced → Go to (project) (unsafe)** and then **Allow**.
+   - This is normal for your own script.
+6. Click **Deploy → New deployment → ⚙ Select type → Web app**.
+   - **Execute as:** Me
+   - **Who has access:** Anyone
+   - Click **Deploy** and **copy the Web app URL**. It ends in `/exec`.
+7. Back in the sheet, open the **App Settings** tab. It shows your **Passcode** (for the team) and **Admin PIN** (for you).
 
-## 2. Configure the page
+## Step 2: Upload to GitHub (about 2 minutes)
 
-Open `index.html` and edit the `CONFIG` block near the top of the `<script>`:
+1. Open your repo, for example **BLOWER-ORIENTATION-MEGAVERKS-**, and choose **Add file → Upload files**.
+2. Drop in `index.html`, `config.js` and `README.md`, then click **Commit changes**. This replaces the old `index.html`.
+3. In the repo, click **config.js → ✏️ Edit** and paste the `/exec` URL between the quotes:
+   ```js
+   API_URL: 'https://script.google.com/macros/s/XXXXXXXX/exec'
+   ```
+4. Click **Commit changes**. GitHub Pages updates in about a minute.
 
-```js
-API_URL: 'https://script.google.com/macros/s/XXXXXXXX/exec',
-API_TOKEN: 'megaverks-2026',   // same as API_TOKEN in Code.gs
-```
+## Step 3: Use it
 
-With this set, anyone who opens the page is connected straight away and sees all saved history.
+1. Open **https://punith112.github.io/BLOWER-ORIENTATION-MEGAVERKS-/** and enter the **passcode** once on each phone.
+2. Save a selection. It goes into the sheet's **Blower Selections** tab with an **Open Link**. Opening that link on any phone, after the passcode, shows the full selection again.
+3. **Settings → ▶ Test connection** checks four things: the URL, the passcode, reading and writing.
+4. **Settings → 🔒 Lock this device** asks for the passcode again on that phone.
 
-## 3. Publish on GitHub Pages
+### Passcode & PIN
+- They live **only** in the sheet's **App Settings** tab, not in the GitHub code.
+- To change them, type a new value there. Every phone is then asked for the new passcode.
+- The **Admin PIN** is needed to edit the blower and casing lists or to delete a saved selection.
 
-1. Create a GitHub repository, for example `blower-selector`, and upload `index.html`.
-2. Go to **Settings → Pages → Build and deployment**. Choose **Deploy from a branch**, then branch `main` and folder `/ (root)`, and click **Save**.
-3. After about a minute the page is live at `https://<your-username>.github.io/blower-selector/`.
+### Selections made before this update
+These were saved only on the phone that made them, shown as "Pending". Open the updated app on that phone and enter the passcode, and they upload to the sheet automatically.
 
-## 4. Test
-
-1. Open the page and go to **Settings → ▶ Test connection**. The test checks four things:
-   - the URL format,
-   - that the script is reachable and the token is accepted,
-   - that the sheet can be read,
-   - that the sheet can be written (and Drive reached).
-2. If all four steps show ✓, the green **Connected** dot appears in the header.
+### Updating the script later
+Use **Deploy → Manage deployments → ✏️ → Version: New version → Deploy**. This keeps the same URL, so `config.js` doesn't change.
 
 ---
-
-## Using it
-
-- **Save to cloud** writes the selection to the sheet and saves the PDF in Drive.
-  - If the internet drops, the selection is kept on the phone and synced automatically later. It shows as "Pending".
-- **PDF** downloads the A4 selection sheet.
-- **WhatsApp**:
-  - **Customer / Site engineer / Electrician** opens WhatsApp to that number. The message includes the details, the Drive PDF link and a link that reopens the record.
-  - **Choose…** on a phone shares the PDF file itself through the share sheet.
-- **History** shows totals, the engineer leaderboard and a searchable list. Tap **Open** to load a record back into the form with every field auto-filled.
-- **Duplicate** copies a record as a new selection, for repeat customers.
-- Typing a known customer name or phone number offers to fill the customer and site details from the last selection.
-- **Settings → Copy setup link** produces a link that connects a teammate's phone in one tap.
-- **No prices or costs** are shown anywhere: not in the page, the PDF, WhatsApp or the sheet.
-- **Casing sizes:** picking a blower fills its casing size, and the page immediately shows:
-  - **Inlet (round) Ø** = casing × 10 mm (50 casing → Ø500 mm)
-  - **Blower outlet W × D** = 75 % × 100 % of the casing Ø (50 casing → 375 × 500 mm)
-  - **Duct outlet** = the standard square duct (50 → 500 × 500, 55 → 550 × 550, 60 → 700 × 700). It is pre-filled but **editable**, and *Use standard size* puts it back.
-- The **blower list** and **casing table** live in the *Blower Master* and *Casing Sizes* tabs. Edit them in Settings (needs the Admin PIN) or directly in the sheet.
-
-## Good to know
-
-- The **JSON** column in *Blower Selections* is the master copy of each record. The other columns are a readable mirror for filtering and reports. Edits made directly in those columns are not read back by the page; edit in the page instead.
-- **Security:**
-  - A public GitHub repo exposes `API_URL` and `API_TOKEN` to anyone who reads the code, and customer phone numbers and addresses are readable through that link.
-  - For tighter control, leave `API_URL` blank in the file and give the team the **setup link** instead. Change `API_TOKEN` if it ever leaks; update it in both files and redeploy.
-- The engineering check uses rules of thumb: 60 % fan efficiency, 15 % motor margin and a 5–12.5 m/s duct velocity band. Treat it as a sanity check, not as fan-curve selection.
 
 ## Casing table (standard list)
 
@@ -99,5 +78,6 @@ With this set, anyone who opens the page is connected straight away and sees all
 | 10 HP / 1440 | 60 | 600 | 450 × 600 | 700 × 700 |
 | 10 HP / 960 | 70 | 700 | 525 × 700 | 700 × 700 * |
 
-\* Standard duct not specified yet: it defaults to casing Ø square. Correct it once in **Settings → Casing sizes** and it applies for everyone.
-Outlet W is rounded to the nearest mm (337.5 → 338, 412.5 → 413).
+- **How sizes are worked out:** inlet Ø is the casing number × 10 mm. The blower outlet is 75 % × 100 % of the casing Ø. Outlet W is rounded to the nearest mm.
+- **Duct sizes marked \*:** these defaults are the casing Ø square, because no standard duct size was given. Correct them once in **Settings → Casing sizes** (needs the Admin PIN) and they apply for everyone.
+- **Prices:** none are shown anywhere in the app, PDF, WhatsApp message or sheet.
