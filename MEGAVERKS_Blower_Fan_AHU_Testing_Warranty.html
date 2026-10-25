@@ -1,0 +1,1694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MEGAVERKS — Blower, Fan, AHU Selection + Testing + Warranty</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#f0f2f5;color:#2c3e50;line-height:1.5}
+  .container{max-width:1400px;margin:0 auto;padding:16px}
+  header{background:linear-gradient(135deg,#1a237e 0%,#283593 100%);color:white;padding:20px;border-radius:12px;margin-bottom:14px;box-shadow:0 4px 20px rgba(0,0,0,0.15)}
+  header h1{font-size:1.5rem;letter-spacing:1px}
+  header p{opacity:.9;margin-top:3px;font-size:.85rem}
+
+  .settings-bar{background:#fff3e0;border:1px solid #ffcc80;border-radius:10px;padding:10px 14px;margin-bottom:14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .settings-bar label{font-size:.78rem;font-weight:600;color:#e65100}
+  .settings-bar input{flex:1;min-width:260px;padding:7px 10px;border:1.5px solid #ffcc80;border-radius:6px;font-size:.85rem}
+  .sync-status{font-size:.78rem;padding:3px 10px;border-radius:4px;font-weight:600}
+  .sync-status.online{background:#e8f5e9;color:#2e7d32}
+  .sync-status.offline{background:#ffebee;color:#c62828}
+
+  .tabs{display:flex;gap:3px;margin-bottom:14px;background:white;padding:4px;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.06);overflow-x:auto}
+  .tab-btn{flex:1;padding:10px 8px;border:none;background:transparent;border-radius:8px;font-size:.82rem;font-weight:600;cursor:pointer;color:#666;transition:all .2s;white-space:nowrap;min-width:80px}
+  .tab-btn:hover{background:#f5f5f5}
+  .tab-btn.active{background:#1a237e;color:white;box-shadow:0 2px 8px rgba(26,35,126,.25)}
+
+  .tab-panel{display:none}
+  .tab-panel.active{display:block}
+
+  .card{background:white;border-radius:12px;padding:18px;margin-bottom:14px;box-shadow:0 2px 12px rgba(0,0,0,.08)}
+  .card h2{font-size:1.05rem;color:#1a237e;margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid #e8eaf6;display:flex;align-items:center;gap:6px}
+  .card h2 .icon{font-size:1.2rem}
+  .card h3{font-size:.95rem;color:#1565c0;margin:12px 0 8px 0;padding-left:8px;border-left:3px solid #1565c0}
+
+  .form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+  .form-group{display:flex;flex-direction:column}
+  .form-group label{font-size:.78rem;font-weight:600;color:#555;margin-bottom:4px}
+  .form-group input,.form-group select,.form-group textarea{padding:8px 10px;border:1.5px solid #ddd;border-radius:8px;font-size:.9rem;transition:border-color .2s,box-shadow .2s}
+  .form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:#1a237e;box-shadow:0 0 0 3px rgba(26,35,126,.1)}
+  .form-group textarea{resize:vertical;min-height:50px}
+  .form-group .hint{font-size:.7rem;color:#999;margin-top:2px}
+
+  .blower-table{width:100%;border-collapse:collapse;margin-top:6px;font-size:.82rem}
+  .blower-table th,.blower-table td{border:1px solid #e0e0e0;padding:7px 9px;text-align:left}
+  .blower-table th{background:#1a237e;color:white;font-weight:600;font-size:.76rem;white-space:nowrap}
+  .blower-table tr:nth-child(even){background:#f8f9fa}
+  .blower-table tr:hover{background:#e8eaf6;cursor:pointer}
+  .blower-table tr.selected{background:#c5cae9!important;border-left:4px solid #1a237e}
+  .blower-table td:first-child{text-align:center;font-weight:600}
+
+  .orientation-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin-top:10px}
+  .orientation-card{border:2px solid #e0e0e0;border-radius:10px;padding:10px;text-align:center;cursor:pointer;transition:all .2s;background:white}
+  .orientation-card:hover{border-color:#1a237e;transform:translateY(-2px)}
+  .orientation-card.selected{border-color:#1a237e;background:#e8eaf6;box-shadow:0 4px 12px rgba(26,35,126,.15)}
+  .orientation-card .svg-wrap{height:100px;display:flex;align-items:center;justify-content:center}
+  .orientation-card .label{font-weight:700;color:#1a237e;margin-top:5px;font-size:.88rem}
+  .orientation-card .desc{font-size:.72rem;color:#666;margin-top:1px}
+
+  .cad-panel{background:#fafafa;border:2px solid #e0e0e0;border-radius:12px;padding:16px;margin-top:14px;text-align:center}
+  .cad-panel h3{color:#1a237e;margin-bottom:8px;font-size:.9rem}
+  .cad-drawing{background:white;border:1px solid #ddd;border-radius:8px;padding:12px;display:inline-block}
+  .cad-dims{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:5px;margin-top:10px;text-align:left;font-size:.78rem}
+  .cad-dim-item{background:#e8eaf6;padding:5px 8px;border-radius:6px;display:flex;justify-content:space-between}
+  .cad-dim-item .dim-label{font-weight:600;color:#444}
+  .cad-dim-item .dim-val{color:#1a237e;font-weight:700}
+
+  .recommendation-box{background:linear-gradient(135deg,#e8f5e9 0%,#c8e6c9 100%);border-left:4px solid #2e7d32;border-radius:8px;padding:12px;margin-top:12px}
+  .recommendation-box h3{color:#1b5e20;margin-bottom:6px;font-size:.9rem}
+  .recommendation-box p{font-size:.85rem;color:#333}
+  .recommendation-box .rec-type{display:inline-block;background:#2e7d32;color:white;padding:3px 10px;border-radius:4px;font-weight:700;margin-top:4px;font-size:.8rem}
+
+  .summary-box{background:#e8eaf6;border-radius:10px;padding:12px;margin-top:12px;border-left:4px solid #1a237e}
+  .summary-box h3{color:#1a237e;margin-bottom:6px;font-size:.9rem}
+  .summary-item{display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px dashed #c5cae9;font-size:.82rem}
+  .summary-item:last-child{border-bottom:none}
+  .summary-item .key{font-weight:600;color:#444}
+  .summary-item .val{color:#1a237e;font-weight:600}
+
+  .action-bar{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;padding:14px;background:white;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,.08);position:sticky;bottom:14px}
+  .btn{padding:9px 18px;border:none;border-radius:8px;font-size:.88rem;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all .2s}
+  .btn-primary{background:#1a237e;color:white}
+  .btn-primary:hover{background:#0d1642}
+  .btn-success{background:#2e7d32;color:white}
+  .btn-success:hover{background:#1b5e20}
+  .btn-info{background:#0277bd;color:white}
+  .btn-info:hover{background:#01579b}
+  .btn-warning{background:#f9a825;color:#333}
+  .btn-warning:hover{background:#f57f17}
+  .btn-secondary{background:#757575;color:white}
+  .btn-secondary:hover{background:#616161}
+  .btn-danger{background:#c62828;color:white}
+  .btn-danger:hover{background:#b71c1c}
+
+  .badge{display:inline-block;padding:2px 6px;border-radius:4px;font-size:.68rem;font-weight:700;margin-left:3px}
+  .badge-4pole{background:#fff3e0;color:#e65100}
+  .badge-6pole{background:#e8f5e9;color:#2e7d32}
+  .badge-1ph{background:#fce4ec;color:#c2185b}
+  .badge-3ph{background:#e3f2fd;color:#1565c0}
+  .badge-warranty-active{background:#d4edda;color:#155724}
+  .badge-warranty-expired{background:#f8d7da;color:#721c24}
+  .badge-warranty-warning{background:#fff3cd;color:#856404}
+
+  .modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.6);z-index:1000;align-items:center;justify-content:center}
+  .modal-overlay.active{display:flex}
+  .modal{background:white;border-radius:12px;max-width:850px;width:92%;max-height:90vh;overflow-y:auto;padding:20px;position:relative}
+  .modal h2{margin-bottom:12px;color:#1a237e}
+  .modal-close{position:absolute;top:12px;right:12px;background:none;border:none;font-size:1.4rem;cursor:pointer;color:#666}
+  .preview-content{white-space:pre-wrap;font-family:monospace;font-size:.8rem;background:#f5f5f5;padding:12px;border-radius:8px}
+
+  .section-note{background:#fff8e1;border-left:3px solid #f9a825;padding:8px 12px;border-radius:6px;font-size:.8rem;color:#5d4037;margin-bottom:12px}
+
+  .testing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+  .velocity-row{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;align-items:end}
+  .velocity-row .form-group input{text-align:center;font-weight:700}
+  .velocity-row .form-group.average input{background:#e8f5e9;border-color:#2e7d32;color:#1b5e20}
+
+  .leaderboard-table{width:100%;border-collapse:collapse;font-size:.78rem;margin-top:8px}
+  .leaderboard-table th,.leaderboard-table td{border:1px solid #e0e0e0;padding:6px 8px;text-align:left}
+  .leaderboard-table th{background:#1565c0;color:white;font-weight:600;position:sticky;top:0}
+  .leaderboard-table tr:nth-child(even){background:#f8f9fa}
+  .leaderboard-table tr:hover{background:#e3f2fd}
+
+  .ahu-subtabs{display:flex;gap:4px;margin-bottom:12px}
+  .ahu-subtab{padding:8px 16px;border:1.5px solid #ddd;background:white;border-radius:6px;cursor:pointer;font-size:.85rem;font-weight:600;color:#666}
+  .ahu-subtab.active{background:#1565c0;color:white;border-color:#1565c0}
+  .ahu-panel{display:none}
+  .ahu-panel.active{display:block}
+
+  .warranty-card{background:#f8f9fa;border:2px solid #e0e0e0;border-radius:10px;padding:14px;margin-bottom:10px;transition:all .2s}
+  .warranty-card:hover{border-color:#1a237e}
+  .warranty-card.active{border-color:#2e7d32;background:#e8f5e9}
+  .warranty-card.warning{border-color:#f9a825;background:#fff8e1}
+  .warranty-card.expired{border-color:#c62828;background:#ffebee}
+  .warranty-card h4{font-size:.95rem;color:#1a237e;margin-bottom:6px}
+  .warranty-card .warranty-meta{display:flex;gap:16px;flex-wrap:wrap;font-size:.8rem;color:#666;margin-top:6px}
+  .warranty-card .warranty-meta span{display:flex;align-items:center;gap:4px}
+
+  .hidden-field{display:none!important}
+
+  .result-box{background:#f8f9fa;border:1px solid #e9ecef;border-radius:8px;padding:14px;margin-top:12px}
+  .result-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #e9ecef;font-size:13px}
+  .result-row:last-child{border-bottom:none}
+  .result-label{color:#6c757d;font-weight:500}
+  .result-value{font-weight:600;color:#1a5276;font-variant-numeric:tabular-nums}
+  .result-value.warning{color:#dc3545}
+  .result-value.success{color:#28a745}
+
+  .fan-card{border:2px solid #e9ecef;border-radius:10px;padding:14px;cursor:pointer;transition:all .2s;margin-bottom:8px}
+  .fan-card:hover{border-color:#2980b9}
+  .fan-card.selected{border-color:#2980b9;background:#e8f4f8}
+  .fan-card h4{font-size:14px;color:#1a5276;margin-bottom:6px}
+  .fan-card p{font-size:12px;color:#6c757d}
+
+  .gad-container{background:white;border:1px solid #dee2e6;border-radius:8px;overflow:hidden;margin-top:12px}
+  .gad-header{background:#1a5276;color:white;padding:10px 16px;font-size:13px;font-weight:600}
+  .gad-body{padding:16px}
+
+  @media print{
+    body{background:white}
+    .no-print{display:none!important}
+    .card{box-shadow:none;border:1px solid #ddd;page-break-inside:avoid}
+    header{background:#1a237e!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .blower-table th{background:#1a237e!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .leaderboard-table th{background:#1565c0!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .action-bar{display:none}
+    .container{max-width:100%;padding:8px}
+    .tabs{display:none}
+    .tab-panel{display:block!important}
+    .settings-bar{display:none}
+    .ahu-subtabs{display:none}
+    .ahu-panel{display:block!important}
+  }
+  @media(max-width:600px){
+    .form-grid{grid-template-columns:1fr}
+    .orientation-grid{grid-template-columns:repeat(2,1fr)}
+    .velocity-row{grid-template-columns:1fr 1fr}
+    header h1{font-size:1.1rem}
+    .tabs{flex-wrap:wrap}
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <h1>MEGAVERKS — BLOWER, FAN, AHU SELECTION + TESTING + WARRANTY</h1>
+    <p>SISW Centrifugal | Axial Flow | LLD Blowers | AHU | Testing Quality | Warranty Tracking | Google Sheets Sync</p>
+  </header>
+
+  <!-- SETTINGS / GOOGLE SHEETS -->
+  <div class="settings-bar no-print">
+    <label>🔗 GAS URL:</label>
+    <input type="text" id="gasUrl" placeholder="Paste your deployed Apps Script Web App URL here">
+    <span class="sync-status offline" id="syncStatus">● Offline</span>
+    <button class="btn btn-primary" onclick="testConnection()" style="padding:7px 12px;font-size:.78rem">Test</button>
+    <button class="btn btn-success" onclick="syncAllToSheets()" style="padding:7px 12px;font-size:.78rem">☁️ Sync All</button>
+    <button class="btn btn-info" onclick="loadAllFromSheets()" style="padding:7px 12px;font-size:.78rem">📥 Load All</button>
+  </div>
+
+  <!-- PROJECT INFO -->
+  <div class="card">
+    <h2><span class="icon">📋</span> Project & Contact Information</h2>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Customer Name <span style="color:#c62828">*</span></label>
+        <input type="text" id="customerName" placeholder="Enter customer name" onchange="onCustomerChange()" list="customerList">
+        <datalist id="customerList"></datalist>
+      </div>
+      <div class="form-group"><label>Engineer Name</label><input type="text" id="engineerName" placeholder="Enter engineer name"></div>
+      <div class="form-group"><label>Team / Site Name</label><input type="text" id="siteName" placeholder="Enter team or site name"></div>
+      <div class="form-group"><label>Customer Contact</label><input type="text" id="customerContact" placeholder="Phone / Email"></div>
+      <div class="form-group"><label>Project Name</label><input type="text" id="projectName" placeholder="Enter project name"></div>
+      <div class="form-group"><label>Site Contact Person</label><input type="text" id="siteContactPerson" placeholder="Name of site contact"></div>
+      <div class="form-group" style="grid-column:1/-1"><label>Site Address / Location</label><textarea id="siteAddress" rows="2" placeholder="Full site address"></textarea></div>
+    </div>
+    <div style="margin-top:10px;display:flex;gap:8px;" class="no-print">
+      <button class="btn btn-success" onclick="saveCustomerLocal()">💾 Save Customer</button>
+      <button class="btn btn-primary" onclick="saveCustomerToSheets()">☁️ Save to Sheets</button>
+      <button class="btn btn-info" onclick="loadCustomerFromSheets()">📥 Load from Sheets</button>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs no-print">
+    <button class="tab-btn active" onclick="switchTab('sisw')">⚙️ SISW</button>
+    <button class="tab-btn" onclick="switchTab('axial')">🌀 Axial</button>
+    <button class="tab-btn" onclick="switchTab('lld')">🔧 LLD</button>
+    <button class="tab-btn" onclick="switchTab('ahu')">🏭 AHU</button>
+    <button class="tab-btn" onclick="switchTab('testing')">🧪 Testing</button>
+    <button class="tab-btn" onclick="switchTab('warranty')">🛡️ Warranty</button>
+    <button class="tab-btn" onclick="switchTab('leaderboard')">📊 Board</button>
+  </div>
+
+  <!-- ===================== TAB 1: SISW ===================== -->
+  <div id="tab-sisw" class="tab-panel active">
+    <div class="card">
+      <h2><span class="icon">⚙️</span> SISW Centrifugal Blower</h2>
+      <div class="form-grid">
+        <div class="form-group"><label>Required CFM</label><input type="number" id="siswCfm" placeholder="e.g. 2500" oninput="siswRecommend()"></div>
+        <div class="form-group"><label>Static Pressure (mm WG)</label><input type="number" id="siswSp" placeholder="e.g. 75" oninput="siswRecommend()"></div>
+        <div class="form-group"><label>Motor Pole</label><select id="siswPole" onchange="filterSisw()"><option value="">All</option><option value="4">4P (1440 RPM)</option><option value="6">6P (960 RPM)</option></select></div>
+        <div class="form-group"><label>HP</label><select id="siswHp" onchange="filterSisw()"><option value="">All</option><option value="2">2 HP</option><option value="3">3 HP</option><option value="5">5 HP</option><option value="7.5">7.5 HP</option><option value="10">10 HP</option><option value="12.5">12.5 HP</option><option value="15">15 HP</option></select></div>
+        <div class="form-group"><label>Drive Type</label><select id="siswDrive"><option value="Direct Driven">Direct Driven</option><option value="Belt Driven">Belt Driven</option></select></div>
+      </div>
+      <div id="siswRecBox" class="recommendation-box" style="display:none"><h3>🎯 Impeller Curve Recommendation</h3><p id="siswRecText"></p><span class="rec-type" id="siswRecType"></span></div>
+      <div style="margin-top:14px"><label style="font-weight:700;color:#1a237e;margin-bottom:4px;display:block">Select Blower Casing:</label>
+        <table class="blower-table"><thead><tr><th>SL</th><th>Configuration</th><th>Casing (Inlet Ø)</th><th>Pole</th></tr></thead><tbody id="siswTableBody"></tbody></table>
+      </div>
+      <div class="summary-box" id="siswSummary" style="display:none"><h3>Selected SISW Blower</h3><div id="siswSummaryContent"></div></div>
+      <div class="cad-panel" id="siswCadPanel" style="display:none"><h3>📐 SISW CAD View</h3><div class="cad-drawing" id="siswCadDrawing"></div><div class="cad-dims" id="siswCadDims"></div></div>
+    </div>
+    <div class="card">
+      <h2><span class="icon">🧭</span> SISW Orientation</h2>
+      <div class="orientation-grid">
+        <div class="orientation-card" data-orientation="R1" onclick="selectSiswOrientation(this)"><div class="svg-wrap"><svg viewBox="0 0 120 120" width="100" height="100"><path d="M75 25 Q95 35 95 60 Q95 85 70 95 L55 85 L55 75 L70 80 Q85 75 85 60 Q85 45 70 35 Z" fill="none" stroke="#333" stroke-width="2"/><polygon points="60,45 75,55 75,75 60,85 45,75 45,55" fill="#e8eaf6" stroke="#333" stroke-width="1.5"/><circle cx="60" cy="65" r="6" fill="none" stroke="#333" stroke-width="1"/><text x="60" y="112" text-anchor="middle" font-size="8" fill="#666" font-weight="bold">R1</text><text x="60" y="118" text-anchor="middle" font-size="6" fill="#999">CW / Bot.Ang.Down</text></svg></div><div class="label">R1</div><div class="desc">CW / Bot.Ang.Down</div></div>
+        <div class="orientation-card" data-orientation="R2" onclick="selectSiswOrientation(this)"><div class="svg-wrap"><svg viewBox="0 0 120 120" width="100" height="100"><path d="M75 25 Q95 35 95 60 Q95 85 70 95 L25 95 L25 85 L70 85 Q85 80 85 60 Q85 40 70 30 Z" fill="none" stroke="#333" stroke-width="2"/><polygon points="60,45 75,55 75,75 60,85 45,75 45,55" fill="#e8eaf6" stroke="#333" stroke-width="1.5"/><circle cx="60" cy="65" r="6" fill="none" stroke="#333" stroke-width="1"/><text x="60" y="112" text-anchor="middle" font-size="8" fill="#666" font-weight="bold">R2</text><text x="60" y="118" text-anchor="middle" font-size="6" fill="#999">CW / Bot.Horizontal</text></svg></div><div class="label">R2</div><div class="desc">CW / Bot.Horizontal</div></div>
+        <div class="orientation-card" data-orientation="R3" onclick="selectSiswOrientation(this)"><div class="svg-wrap"><svg viewBox="0 0 120 120" width="100" height="100"><path d="M25 60 Q25 35 50 25 L95 25 L95 35 L50 35 Q35 40 35 60 Q35 80 50 85 L55 75 L55 65 L50 70 Q40 65 40 60 Q40 50 50 45 Z" fill="none" stroke="#333" stroke-width="2"/><polygon points="60,45 75,55 75,75 60,85 45,75 45,55" fill="#e8eaf6" stroke="#333" stroke-width="1.5"/><circle cx="60" cy="65" r="6" fill="none" stroke="#333" stroke-width="1"/><text x="60" y="112" text-anchor="middle" font-size="8" fill="#666" font-weight="bold">R3</text><text x="60" y="118" text-anchor="middle" font-size="6" fill="#999">CW / Top Horizontal</text></svg></div><div class="label">R3</div><div class="desc">CW / Top Horizontal</div></div>
+        <div class="orientation-card" data-orientation="R4" onclick="selectSiswOrientation(this)"><div class="svg-wrap"><svg viewBox="0 0 120 120" width="100" height="100"><path d="M25 60 Q25 35 50 25 Q75 25 95 45 Q95 70 80 85 L80 105 L70 105 L70 88 Q85 78 85 60 Q85 42 65 35 Q45 35 35 55 Q35 75 50 85 L55 75 L55 65 L50 70 Q42 62 42 55 Q42 42 55 38 Z" fill="none" stroke="#333" stroke-width="2"/><polygon points="60,45 75,55 75,75 60,85 45,75 45,55" fill="#e8eaf6" stroke="#333" stroke-width="1.5"/><circle cx="60" cy="65" r="6" fill="none" stroke="#333" stroke-width="1"/><text x="60" y="112" text-anchor="middle" font-size="8" fill="#666" font-weight="bold">R4</text><text x="60" y="118" text-anchor="middle" font-size="6" fill="#999">CW / Down Blast</text></svg></div><div class="label">R4</div><div class="desc">CW / Down Blast</div></div>
+        <div class="orientation-card" data-orientation="L1" onclick="selectSiswOrientation(this)"><div class="svg-wrap"><svg viewBox="0 0 120 120" width="100" height="100"><path d="M45 25 Q25 35 25 60 Q25 85 50 95 L65 85 L65 75 L50 80 Q35 75 35 60 Q35 45 50 35 Z" fill="none" stroke="#333" stroke-width="2"/><polygon points="60,45 75,55 75,75 60,85 45,75 45,55" fill="#e8eaf6" stroke="#333" stroke-width="1.5"/><circle cx="60" cy="65" r="6" fill="none" stroke="#333" stroke-width="1"/><text x="60" y="112" text-anchor="middle" font-size="8" fill="#666" font-weight="bold">L1</text><text x="60" y="118" text-anchor="middle" font-size="6" fill="#999">CCW / Bot.Ang.Down</text></svg></div><div class="label">L1</div><div class="desc">CCW / Bot.Ang.Down</div></div>
+        <div class="orientation-card" data-orientation="L2" onclick="selectSiswOrientation(this)"><div class="svg-wrap"><svg viewBox="0 0 120 120" width="100" height="100"><path d="M45 25 Q25 35 25 60 Q25 85 50 95 L95 95 L95 85 L50 85 Q35 80 35 60 Q35 40 50 30 Z" fill="none" stroke="#333" stroke-width="2"/><polygon points="60,45 75,55 75,75 60,85 45,75 45,55" fill="#e8eaf6" stroke="#333" stroke-width="1.5"/><circle cx="60" cy="65" r="6" fill="none" stroke="#333" stroke-width="1"/><text x="60" y="112" text-anchor="middle" font-size="8" fill="#666" font-weight="bold">L2</text><text x="60" y="118" text-anchor="middle" font-size="6" fill="#999">CCW / Bot.Horizontal</text></svg></div><div class="label">L2</div><div class="desc">CCW / Bot.Horizontal</div></div>
+        <div class="orientation-card" data-orientation="L3" onclick="selectSiswOrientation(this)"><div class="svg-wrap"><svg viewBox="0 0 120 120" width="100" height="100"><path d="M95 60 Q95 35 70 25 L25 25 L25 35 L70 35 Q85 40 85 60 Q85 80 70 85 L65 75 L65 65 L70 70 Q80 65 80 60 Q80 50 70 45 Z" fill="none" stroke="#333" stroke-width="2"/><polygon points="60,45 75,55 75,75 60,85 45,75 45,55" fill="#e8eaf6" stroke="#333" stroke-width="1.5"/><circle cx="60" cy="65" r="6" fill="none" stroke="#333" stroke-width="1"/><text x="60" y="112" text-anchor="middle" font-size="8" fill="#666" font-weight="bold">L3</text><text x="60" y="118" text-anchor="middle" font-size="6" fill="#999">CCW / Top Horizontal</text></svg></div><div class="label">L3</div><div class="desc">CCW / Top Horizontal</div></div>
+        <div class="orientation-card" data-orientation="L4" onclick="selectSiswOrientation(this)"><div class="svg-wrap"><svg viewBox="0 0 120 120" width="100" height="100"><path d="M95 60 Q95 35 70 25 Q45 25 25 45 Q25 70 40 85 L40 105 L50 105 L50 88 Q35 78 35 60 Q35 42 55 35 Q75 35 85 55 Q85 75 70 85 L65 75 L65 65 L70 70 Q78 62 78 55 Q78 42 65 38 Z" fill="none" stroke="#333" stroke-width="2"/><polygon points="60,45 75,55 75,75 60,85 45,75 45,55" fill="#e8eaf6" stroke="#333" stroke-width="1.5"/><circle cx="60" cy="65" r="6" fill="none" stroke="#333" stroke-width="1"/><text x="60" y="112" text-anchor="middle" font-size="8" fill="#666" font-weight="bold">L4</text><text x="60" y="118" text-anchor="middle" font-size="6" fill="#999">CCW / Down Blast</text></svg></div><div class="label">L4</div><div class="desc">CCW / Down Blast</div></div>
+        <div class="orientation-card" data-orientation="Arr-A" onclick="selectSiswOrientation(this)"><div class="svg-wrap"><svg viewBox="0 0 120 120" width="100" height="100"><rect x="25" y="35" width="40" height="45" rx="4" fill="none" stroke="#333" stroke-width="2"/><circle cx="45" cy="57" r="12" fill="none" stroke="#333" stroke-width="1.5"/><rect x="70" y="42" width="28" height="30" rx="2" fill="#e8eaf6" stroke="#333" stroke-width="1.5"/><text x="84" y="62" text-anchor="middle" font-size="9" fill="#1a237e" font-weight="bold">M</text><line x1="70" y1="57" x2="57" y2="57" stroke="#333" stroke-width="2"/><rect x="30" y="82" width="60" height="6" fill="#ddd" stroke="#333" stroke-width="1"/><text x="60" y="112" text-anchor="middle" font-size="8" fill="#666" font-weight="bold">Arr-A</text></svg></div><div class="label">Arr-A</div><div class="desc">Direct Drive A</div></div>
+        <div class="orientation-card" data-orientation="Arr-B" onclick="selectSiswOrientation(this)"><div class="svg-wrap"><svg viewBox="0 0 120 120" width="100" height="100"><rect x="25" y="35" width="40" height="45" rx="4" fill="none" stroke="#333" stroke-width="2"/><circle cx="45" cy="57" r="12" fill="none" stroke="#333" stroke-width="1.5"/><rect x="-5" y="42" width="28" height="30" rx="2" fill="#e8eaf6" stroke="#333" stroke-width="1.5"/><text x="9" y="62" text-anchor="middle" font-size="9" fill="#1a237e" font-weight="bold">M</text><line x1="25" y1="57" x2="12" y2="57" stroke="#333" stroke-width="2"/><rect x="5" y="82" width="60" height="6" fill="#ddd" stroke="#333" stroke-width="1"/><text x="60" y="112" text-anchor="middle" font-size="8" fill="#666" font-weight="bold">Arr-B</text></svg></div><div class="label">Arr-B</div><div class="desc">Direct Drive B</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== TAB 2: AXIAL ===================== -->
+  <div id="tab-axial" class="tab-panel">
+    <div class="card">
+      <h2><span class="icon">🌀</span> Axial Flow Fan</h2>
+      <div class="section-note">Three categories: Inbuilt Motors | Leafs Low CFM | Leafs High CFM</div>
+      <div class="form-grid">
+        <div class="form-group"><label>Required CFM</label><input type="number" id="axialCfm" placeholder="e.g. 9000" oninput="filterAxial()"></div>
+        <div class="form-group"><label>Fan Diameter (mm)</label><select id="axialDia" onchange="filterAxial()"><option value="">All</option><option value="250">250 mm (10")</option><option value="300">300 mm (12")</option><option value="380">380 mm (15")</option><option value="450">450 mm (18")</option><option value="600">600 mm (24")</option><option value="700">700 mm (28")</option><option value="800">800 mm (31")</option><option value="900">900 mm (35")</option><option value="990">990 mm (39")</option><option value="1190">1190 mm (47")</option></select></div>
+        <div class="form-group"><label>Motor RPM</label><select id="axialRpm" onchange="filterAxial()"><option value="">All</option><option value="1400">1400 RPM</option><option value="1440">1440 RPM</option><option value="2800">2800 RPM</option></select></div>
+        <div class="form-group"><label>HP</label><select id="axialHp" onchange="filterAxial()"><option value="">All</option><option value="0.5">0.5 HP</option><option value="1">1 HP</option><option value="2">2 HP</option><option value="3">3 HP</option><option value="5">5 HP</option><option value="7.5">7.5 HP</option><option value="10">10 HP</option><option value="15">15 HP</option><option value="20">20 HP</option><option value="25">25 HP</option></select></div>
+        <div class="form-group"><label>Phase</label><select id="axialPhase" onchange="filterAxial()"><option value="">All</option><option value="Single">Single Phase</option><option value="3 Phase">3 Phase</option></select></div>
+      </div>
+      <h3>🔹 Inbuilt Motors</h3><table class="blower-table"><thead><tr><th>SL</th><th>Dia</th><th>RPM</th><th>HP</th><th>Phase</th><th>CFM</th><th>Vel</th><th>SP</th><th>Price</th></tr></thead><tbody id="axialTable1"></tbody></table>
+      <h3>🔹 Low CFM Leafs</h3><table class="blower-table"><thead><tr><th>SL</th><th>Dia</th><th>RPM</th><th>HP</th><th>Phase</th><th>CFM</th><th>Vel</th><th>SP</th><th>Price</th></tr></thead><tbody id="axialTable2"></tbody></table>
+      <h3>🔹 High CFM Leafs</h3><table class="blower-table"><thead><tr><th>SL</th><th>Dia</th><th>RPM</th><th>HP</th><th>Phase</th><th>CFM</th><th>Vel</th><th>SP</th><th>Price</th></tr></thead><tbody id="axialTable3"></tbody></table>
+      <div class="summary-box" id="axialSummary" style="display:none"><h3>Selected Axial Fan</h3><div id="axialSummaryContent"></div></div>
+      <div class="cad-panel" id="axialCadPanel" style="display:none"><h3>📐 Axial Fan CAD View</h3><div class="cad-drawing" id="axialCadDrawing"></div><div class="cad-dims" id="axialCadDims"></div></div>
+    </div>
+  </div>
+
+  <!-- ===================== TAB 3: LLD ===================== -->
+  <div id="tab-lld" class="tab-panel">
+    <div class="card">
+      <h2><span class="icon">🔧</span> LLD Limit Load Blower</h2>
+      <div class="section-note">Model number = impeller outer diameter in decimetres (e.g. LLD 5.5 = 550mm). Backward-curved, non-overloading HP.</div>
+      <div class="form-grid">
+        <div class="form-group"><label>Required CFM</label><input type="number" id="lldCfm" placeholder="e.g. 8000" oninput="filterLld()"></div>
+        <div class="form-group"><label>LLD Model</label><select id="lldModel" onchange="filterLld()"><option value="">All</option><option value="3.0">LLD 3.0 (300mm)</option><option value="4.0">LLD 4.0 (400mm)</option><option value="4.5">LLD 4.5 (450mm)</option><option value="5.0">LLD 5.0 (500mm)</option><option value="5.5">LLD 5.5 (550mm)</option><option value="6.0">LLD 6.0 (600mm)</option><option value="6.5">LLD 6.5 (650mm)</option><option value="7.3">LLD 7.3 (730mm)</option><option value="8.2">LLD 8.2 (820mm)</option><option value="9.1">LLD 9.1 (910mm)</option><option value="10.0">LLD 10.0 (1000mm)</option></select></div>
+        <div class="form-group"><label>Drive</label><select id="lldDrive"><option value="Belt Drive (Arr 3/7)">Belt Drive (Arr 3/7)</option><option value="Direct Drive (Arr 6)">Direct Drive (Arr 6)</option></select></div>
+        <div class="form-group"><label>Static Pressure</label><select id="lldSp"><option value="50-150">50 - 150 mmWC</option><option value="100-200">100 - 200 mmWC</option><option value="150-250">150 - 250 mmWC</option></select></div>
+      </div>
+      <div style="margin-top:14px"><label style="font-weight:700;color:#1a237e;margin-bottom:4px;display:block">Select LLD Model:</label>
+        <table class="blower-table"><thead><tr><th>Model</th><th>Impeller Ø</th><th>Motor Power</th><th>Airflow Range</th><th>Efficiency</th></tr></thead><tbody id="lldTableBody"></tbody></table>
+      </div>
+      <div class="summary-box" id="lldSummary" style="display:none"><h3>Selected LLD Blower</h3><div id="lldSummaryContent"></div></div>
+      <div class="cad-panel" id="lldCadPanel" style="display:none"><h3>📐 LLD Double Inlet CAD View</h3><div class="cad-drawing" id="lldCadDrawing"></div><div class="cad-dims" id="lldCadDims"></div></div>
+    </div>
+  </div>
+
+  <!-- ===================== TAB 4: AHU ===================== -->
+  <div id="tab-ahu" class="tab-panel">
+    <div class="card">
+      <h2><span class="icon">🏭</span> MEGAVENTS AHU Selection</h2>
+      <div class="section-note">Nicotra RDH Fan · Pulley · Belt · AHU Configurator — CF Soft V-belt method | MEGAVERKS TECHNOLOGIES</div>
+      <div class="form-grid">
+        <div class="form-group"><label>Air Volume (CFM)</label><input type="number" id="ahuCfm" value="9500" min="500" max="62000" step="100" onchange="ahuCalculate()"></div>
+        <div class="form-group"><label>Static Pressure (mmwg)</label><input type="number" id="ahuSp" value="80" min="10" max="300" step="5" onchange="ahuCalculate()"></div>
+        <div class="form-group"><label>Motor Capacity (HP)</label><select id="ahuHp" onchange="ahuCalculate()"><option value="3">3 HP</option><option value="5">5 HP</option><option value="7.5" selected>7.5 HP</option><option value="10">10 HP</option><option value="15">15 HP</option><option value="20">20 HP</option><option value="25">25 HP</option><option value="30">30 HP</option><option value="40">40 HP</option><option value="50">50 HP</option><option value="60">60 HP</option><option value="75">75 HP</option></select></div>
+        <div class="form-group"><label>Motor Speed (RPM)</label><select id="ahuMotorRpm" onchange="ahuCalculate()"><option value="1440" selected>1440 (4P / 50Hz)</option><option value="960">960 (6P / 50Hz)</option><option value="720">720 (8P / 50Hz)</option></select></div>
+        <div class="form-group"><label>Motor Efficiency (%)</label><input type="number" id="ahuEff" value="85" min="70" max="96" step="1" onchange="ahuCalculate()"></div>
+        <div class="form-group"><label>Power Correction (%)</label><input type="number" id="ahuPwrCorr" value="15" min="0" max="30" step="5" onchange="ahuCalculate()"></div>
+        <div class="form-group"><label>Duty Class (CF Soft)</label><select id="ahuDuty" onchange="ahuCalculate()"><option value="auto" selected>Auto (by fan kW)</option><option value="1">Class 1 — Fan ≤ 7.5 kW</option><option value="2">Class 2 — Fan > 7.5 kW</option></select></div>
+        <div class="form-group"><label>Start Type</label><select id="ahuStart" onchange="ahuCalculate()"><option value="soft" selected>Soft (Star-Delta)</option><option value="heavy">Heavy (DOL)</option></select></div>
+        <div class="form-group"><label>Hours / Day</label><select id="ahuHours" onchange="ahuCalculate()"><option value="0" selected>< 10 h</option><option value="1">10 – 16 h</option><option value="2">> 16 h</option></select></div>
+        <div class="form-group"><label>Centre Distance mm (0 = Auto)</label><input type="number" id="ahuCentre" value="0" min="0" max="3000" step="10" onchange="ahuCalculate()"></div>
+        <div class="form-group"><label>Unit Type</label><select id="ahuUnitType" onchange="ahuApplyPreset()"><option value="floor">Floor Mounted AHU (500–60000 CFM)</option><option value="vertical">Vertical AHU (500–60000 CFM)</option><option value="ceiling">Ceiling Suspended AHU (500–12000 CFM)</option><option value="washer">Air Washer — Evaporative (500–12000 CFM)</option><option value="fau" selected>Fresh Air Unit (500–60000 CFM)</option><option value="eau">Exhaust Air Unit (500–40000 CFM)</option><option value="ksw">Kitchen Exhaust — Wet Scrubber</option><option value="ksd">Kitchen Exhaust — Dry Scrubber (ESP)</option></select></div>
+        <div class="form-group"><label>Fan Application</label><select id="ahuApp" onchange="ahuApplyAppPreset()"><option value="fresh" selected>Fresh Air</option><option value="exhaust">Exhaust Air</option></select></div>
+      </div>
+      <div style="margin-top:10px;display:flex;gap:8px" class="no-print">
+        <button class="btn btn-primary" onclick="ahuCalculate()">Calculate Selection</button>
+        <button class="btn btn-secondary" onclick="ahuReset()">Reset</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><span class="icon">🌀</span> Fan Size Selection (Nicotra RDH R Series)</h2>
+      <div id="ahuFanCards"></div>
+      <div class="section-note"><strong>Auto-recommended:</strong> Based on CFM and static pressure. Click a card to override.</div>
+    </div>
+
+    <div class="card">
+      <h2><span class="icon">📐</span> Selection Results</h2>
+      <div class="form-grid">
+        <div class="form-group"><label>Selected Fan</label><input type="text" id="resAhuFanModel" readonly></div>
+        <div class="form-group"><label>Fan Speed</label><input type="text" id="resAhuFanSpeed" readonly></div>
+        <div class="form-group"><label>Fan Power</label><input type="text" id="resAhuFanPower" readonly></div>
+        <div class="form-group"><label>Total Efficiency</label><input type="text" id="resAhuFanEff" readonly></div>
+        <div class="form-group"><label>Static Efficiency</label><input type="text" id="resAhuFanStatEff" readonly></div>
+        <div class="form-group"><label>Air Velocity</label><input type="text" id="resAhuFanVel" readonly></div>
+        <div class="form-group"><label>Sound Power</label><input type="text" id="resAhuFanLw" readonly></div>
+        <div class="form-group"><label>Max Fan Speed</label><input type="text" id="resAhuFanMax" readonly></div>
+        <div class="form-group"><label>Operating Margin</label><input type="text" id="resAhuFanMargin" readonly></div>
+        <div class="form-group"><label>Motor Pulley</label><input type="text" id="resAhuMp" readonly></div>
+        <div class="form-group"><label>Fan Pulley</label><input type="text" id="resAhuFp" readonly></div>
+        <div class="form-group"><label>Speed Ratio</label><input type="text" id="resAhuRatio" readonly></div>
+        <div class="form-group"><label>Centre Distance</label><input type="text" id="resAhuCentre" readonly></div>
+        <div class="form-group"><label>Belt Section</label><input type="text" id="resAhuBeltType" readonly></div>
+        <div class="form-group"><label>Number of Belts</label><input type="text" id="resAhuBeltQty" readonly></div>
+        <div class="form-group"><label>Fenner Poly-F Plus Code</label><input type="text" id="resAhuBeltFenner" readonly></div>
+        <div class="form-group"><label>Belt Pitch Length</label><input type="text" id="resAhuBeltLen" readonly></div>
+        <div class="form-group"><label>Service Factor</label><input type="text" id="resAhuBeltSf" readonly></div>
+        <div class="form-group"><label>Design Power</label><input type="text" id="resAhuBeltPower" readonly></div>
+        <div class="form-group"><label>Motor Rating</label><input type="text" id="resAhuMotorHp" readonly></div>
+        <div class="form-group"><label>Motor Speed</label><input type="text" id="resAhuMotorRpm" readonly></div>
+        <div class="form-group"><label>Required Power</label><input type="text" id="resAhuMotorReq" readonly></div>
+        <div class="form-group"><label>Power Margin</label><input type="text" id="resAhuMotorMargin" readonly></div>
+        <div class="form-group"><label>Frame Size</label><input type="text" id="resAhuMotorFrame" readonly></div>
+        <div class="form-group"><label>Shaft Diameter</label><input type="text" id="resAhuMotorShaft" readonly></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><span class="icon">📏</span> AHU Section Selection</h2>
+      <div class="form-grid">
+        <div class="form-group"><label>Face Velocity (m/s)</label><select id="ahuFaceVel" onchange="ahuCalcSize()"><option value="1.5">1.5 (Low noise)</option><option value="2.0" selected>2.0 (Standard)</option><option value="2.5">2.5 (Compact)</option><option value="3.0">3.0 (Max)</option></select></div>
+        <div class="form-group"><label>Site Max Width (mm)</label><input type="number" id="ahuMaxW" value="2000" min="400" max="4000" step="50" onchange="ahuCalcSize()"></div>
+        <div class="form-group"><label>Site Max Height (mm)</label><input type="number" id="ahuMaxH" value="2000" min="400" max="4000" step="50" onchange="ahuCalcSize()"></div>
+        <div class="form-group"><label>Site Max Length (mm)</label><input type="number" id="ahuMaxL" value="4000" min="800" max="8000" step="100" onchange="ahuCalcSize()"></div>
+        <div class="form-group"><label>Panel Thickness (mm)</label><select id="ahuPanel" onchange="ahuCalcSize()"><option value="25" selected>25 ± 2 mm PUF (Standard, CFC-free)</option><option value="45">45 ± 2 mm PUF (Optional)</option></select></div>
+        <div class="form-group"><label>Coil Type</label><select id="ahuCoilType" onchange="ahuCalcSize()"><option value="CHW" selected>Chilled Water (CHW)</option><option value="DX">Direct Expansion (DX)</option></select></div>
+        <div class="form-group"><label>Coil Rows</label><select id="ahuCoilRows" onchange="ahuCalcSize()"><option value="2">2 Row</option><option value="4" selected>4 Row</option><option value="6">6 Row</option><option value="8">8 Row</option></select></div>
+      </div>
+      <div style="margin-top:10px">
+        <label style="font-weight:700;color:#1a237e;margin-bottom:4px;display:block">Sections Required:</label>
+        <div class="form-grid" id="ahuSectionPicker">
+          <div class="form-group"><label><input type="checkbox" id="sec-louver" checked onchange="ahuCalcSize()"> Intake Louver / Mixing Box (300mm)</label></div>
+          <div class="form-group"><label><input type="checkbox" id="sec-prefilter" checked onchange="ahuCalcSize()"> Pre Filter (100mm)</label></div>
+          <div class="form-group"><label><input type="checkbox" id="sec-finefilter" onchange="ahuCalcSize()"> Fine Filter (300mm)</label></div>
+          <div class="form-group"><label><input type="checkbox" id="sec-waterwash" checked onchange="ahuCalcSize()"> Water Wash / Spray (600mm)</label></div>
+          <div class="form-group"><label><input type="checkbox" id="sec-coil" onchange="ahuCalcSize()"> Cooling Coil (400mm)</label></div>
+          <div class="form-group"><label><input type="checkbox" id="sec-heater" onchange="ahuCalcSize()"> Heater Bank (300mm)</label></div>
+          <div class="form-group"><label><input type="checkbox" id="sec-uvgi" onchange="ahuCalcSize()"> UVGI Section (300mm)</label></div>
+          <div class="form-group"><label><input type="checkbox" id="sec-elim" checked onchange="ahuCalcSize()"> Moisture Eliminator (150mm)</label></div>
+          <div class="form-group"><label><input type="checkbox" id="sec-fan" checked disabled onchange="ahuCalcSize()"> Fan Section (auto)</label></div>
+          <div class="form-group"><label><input type="checkbox" id="sec-access" checked onchange="ahuCalcSize()"> Access / Diffuser (250mm)</label></div>
+        </div>
+      </div>
+      <div style="margin-top:14px">
+        <div class="result-box">
+          <div class="result-row"><span class="result-label">Required Face Area</span><span class="result-value" id="resAhuFaceArea">—</span></div>
+          <div class="result-row"><span class="result-label">Selected W x H</span><span class="result-value" id="resAhuWh">—</span></div>
+          <div class="result-row"><span class="result-label">Actual Face Velocity</span><span class="result-value" id="resAhuActualVel">—</span></div>
+          <div class="result-row"><span class="result-label">AHU Length</span><span class="result-value" id="resAhuLen">—</span></div>
+          <div class="result-row"><span class="result-label">Volume</span><span class="result-value" id="resAhuVol">—</span></div>
+          <div class="result-row"><span class="result-label">Weight (Approx)</span><span class="result-value" id="resAhuWeight">—</span></div>
+          <div class="result-row"><span class="result-label">Site Constraint</span><span class="result-value success" id="resAhuSiteCheck">—</span></div>
+        </div>
+      </div>
+      <div style="margin-top:10px;display:flex;gap:8px" class="no-print">
+        <button class="btn btn-success" onclick="saveAhuLocal()">💾 Save AHU</button>
+        <button class="btn btn-primary" onclick="saveAhuToSheets()">☁️ Save to Sheets</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== TAB 5: TESTING ===================== -->
+  <div id="tab-testing" class="tab-panel">
+    <div class="card">
+      <h2><span class="icon">🧪</span> Testing Quality Report</h2>
+      <div class="section-note">Fill testing data after installation. Select customer to auto-load project info. Save to Google Sheets for backup.</div>
+      <div class="testing-grid">
+        <div class="form-group">
+          <label>Customer Name <span style="color:#c62828">*</span></label>
+          <select id="testCustomer" onchange="loadTestingForCustomer()"><option value="">-- Select Customer --</option></select>
+        </div>
+        <div class="form-group"><label>Engineer Name (Testing)</label><input type="text" id="testEngineer" placeholder="Engineer conducting test"></div>
+        <div class="form-group"><label>Site Location</label><input type="text" id="testSiteLocation" placeholder="Site location"></div>
+        <div class="form-group"><label>Site Contact</label><input type="text" id="testSiteContact" placeholder="Site contact person"></div>
+        <div class="form-group"><label>Direction of Rotation</label><select id="testRotation"><option value="">-- Select --</option><option value="Clockwise (CW)">Clockwise (CW)</option><option value="Counter-Clockwise (CCW)">Counter-Clockwise (CCW)</option></select></div>
+        <div class="form-group"><label>Drive Type</label><select id="testDriveType" onchange="toggleBeltFields()"><option value="">-- Select --</option><option value="Direct Driven">Direct Driven</option><option value="Belt Driven">Belt Driven</option></select></div>
+        <div class="form-group" id="fgPulley"><label>Pulley Used</label><input type="text" id="testPulley" placeholder="e.g. 4" SPB 160mm"></div>
+        <div class="form-group" id="fgVBelts"><label>V Belts Used</label><input type="text" id="testVBelts" placeholder="e.g. 3 x B-68"></div>
+        <div class="form-group"><label>Static Pressure (mm WG)</label><input type="number" id="testStaticPressure" placeholder="e.g. 75"></div>
+        <div class="form-group"><label>CFM Measured</label><input type="number" id="testCfm" placeholder="e.g. 3200"></div>
+        <div class="form-group"><label>Motor HP</label><input type="text" id="testMotorHP" placeholder="e.g. 7.5 HP"></div>
+        <div class="form-group"><label>Motor RPM</label><input type="number" id="testMotorRPM" placeholder="e.g. 1440"></div>
+        <div class="form-group"><label>Phase</label><select id="testPhase"><option value="">-- Select --</option><option value="Single Phase">Single Phase</option><option value="3 Phase">3 Phase</option></select></div>
+        <div class="form-group"><label>Vibration</label><select id="testVibration"><option value="">-- Select --</option><option value="Yes">Yes</option><option value="No">No</option></select></div>
+        <div class="form-group"><label>Noise (dB)</label><input type="number" id="testNoise" placeholder="e.g. 72"></div>
+        <div class="form-group"><label>Amps</label><input type="number" step="0.1" id="testAmps" placeholder="e.g. 12.5"></div>
+        <div class="form-group"><label>Voltage</label><input type="number" id="testVoltage" placeholder="e.g. 415"></div>
+        <div class="form-group" style="grid-column:1/-1">
+          <label>Velocities at 4 Points (m/s) — Average auto-calculated</label>
+          <div class="velocity-row">
+            <div class="form-group"><label>Point 1</label><input type="number" step="0.1" id="testVel1" placeholder="0.0" oninput="calcVelAvg()"></div>
+            <div class="form-group"><label>Point 2</label><input type="number" step="0.1" id="testVel2" placeholder="0.0" oninput="calcVelAvg()"></div>
+            <div class="form-group"><label>Point 3</label><input type="number" step="0.1" id="testVel3" placeholder="0.0" oninput="calcVelAvg()"></div>
+            <div class="form-group"><label>Point 4</label><input type="number" step="0.1" id="testVel4" placeholder="0.0" oninput="calcVelAvg()"></div>
+            <div class="form-group average"><label>Average</label><input type="number" step="0.1" id="testVelAvg" placeholder="0.0" readonly></div>
+          </div>
+        </div>
+        <div class="form-group" style="grid-column:1/-1"><label>Remarks</label><textarea id="testRemarks" rows="3" placeholder="Any observations, issues, or notes..."></textarea></div>
+      </div>
+      <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap" class="no-print">
+        <button class="btn btn-success" onclick="saveTestingLocal()">💾 Save Testing (Local)</button>
+        <button class="btn btn-primary" onclick="saveTestingToSheets()">☁️ Save to Sheets</button>
+        <button class="btn btn-info" onclick="loadTestingForCustomer()">📥 Load Testing Records</button>
+        <button class="btn btn-secondary" onclick="clearTestingForm()">🔄 Clear Form</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== TAB 6: WARRANTY ===================== -->
+  <div id="tab-warranty" class="tab-panel">
+    <div class="card">
+      <h2><span class="icon">🛡️</span> Warranty Registration</h2>
+      <div class="section-note">Register warranty for each product sold. Auto-calculates expiry date. Tracks status across all devices via Google Sheets.</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Customer Name <span style="color:#c62828">*</span></label>
+          <select id="warrantyCustomer" onchange="onWarrantyCustomerChange()"><option value="">-- Select Customer --</option></select>
+        </div>
+        <div class="form-group"><label>Product Type</label><select id="warrantyProductType"><option value="SISW Blower">SISW Blower</option><option value="Axial Fan">Axial Fan</option><option value="LLD Blower">LLD Blower</option><option value="AHU">AHU</option><option value="Spare Parts">Spare Parts</option></select></div>
+        <div class="form-group"><label>Product Model / Description</label><input type="text" id="warrantyProductModel" placeholder="e.g. RDH 500 R / 7.5 HP"></div>
+        <div class="form-group"><label>Serial Number</label><input type="text" id="warrantySerial" placeholder="e.g. MVT-2026-001234"></div>
+        <div class="form-group"><label>Date of Supply</label><input type="date" id="warrantySupplyDate" onchange="calcWarrantyExpiry()"></div>
+        <div class="form-group"><label>Warranty Period</label><select id="warrantyPeriod" onchange="calcWarrantyExpiry()"><option value="3">3 Months</option><option value="6">6 Months</option><option value="12" selected>12 Months</option><option value="18">18 Months</option><option value="24">24 Months</option><option value="36">36 Months</option><option value="60">60 Months</option></select></div>
+        <div class="form-group"><label>Warranty Expiry Date</label><input type="date" id="warrantyExpiryDate" readonly style="background:#f5f5f5"></div>
+        <div class="form-group"><label>Status</label><input type="text" id="warrantyStatus" readonly style="background:#f5f5f5;font-weight:700"></div>
+        <div class="form-group"><label>Engineer Name</label><input type="text" id="warrantyEngineer" placeholder="Engineer who supplied"></div>
+        <div class="form-group"><label>Site Location</label><input type="text" id="warrantySiteLocation" placeholder="Installation site"></div>
+        <div class="form-group" style="grid-column:1/-1"><label>Warranty Terms / Remarks</label><textarea id="warrantyRemarks" rows="3" placeholder="Warranty coverage details, exclusions, service terms..."></textarea></div>
+      </div>
+      <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap" class="no-print">
+        <button class="btn btn-success" onclick="saveWarrantyLocal()">💾 Save Warranty (Local)</button>
+        <button class="btn btn-primary" onclick="saveWarrantyToSheets()">☁️ Save to Sheets</button>
+        <button class="btn btn-info" onclick="loadWarrantyForCustomer()">📥 Load Warranty Records</button>
+        <button class="btn btn-secondary" onclick="clearWarrantyForm()">🔄 Clear Form</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><span class="icon">📋</span> Warranty Dashboard</h2>
+      <div class="form-grid" style="margin-bottom:12px">
+        <div class="form-group"><label>Filter Status</label><select id="warrantyFilterStatus" onchange="renderWarrantyDashboard()"><option value="">All</option><option value="Active">Active</option><option value="Expiring Soon">Expiring Soon (&lt; 30 days)</option><option value="Expired">Expired</option></select></div>
+        <div class="form-group"><label>Filter Customer</label><input type="text" id="warrantyFilterCustomer" placeholder="Customer name" oninput="renderWarrantyDashboard()"></div>
+        <div class="form-group"><label>Filter Product</label><select id="warrantyFilterProduct" onchange="renderWarrantyDashboard()"><option value="">All Products</option><option value="SISW Blower">SISW Blower</option><option value="Axial Fan">Axial Fan</option><option value="LLD Blower">LLD Blower</option><option value="AHU">AHU</option><option value="Spare Parts">Spare Parts</option></select></div>
+      </div>
+      <div id="warrantyDashboard"></div>
+      <div style="margin-top:12px;display:flex;gap:8px" class="no-print">
+        <button class="btn btn-info" onclick="loadAllWarrantyFromSheets()">📥 Load from Sheets</button>
+        <button class="btn btn-secondary" onclick="exportWarrantyCSV()">📊 Export CSV</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== TAB 7: LEADERBOARD ===================== -->
+  <div id="tab-leaderboard" class="tab-panel">
+    <div class="card">
+      <h2><span class="icon">📊</span> Testing Quality Leaderboard</h2>
+      <div class="section-note">All testing records from local storage and Google Sheets. Use filters to narrow down.</div>
+      <div class="form-grid" style="margin-bottom:12px">
+        <div class="form-group"><label>Filter by Customer</label><input type="text" id="lbFilterCustomer" placeholder="Customer name" oninput="renderLeaderboard()"></div>
+        <div class="form-group"><label>Filter by Engineer</label><input type="text" id="lbFilterEngineer" placeholder="Engineer name" oninput="renderLeaderboard()"></div>
+        <div class="form-group"><label>From Date</label><input type="date" id="lbFilterFrom" onchange="renderLeaderboard()"></div>
+        <div class="form-group"><label>To Date</label><input type="date" id="lbFilterTo" onchange="renderLeaderboard()"></div>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="leaderboard-table" id="leaderboardTable">
+          <thead><tr><th>#</th><th>Date</th><th>Customer</th><th>Engineer</th><th>Site</th><th>Rotation</th><th>Drive</th><th>SP</th><th>CFM</th><th>VelAvg</th><th>HP</th><th>RPM</th><th>Phase</th><th>Vib</th><th>Noise</th><th>A/V</th><th>Remarks</th></tr></thead>
+          <tbody id="leaderboardBody"><tr><td colspan="17" style="text-align:center;color:#999;padding:20px">No records yet. Save testing data to populate.</td></tr></tbody>
+        </table>
+      </div>
+      <div style="margin-top:12px;display:flex;gap:8px" class="no-print">
+        <button class="btn btn-info" onclick="loadAllTestingFromSheets()">📥 Load from Sheets</button>
+        <button class="btn btn-secondary" onclick="exportLeaderboardCSV()">📊 Export CSV</button>
+        <button class="btn btn-danger" onclick="clearLocalTesting()">🗑️ Clear Local Only</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACTIONS -->
+  <div class="action-bar no-print">
+    <button class="btn btn-primary" onclick="generatePreview()">👁️ Preview All</button>
+    <button class="btn btn-success" onclick="printDocument()">🖨️ Print</button>
+    <button class="btn btn-info" onclick="shareWhatsApp()">📱 WhatsApp</button>
+    <button class="btn btn-warning" onclick="shareEmail()">✉️ Email</button>
+    <button class="btn btn-secondary" onclick="exportToExcel()">📊 Export XLS</button>
+    <button class="btn btn-secondary" onclick="resetForm()">🔄 Reset All</button>
+  </div>
+</div>
+
+<!-- Preview Modal -->
+<div class="modal-overlay" id="previewModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">&times;</button>
+    <h2>Complete Selection Summary</h2>
+    <div class="preview-content" id="previewContent"></div>
+    <div style="margin-top:12px;text-align:right">
+      <button class="btn btn-primary" onclick="closeModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// DATA
+// ============================================================
+const siswData=[
+  {sl:1,hp:"2",rpm:1440,pole:4,casing:"35 Casing (350 mm)",config:"2 HP WITH 1440 RPM",cfmRange:"800 - 1500",curve:"Forward"},
+  {sl:2,hp:"3",rpm:1440,pole:4,casing:"40 Casing (400 mm)",config:"3 HP WITH 1440 RPM",cfmRange:"1200 - 2200",curve:"Forward"},
+  {sl:3,hp:"3",rpm:960,pole:6,casing:"45 Casing (450 mm)",config:"3 HP WITH 960 RPM",cfmRange:"1000 - 1800",curve:"Forward"},
+  {sl:4,hp:"5",rpm:1440,pole:4,casing:"45 Casing (450 mm)",config:"5 HP WITH 1440 RPM",cfmRange:"1800 - 3500",curve:"Backward"},
+  {sl:5,hp:"5",rpm:960,pole:6,casing:"50 Casing (500 mm)",config:"5 HP WITH 960 RPM",cfmRange:"1500 - 2800",curve:"Backward"},
+  {sl:6,hp:"7.5",rpm:1440,pole:4,casing:"50 Casing (500 mm)",config:"7.5 HP WITH 1440 RPM",cfmRange:"2500 - 4500",curve:"Backward"},
+  {sl:7,hp:"7.5",rpm:960,pole:6,casing:"55 Casing (550 mm)",config:"7.5 HP WITH 960 RPM",cfmRange:"2000 - 3800",curve:"Backward"},
+  {sl:8,hp:"10",rpm:1440,pole:4,casing:"55 Casing (550 mm)",config:"10 HP WITH 1440 RPM",cfmRange:"3000 - 5000",curve:"Backward"},
+  {sl:9,hp:"10",rpm:960,pole:6,casing:"70 Casing (700 mm)",config:"10 HP / 12.5 HP WITH 960 RPM",cfmRange:"3500 - 6000",curve:"Backward"},
+  {sl:10,hp:"15",rpm:960,pole:6,casing:"75 Casing (750 mm)",config:"15 HP WITH 960 RPM",cfmRange:"4500 - 7500",curve:"Backward"}
+];
+// Megaverks SISW spec: inlet Ø = casing x 10 mm; blower outlet W = 75 % and D = 100 % of casing Ø;
+// duct outlet = standard square duct (50→500, 55→550, 60→700, others casing Ø square) — editable per selection
+const SISW_STD_DUCT={50:500,55:550,60:700};
+function siswSpec(b){const m=String(b.casing).match(/(\d+)\s*Casing/);const c=m?parseInt(m[1]):50;const d=c*10;const duct=SISW_STD_DUCT[c]||d;return{casingNo:c,inletDia:d,outletW:Math.round(d*0.75),outletD:d,ductW:duct,ductH:duct};}
+function siswDuctChange(){
+  if(!selectedSisw)return;
+  const w=parseInt(document.getElementById('siswDuctW').value,10),h=parseInt(document.getElementById('siswDuctH').value,10);
+  if(w>0)selectedSisw.ductW=w;if(h>0)selectedSisw.ductH=h;
+  const el=document.getElementById('siswDuctDim');if(el)el.textContent=selectedSisw.ductW+' × '+selectedSisw.ductH+' mm';
+}
+function siswDuctStd(){
+  if(!selectedSisw)return;const std=siswSpec(selectedSisw);
+  document.getElementById('siswDuctW').value=std.ductW;document.getElementById('siswDuctH').value=std.ductH;siswDuctChange();
+}
+const axialData1=[
+  {sl:1,diaIn:12,diaMm:300,rpm:2800,hp:"",phase:"Single",cfm:2000,vel:13,sp:"",price:6000},
+  {sl:2,diaIn:10,diaMm:250,rpm:2800,hp:"",phase:"Single",cfm:1500,vel:14,sp:"",price:5800},
+  {sl:3,diaIn:15,diaMm:380,rpm:1400,hp:"",phase:"Single",cfm:3000,vel:12,sp:"",price:6800},
+  {sl:4,diaIn:18,diaMm:450,rpm:1400,hp:"",phase:"Single",cfm:4000,vel:12,sp:"",price:7800},
+  {sl:5,diaIn:12,diaMm:300,rpm:1400,hp:"",phase:"Single",cfm:1400,vel:9,sp:"",price:5800},
+  {sl:6,diaIn:15,diaMm:380,rpm:1440,hp:"0.5",phase:"Single",cfm:3124,vel:13,sp:22,price:""},
+  {sl:7,diaIn:15,diaMm:380,rpm:2800,hp:"1",phase:"Single",cfm:5767,vel:24,sp:18,price:""}
+];
+const axialData2=[
+  {sl:1,diaIn:24,diaMm:600,rpm:1440,hp:"1",phase:"3 Phase",cfm:9000,vel:15,sp:25,price:3650},
+  {sl:2,diaIn:18,diaMm:450,rpm:1440,hp:"0.5",phase:"3 Phase",cfm:5500,vel:15,sp:13,price:3650},
+  {sl:3,diaIn:28,diaMm:700,rpm:1440,hp:"2",phase:"3 Phase",cfm:14678,vel:18,sp:25,price:3650},
+  {sl:4,diaIn:28,diaMm:700,rpm:1440,hp:"3",phase:"3 Phase",cfm:16309,vel:20,sp:30,price:3650},
+  {sl:5,diaIn:31,diaMm:800,rpm:1440,hp:"3 / 5",phase:"3 Phase",cfm:21301,vel:20,sp:40,price:3650},
+  {sl:6,diaIn:31,diaMm:800,rpm:1440,hp:"5",phase:"3 Phase",cfm:24497,vel:23,sp:50,price:3650},
+  {sl:7,diaIn:35,diaMm:900,rpm:1440,hp:"5",phase:"3 Phase",cfm:24264,vel:18,sp:30,price:""},
+  {sl:8,diaIn:35,diaMm:900,rpm:1440,hp:"7.5",phase:"3 Phase",cfm:32351,vel:24,sp:35,price:""},
+  {sl:9,diaIn:35,diaMm:900,rpm:1440,hp:"10",phase:"3 Phase",cfm:33699,vel:25,sp:"",price:""},
+  {sl:10,diaIn:18,diaMm:450,rpm:1440,hp:"2",phase:"3 Phase",cfm:8088,vel:24,sp:"",price:""}
+];
+const axialData3=[
+  {sl:1,diaIn:39,diaMm:990,rpm:2800,hp:"10",phase:"3 Phase",cfm:32621,vel:20,sp:"35-40",price:13500},
+  {sl:2,diaIn:47,diaMm:1190,rpm:2800,hp:"15",phase:"3 Phase",cfm:47132,vel:20,sp:"45-50",price:20000},
+  {sl:3,diaIn:47,diaMm:1190,rpm:2800,hp:"20",phase:"3 Phase",cfm:51846,vel:22,sp:45,price:20000},
+  {sl:4,diaIn:47,diaMm:1190,rpm:2800,hp:"25",phase:"3 Phase",cfm:54202,vel:23,sp:45,price:20000}
+];
+const lldData=[
+  {model:"LLD 3.0",dia:300,power:"2 - 5 HP",cfmMin:1500,cfmMax:3000,eff:"80-85%"},
+  {model:"LLD 4.0",dia:400,power:"5 - 7.5 HP",cfmMin:3000,cfmMax:4500,eff:"80-85%"},
+  {model:"LLD 4.5",dia:450,power:"7.5 - 10 HP",cfmMin:4500,cfmMax:5500,eff:"80-85%"},
+  {model:"LLD 5.0",dia:500,power:"10 - 15 HP",cfmMin:5000,cfmMax:6500,eff:"80-85%"},
+  {model:"LLD 5.5",dia:550,power:"15 - 20 HP",cfmMin:6000,cfmMax:8000,eff:"80-85%"},
+  {model:"LLD 6.0",dia:600,power:"20 - 25 HP",cfmMin:8000,cfmMax:10000,eff:"80-85%"},
+  {model:"LLD 6.5",dia:650,power:"25 - 30 HP",cfmMin:10000,cfmMax:12500,eff:"80-85%"},
+  {model:"LLD 7.3",dia:730,power:"30 - 40 HP",cfmMin:12000,cfmMax:15000,eff:"80-85%"},
+  {model:"LLD 8.2",dia:820,power:"40 - 50 HP",cfmMin:15000,cfmMax:19000,eff:"80-85%"},
+  {model:"LLD 9.1",dia:910,power:"50 - 60 HP",cfmMin:18000,cfmMax:23000,eff:"80-85%"},
+  {model:"LLD 10.0",dia:1000,power:"60 - 75 HP",cfmMin:22000,cfmMax:28000,eff:"80-85%"}
+];
+
+// AHU Data
+const AHU_FAN_DB=[
+  {model:"RDH 355 R",maxCFM:4000,maxSP:60,maxRPM:2800,refRPM:1740,kwBase:0.8,eff:0.62,outlet:0.11,shaft:25,bush:"1610"},
+  {model:"RDH 400 R",maxCFM:5500,maxSP:70,maxRPM:2600,refRPM:1610,kwBase:1.2,eff:0.65,outlet:0.16,shaft:28,bush:"1610"},
+  {model:"RDH 450 R",maxCFM:7000,maxSP:75,maxRPM:2400,refRPM:1490,kwBase:1.8,eff:0.68,outlet:0.20,shaft:32,bush:"2012"},
+  {model:"RDH 500 R",maxCFM:9500,maxSP:80,maxRPM:2100,refRPM:1260,kwBase:2.8,eff:0.72,outlet:0.25,shaft:35,bush:"2012"},
+  {model:"RDH 560 R",maxCFM:12000,maxSP:90,maxRPM:1950,refRPM:1190,kwBase:4.2,eff:0.75,outlet:0.32,shaft:40,bush:"2012"},
+  {model:"RDH 630 R",maxCFM:16000,maxSP:100,maxRPM:1800,refRPM:1120,kwBase:6.5,eff:0.78,outlet:0.42,shaft:45,bush:"2517"},
+  {model:"RDH 710 R",maxCFM:20000,maxSP:100,maxRPM:1600,refRPM:990,kwBase:9.0,eff:0.80,outlet:0.55,shaft:50,bush:"2517"},
+  {model:"RDH 800 R",maxCFM:28000,maxSP:120,maxRPM:1400,refRPM:870,kwBase:14.0,eff:0.82,outlet:0.75,shaft:55,bush:"3020"},
+  {model:"RDH 900 R",maxCFM:40000,maxSP:140,maxRPM:1250,refRPM:775,kwBase:20.0,eff:0.83,outlet:0.95,shaft:60,bush:"3020"},
+  {model:"RDH 1000 R",maxCFM:50000,maxSP:150,maxRPM:1120,refRPM:695,kwBase:27.0,eff:0.84,outlet:1.20,shaft:65,bush:"3535"},
+  {model:"RDH 1120 R",maxCFM:62000,maxSP:160,maxRPM:1000,refRPM:620,kwBase:36.0,eff:0.85,outlet:1.50,shaft:75,bush:"3535"}
+];
+const AHU_MOTOR_DB={
+  "3":{kw:2.2,frame:"100L",shaft:28,rpm4:1430,rpm6:960},
+  "5":{kw:3.7,frame:"112M",shaft:28,rpm4:1440,rpm6:960},
+  "7.5":{kw:5.5,frame:"132S",shaft:38,rpm4:1440,rpm6:960},
+  "10":{kw:7.5,frame:"132M",shaft:38,rpm4:1440,rpm6:960},
+  "15":{kw:11.0,frame:"160M",shaft:42,rpm4:1460,rpm6:970},
+  "20":{kw:15.0,frame:"160L",shaft:42,rpm4:1460,rpm6:970},
+  "25":{kw:18.5,frame:"180M",shaft:48,rpm4:1470,rpm6:980},
+  "30":{kw:22.0,frame:"180L",shaft:48,rpm4:1470,rpm6:980},
+  "40":{kw:30.0,frame:"200L",shaft:55,rpm4:1475,rpm6:985},
+  "50":{kw:37.0,frame:"225S",shaft:60,rpm4:1480,rpm6:985},
+  "60":{kw:45.0,frame:"225M",shaft:60,rpm4:1480,rpm6:985},
+  "75":{kw:55.0,frame:"250M",shaft:65,rpm4:1485,rpm6:990}
+};
+const PULLEY_SIZES=[80,90,100,112,118,125,132,140,150,160,170,180,190,200,212,224,236,250,280,315,355,400,450,500,560,630];
+const AHU_SECTION_INFO={
+  "A":{minDia:75,facePitch:15,faceAdd:20,wedge:"SPA",lenMin:26,lenMax:128},
+  "B":{minDia:125,facePitch:19,faceAdd:25,wedge:"SPB",lenMin:35,lenMax:160},
+  "C":{minDia:200,facePitch:25.5,faceAdd:34,wedge:"SPC",lenMin:60,lenMax:200},
+  "D":{minDia:355,facePitch:37,faceAdd:48,wedge:"SPD",lenMin:120,lenMax:250},
+  "E":{minDia:500,facePitch:44.5,faceAdd:58,wedge:"SPE",lenMin:180,lenMax:320}
+};
+const AHU_BELT_PWR={
+  "A":{K1:0.16,K2:6.0,K3:1.5e-5},
+  "B":{K1:0.26,K2:11.0,K3:3.5e-5},
+  "C":{K1:0.42,K2:22.0,K3:8.0e-5},
+  "D":{K1:0.80,K2:45.0,K3:1.6e-4},
+  "E":{K1:1.10,K2:60.0,K3:2.2e-4}
+};
+const AHU_MIN_PULLEY_KW=[3.0,4.0,5.5,7.5,11.0,15.0,18.5,22,30,37,45,55,75,93,112];
+const AHU_MIN_PULLEY_TABLE={
+  2880:[67,67,67,67,71,80,95,90,90,106,112,150,null,null,null],
+  1440:[67,85,75,100,95,118,118,140,140,160,190,190,250,265,315],
+  960:[67,71,95,80,118,125,112,140,160,160,190,212,280,315,375],
+  720:[67,71,71,95,106,106,125,150,160,200,224,250,315,375,null]
+};
+const AHU_SF_TABLE={
+  "1":{soft:[1.0,1.1,1.2],heavy:[1.1,1.2,1.3]},
+  "2":{soft:[1.1,1.2,1.3],heavy:[1.2,1.3,1.4]}
+};
+const AHU_UNIT_TYPES={
+  floor:{name:"Floor Mounted AHU",code:"AHU",minCFM:500,maxCFM:60000,minSP:20,maxSP:200,app:"fresh"},
+  vertical:{name:"Vertical AHU",code:"VAU",minCFM:500,maxCFM:60000,minSP:20,maxSP:200,app:"fresh"},
+  ceiling:{name:"Ceiling Suspended AHU",code:"CSU",minCFM:500,maxCFM:12000,minSP:20,maxSP:100,app:"fresh"},
+  washer:{name:"Air Washer (Direct Evaporative)",code:"AWU",minCFM:500,maxCFM:12000,minSP:20,maxSP:100,app:"fresh"},
+  fau:{name:"Fresh Air Unit",code:"FAU",minCFM:500,maxCFM:60000,minSP:20,maxSP:125,app:"fresh"},
+  eau:{name:"Exhaust Air Unit",code:"EAU",minCFM:500,maxCFM:40000,minSP:20,maxSP:150,app:"exhaust"},
+  ksw:{name:"Kitchen Exhaust — Wet Scrubber",code:"KSW",minCFM:500,maxCFM:60000,minSP:20,maxSP:125,app:"exhaust"},
+  ksd:{name:"Kitchen Exhaust — Dry Scrubber (ESP)",code:"KSD",minCFM:500,maxCFM:60000,minSP:20,maxSP:125,app:"exhaust"}
+};
+const AHU_SECTION_DEFS=[
+  {id:"louver",name:"Intake Louver / Mixing Box",short:"LOUVER",len:300,desc:"AL/GI intake louvers + mixing box",color:"#e8f4f8"},
+  {id:"prefilter",name:"Pre Filter",short:"PRE-FLT",len:100,desc:"Panel / wire mesh pre-filter",color:"#d4edda"},
+  {id:"finefilter",name:"Fine Filter",short:"FINE-FLT",len:300,desc:"Fine filter bank (F7/F9)",color:"#c3e6cb"},
+  {id:"waterwash",name:"Water Wash / Spray Section",short:"WATER WASH",len:600,desc:"Spray bank + 200/300 mm pad + tank",color:"#cfe2f3"},
+  {id:"coil",name:"Cooling Coil",short:"COIL",len:400,desc:"CHW/DX coil — 2/4/6/8 rows",color:"#fff3cd"},
+  {id:"heater",name:"Heater Bank",short:"HEATER",len:300,desc:"Hot water / electric heater bank",color:"#f8d7da"},
+  {id:"uvgi",name:"UVGI Section",short:"UVGI",len:300,desc:"UV germicidal lamp section",color:"#e2d9f3"},
+  {id:"elim",name:"Moisture Eliminator",short:"ELIM",len:150,desc:"4-pass PVC / SS mist eliminator",color:"#fde2e2"},
+  {id:"fan",name:"Fan Section",short:"FAN SECTION",len:0,desc:"Nicotra RDH fan + motor (auto-length)",color:"#d1ecf1",fixed:true},
+  {id:"access",name:"Access / Diffuser",short:"ACCESS",len:250,desc:"Access door + outlet diffuser",color:"#e9ecef"}
+];
+
+// ============================================================
+// STATE
+// ============================================================
+let selectedSisw=null,selectedSiswOrientation=null;
+let selectedAxial=null,selectedAxialCategory="";
+let selectedLld=null;
+let ahuSelectedFan=null,ahuFanLocked=false,ahuCalcResults={};
+let gasUrl=localStorage.getItem('gasUrl')||'';
+if(gasUrl)document.getElementById('gasUrl').value=gasUrl;
+
+// ============================================================
+// TABS
+// ============================================================
+function switchTab(tab){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelector(`.tab-btn[onclick="switchTab('${tab}')"]`).classList.add('active');
+  document.getElementById('tab-'+tab).classList.add('active');
+  if(tab==='leaderboard')renderLeaderboard();
+  if(tab==='testing')populateTestCustomerDropdown();
+  if(tab==='warranty'){populateWarrantyCustomerDropdown();renderWarrantyDashboard();}
+}
+function switchAhuTab(tab){
+  document.querySelectorAll('.ahu-subtab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.ahu-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelector(`.ahu-subtab[onclick="switchAhuTab('${tab}')"]`).classList.add('active');
+  document.getElementById('ahu-'+tab).classList.add('active');
+}
+
+// ============================================================
+// SISW FUNCTIONS
+// ============================================================
+function filterSisw(){
+  const pole=document.getElementById('siswPole').value;
+  const hp=document.getElementById('siswHp').value;
+  const tbody=document.getElementById('siswTableBody');tbody.innerHTML='';
+  const filtered=siswData.filter(b=>{
+    const poleMatch=!pole||b.pole==pole;
+    let hpMatch=!hp;
+    if(hp){if(hp==="12.5")hpMatch=b.config.includes("12.5");else hpMatch=b.hp===hp;}
+    return poleMatch&&hpMatch;
+  });
+  if(filtered.length===0){tbody.innerHTML='<tr><td colspan="4" style="text-align:center;color:#999">No blowers match</td></tr>';return;}
+  filtered.forEach(b=>{
+    const tr=document.createElement('tr');tr.onclick=()=>selectSisw(tr,b);
+    const badge=b.pole===4?'<span class="badge badge-4pole">4P</span>':'<span class="badge badge-6pole">6P</span>';
+    tr.innerHTML=`<td>${b.sl}</td><td>${b.config}</td><td>${b.casing}</td><td>${badge}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+function selectSisw(row,blower){
+  document.querySelectorAll('#siswTableBody tr').forEach(r=>r.classList.remove('selected'));
+  row.classList.add('selected');selectedSisw=Object.assign({},blower,siswSpec(blower));
+  updateSiswSummary();generateSiswCAD();
+}
+function updateSiswSummary(){
+  const box=document.getElementById('siswSummary');const content=document.getElementById('siswSummaryContent');
+  if(!selectedSisw){box.style.display='none';return;}
+  box.style.display='block';
+  content.innerHTML=`<div class="summary-item"><span class="key">Config:</span><span class="val">${selectedSisw.config}</span></div><div class="summary-item"><span class="key">Casing:</span><span class="val">${selectedSisw.casing}</span></div><div class="summary-item"><span class="key">RPM:</span><span class="val">${selectedSisw.rpm}</span></div><div class="summary-item"><span class="key">Pole:</span><span class="val">${selectedSisw.pole} Pole</span></div><div class="summary-item"><span class="key">CFM Range:</span><span class="val">${selectedSisw.cfmRange}</span></div><div class="summary-item"><span class="key">Curve:</span><span class="val">${selectedSisw.curve} Curve</span></div><div class="summary-item"><span class="key">Inlet Ø (round):</span><span class="val">${selectedSisw.inletDia} mm</span></div><div class="summary-item"><span class="key">Blower Outlet (W × D):</span><span class="val">${selectedSisw.outletW} × ${selectedSisw.outletD} mm</span></div><div class="summary-item"><span class="key">Duct Outlet (W × H, editable):</span><span class="val"><input type="number" id="siswDuctW" value="${selectedSisw.ductW}" min="1" style="width:80px" oninput="siswDuctChange()"> × <input type="number" id="siswDuctH" value="${selectedSisw.ductH}" min="1" style="width:80px" oninput="siswDuctChange()"> mm <button type="button" class="btn btn-info" style="padding:3px 8px;font-size:.72rem" onclick="siswDuctStd()">Standard</button></span></div>`;
+}
+function siswRecommend(){
+  const cfm=parseFloat(document.getElementById('siswCfm').value);
+  const sp=parseFloat(document.getElementById('siswSp').value)||0;
+  const box=document.getElementById('siswRecBox');const text=document.getElementById('siswRecText');const type=document.getElementById('siswRecType');
+  if(!cfm||cfm<=0){box.style.display='none';return;}
+  box.style.display='block';
+  let rec,curve;
+  if(cfm<=1500){rec=sp>100?"Low CFM + high SP → Backward Curve.":"Low CFM → Forward Curve (cost-effective).";curve=sp>100?"BACKWARD CURVE":"FORWARD CURVE";}
+  else if(cfm<=3000){rec="Medium CFM → Backward Curve recommended.";curve="BACKWARD CURVE";}
+  else{rec="High CFM industrial → Backward Curve mandatory.";curve="BACKWARD CURVE";}
+  text.textContent=rec;type.textContent=curve;
+  if(curve==="BACKWARD CURVE"){box.style.background="linear-gradient(135deg,#e3f2fd 0%,#bbdefb 100%)";box.style.borderLeftColor="#1565c0";box.querySelector('h3').style.color="#0d47a1";type.style.background="#1565c0";}
+  else{box.style.background="linear-gradient(135deg,#e8f5e9 0%,#c8e6c9 100%)";box.style.borderLeftColor="#2e7d32";box.querySelector('h3').style.color="#1b5e20";type.style.background="#2e7d32";}
+}
+function selectSiswOrientation(card){
+  document.querySelectorAll('#tab-sisw .orientation-card').forEach(c=>c.classList.remove('selected'));
+  card.classList.add('selected');selectedSiswOrientation=card.dataset.orientation;
+}
+function generateSiswCAD(){
+  if(!selectedSisw)return;
+  document.getElementById('siswCadPanel').style.display='block';
+  const cmMatch=selectedSisw.casing.match(/(\d+)\s*Casing/);
+  const casingCm=cmMatch?parseInt(cmMatch[1]):50;
+  const A=casingCm*10,B=Math.round(A*1.15),C=Math.round(A*0.55),D=Math.round(A*1.35);
+  const E=selectedSisw.outletW||Math.round(A*0.75),F=selectedSisw.outletD||A,G=Math.round(A*0.30),H=Math.round(A*0.40);
+  const scale=280/D,cx=200,cy=160;
+  const svg=`<svg viewBox="0 0 400 320" width="380" height="300" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="g1" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20 0 L0 0 0 20" fill="none" stroke="#e0e0e0" stroke-width="0.5"/></pattern></defs><rect width="100%" height="100%" fill="url(#g1)"/><rect x="260" y="280" width="130" height="35" fill="white" stroke="#333" stroke-width="1"/><text x="265" y="295" font-size="9" fill="#333" font-family="monospace">SISW BLOWER</text><text x="265" y="308" font-size="8" fill="#666" font-family="monospace">${selectedSisw.config}</text><path d="M ${cx-30*scale} ${cy-40*scale} Q ${cx-50*scale} ${cy-60*scale} ${cx} ${cy-70*scale} Q ${cx+50*scale} ${cy-60*scale} ${cx+30*scale} ${cy-40*scale} L ${cx+30*scale} ${cy+40*scale} Q ${cx+50*scale} ${cy+60*scale} ${cx} ${cy+70*scale} Q ${cx-50*scale} ${cy+60*scale} ${cx-30*scale} ${cy+40*scale} Z" fill="none" stroke="#1a237e" stroke-width="2"/><ellipse cx="${cx}" cy="${cy}" rx="${A*scale*0.5}" ry="${A*scale*0.5*0.35}" fill="none" stroke="#333" stroke-width="1.5" stroke-dasharray="4,2"/><circle cx="${cx}" cy="${cy}" r="${A*scale*0.12}" fill="none" stroke="#333" stroke-width="1.5"/><rect x="${cx+30*scale}" y="${cy-15*scale}" width="${25*scale}" height="${30*scale}" fill="none" stroke="#333" stroke-width="1.5"/><rect x="${cx-70*scale}" y="${cy-20*scale}" width="${35*scale}" height="${40*scale}" fill="#e8eaf6" stroke="#333" stroke-width="1.5"/><text x="${cx-52*scale}" y="${cy+5*scale}" text-anchor="middle" font-size="8" fill="#1a237e" font-weight="bold">M</text><line x1="${cx-35*scale}" y1="${cy}" x2="${cx-A*scale*0.5}" y2="${cy}" stroke="#333" stroke-width="2"/><rect x="${cx-40*scale}" y="${cy+70*scale}" width="${80*scale}" height="${8*scale}" fill="#ddd" stroke="#333" stroke-width="1"/><line x1="${cx}" y1="${cy-80*scale}" x2="${cx}" y2="${cy+90*scale}" stroke="#999" stroke-width="0.5" stroke-dasharray="6,3"/><text x="${cx+5}" y="${cy-75*scale}" font-size="7" fill="#999">CL</text></svg>`;
+  document.getElementById('siswCadDrawing').innerHTML=svg;
+  document.getElementById('siswCadDims').innerHTML=`<div class="cad-dim-item"><span class="dim-label">Inlet Ø (A)</span><span class="dim-val">${A} mm</span></div><div class="cad-dim-item"><span class="dim-label">Casing W (B)</span><span class="dim-val">${B} mm</span></div><div class="cad-dim-item"><span class="dim-label">Inlet D (C)</span><span class="dim-val">${C} mm</span></div><div class="cad-dim-item"><span class="dim-label">Overall H (D)</span><span class="dim-val">${D} mm</span></div><div class="cad-dim-item"><span class="dim-label">Outlet W (E)</span><span class="dim-val">${E} mm</span></div><div class="cad-dim-item"><span class="dim-label">Outlet D (F)</span><span class="dim-val">${F} mm</span></div><div class="cad-dim-item"><span class="dim-label">Duct Outlet</span><span class="dim-val" id="siswDuctDim">${selectedSisw.ductW} × ${selectedSisw.ductH} mm</span></div><div class="cad-dim-item"><span class="dim-label">Base H (G)</span><span class="dim-val">${G} mm</span></div><div class="cad-dim-item"><span class="dim-label">Motor Off (H)</span><span class="dim-val">${H} mm</span></div>`;
+}
+
+// ============================================================
+// AXIAL
+// ============================================================
+function renderAxialTable(data,tbodyId,category){
+  const tbody=document.getElementById(tbodyId);tbody.innerHTML='';
+  const cfmFilter=parseFloat(document.getElementById('axialCfm').value)||0;
+  const diaFilter=document.getElementById('axialDia').value;
+  const rpmFilter=document.getElementById('axialRpm').value;
+  const hpFilter=document.getElementById('axialHp').value;
+  const phaseFilter=document.getElementById('axialPhase').value;
+  const filtered=data.filter(b=>{
+    const cfmMatch=!cfmFilter||b.cfm>=cfmFilter*0.7;
+    const diaMatch=!diaFilter||b.diaMm==diaFilter;
+    const rpmMatch=!rpmFilter||b.rpm==rpmFilter;
+    const hpMatch=!hpFilter||b.hp.includes(hpFilter);
+    const phaseMatch=!phaseFilter||b.phase===phaseFilter;
+    return cfmMatch&&diaMatch&&rpmMatch&&hpMatch&&phaseMatch;
+  });
+  if(filtered.length===0){tbody.innerHTML='<tr><td colspan="9" style="text-align:center;color:#999">No fans match</td></tr>';return;}
+  filtered.forEach(b=>{
+    const tr=document.createElement('tr');tr.onclick=()=>selectAxial(tr,b,category);
+    const badge=b.phase==="Single"?'<span class="badge badge-1ph">1φ</span>':'<span class="badge badge-3ph">3φ</span>';
+    tr.innerHTML=`<td>${b.sl}</td><td>${b.diaIn}" (${b.diaMm})</td><td>${b.rpm}</td><td>${b.hp||'-'}</td><td>${badge}</td><td>${b.cfm}</td><td>${b.vel}</td><td>${b.sp||'-'}</td><td>${b.price?'₹'+b.price:'-'}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+function filterAxial(){
+  renderAxialTable(axialData1,'axialTable1','Inbuilt Motors');
+  renderAxialTable(axialData2,'axialTable2','Low CFM Leafs');
+  renderAxialTable(axialData3,'axialTable3','High CFM Leafs');
+}
+function selectAxial(row,fan,category){
+  document.querySelectorAll('#tab-axial .blower-table tr').forEach(r=>r.classList.remove('selected'));
+  row.classList.add('selected');selectedAxial=fan;selectedAxialCategory=category;
+  updateAxialSummary();generateAxialCAD();
+}
+function updateAxialSummary(){
+  const box=document.getElementById('axialSummary');const content=document.getElementById('axialSummaryContent');
+  if(!selectedAxial){box.style.display='none';return;}
+  box.style.display='block';
+  content.innerHTML=`<div class="summary-item"><span class="key">Category:</span><span class="val">${selectedAxialCategory}</span></div><div class="summary-item"><span class="key">Diameter:</span><span class="val">${selectedAxial.diaIn}" (${selectedAxial.diaMm} mm)</span></div><div class="summary-item"><span class="key">RPM:</span><span class="val">${selectedAxial.rpm}</span></div><div class="summary-item"><span class="key">HP:</span><span class="val">${selectedAxial.hp||'-'}</span></div><div class="summary-item"><span class="key">Phase:</span><span class="val">${selectedAxial.phase}</span></div><div class="summary-item"><span class="key">CFM:</span><span class="val">${selectedAxial.cfm}</span></div><div class="summary-item"><span class="key">Velocity:</span><span class="val">${selectedAxial.vel} m/s</span></div><div class="summary-item"><span class="key">SP:</span><span class="val">${selectedAxial.sp||'-'} mm</span></div><div class="summary-item"><span class="key">Price:</span><span class="val">${selectedAxial.price?'₹'+selectedAxial.price:'-'}</span></div>`;
+}
+function generateAxialCAD(){
+  if(!selectedAxial)return;
+  document.getElementById('axialCadPanel').style.display='block';
+  const D=selectedAxial.diaMm,H=Math.round(D*0.35),W=Math.round(D*1.1),M=Math.round(D*0.25);
+  const svg=`<svg viewBox="0 0 400 260" width="380" height="240" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="g2" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20 0 L0 0 0 20" fill="none" stroke="#e0e0e0" stroke-width="0.5"/></pattern></defs><rect width="100%" height="100%" fill="url(#g2)"/><rect x="260" y="220" width="130" height="35" fill="white" stroke="#333" stroke-width="1"/><text x="265" y="235" font-size="9" fill="#333" font-family="monospace">AXIAL FAN</text><text x="265" y="248" font-size="8" fill="#666" font-family="monospace">${selectedAxial.diaMm}mm / ${selectedAxial.rpm}RPM</text><circle cx="200" cy="130" r="${D*0.08}" fill="#e8eaf6" stroke="#333" stroke-width="2"/><ellipse cx="200" cy="130" rx="${D*0.45}" ry="${D*0.12}" fill="none" stroke="#1a237e" stroke-width="2"/><line x1="${200-D*0.45}" y1="130" x2="${200+D*0.45}" y2="130" stroke="#333" stroke-width="1"/><line x1="200" y1="${130-D*0.12}" x2="200" y2="${130+D*0.12}" stroke="#333" stroke-width="1"/><ellipse cx="200" cy="130" rx="${D*0.5}" ry="${D*0.14}" fill="none" stroke="#333" stroke-width="1.5" stroke-dasharray="4,2"/><rect x="${200-M*0.5}" y="${130-H*0.5}" width="${M}" height="${H}" rx="4" fill="#ddd" stroke="#333" stroke-width="1.5"/><text x="200" y="${130+4}" text-anchor="middle" font-size="8" fill="#1a237e" font-weight="bold">M</text><line x1="${200-D*0.5}" y1="${130+D*0.14+10}" x2="${200-D*0.5}" y2="${130+D*0.14+25}" stroke="#333" stroke-width="1.5"/><line x1="${200+D*0.5}" y1="${130+D*0.14+10}" x2="${200+D*0.5}" y2="${130+D*0.14+25}" stroke="#333" stroke-width="1.5"/><line x1="${200-D*0.5}" y1="${130+D*0.14+25}" x2="${200+D*0.5}" y2="${130+D*0.14+25}" stroke="#333" stroke-width="1"/><line x1="200" y1="50" x2="200" y2="210" stroke="#999" stroke-width="0.5" stroke-dasharray="6,3"/><text x="205" y="55" font-size="7" fill="#999">CL</text></svg>`;
+  document.getElementById('axialCadDrawing').innerHTML=svg;
+  document.getElementById('axialCadDims').innerHTML=`<div class="cad-dim-item"><span class="dim-label">Fan Ø</span><span class="dim-val">${D} mm</span></div><div class="cad-dim-item"><span class="dim-label">Motor W</span><span class="dim-val">${M} mm</span></div><div class="cad-dim-item"><span class="dim-label">Motor H</span><span class="dim-val">${H} mm</span></div><div class="cad-dim-item"><span class="dim-label">Overall W</span><span class="dim-val">${W} mm</span></div><div class="cad-dim-item"><span class="dim-label">Hub Ø</span><span class="dim-val">${Math.round(D*0.16)} mm</span></div><div class="cad-dim-item"><span class="dim-label">Blade Span</span><span class="dim-val">${Math.round(D*0.9)} mm</span></div>`;
+}
+
+// ============================================================
+// LLD
+// ============================================================
+function filterLld(){
+  const cfm=parseFloat(document.getElementById('lldCfm').value)||0;
+  const model=document.getElementById('lldModel').value;
+  const tbody=document.getElementById('lldTableBody');tbody.innerHTML='';
+  const filtered=lldData.filter(b=>{
+    const cfmMatch=!cfm||(cfm>=b.cfmMin*0.7&&cfm<=b.cfmMax*1.3);
+    const modelMatch=!model||b.model.includes(model);
+    return cfmMatch&&modelMatch;
+  });
+  if(filtered.length===0){tbody.innerHTML='<tr><td colspan="5" style="text-align:center;color:#999">No LLD models match</td></tr>';return;}
+  filtered.forEach(b=>{
+    const tr=document.createElement('tr');tr.onclick=()=>selectLld(tr,b);
+    tr.innerHTML=`<td style="font-weight:700">${b.model}</td><td>${b.dia} mm</td><td>${b.power}</td><td>${b.cfmMin.toLocaleString()} - ${b.cfmMax.toLocaleString()} CFM</td><td>${b.eff}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+function selectLld(row,blower){
+  document.querySelectorAll('#lldTableBody tr').forEach(r=>r.classList.remove('selected'));
+  row.classList.add('selected');selectedLld=blower;
+  updateLldSummary();generateLldCAD();
+}
+function updateLldSummary(){
+  const box=document.getElementById('lldSummary');const content=document.getElementById('lldSummaryContent');
+  if(!selectedLld){box.style.display='none';return;}
+  box.style.display='block';
+  const drive=document.getElementById('lldDrive').value;
+  const sp=document.getElementById('lldSp').value;
+  content.innerHTML=`<div class="summary-item"><span class="key">Model:</span><span class="val">${selectedLld.model}</span></div><div class="summary-item"><span class="key">Impeller Ø:</span><span class="val">${selectedLld.dia} mm</span></div><div class="summary-item"><span class="key">Motor Power:</span><span class="val">${selectedLld.power}</span></div><div class="summary-item"><span class="key">Airflow:</span><span class="val">${selectedLld.cfmMin.toLocaleString()} - ${selectedLld.cfmMax.toLocaleString()} CFM</span></div><div class="summary-item"><span class="key">Efficiency:</span><span class="val">${selectedLld.eff}</span></div><div class="summary-item"><span class="key">Drive:</span><span class="val">${drive}</span></div><div class="summary-item"><span class="key">SP Range:</span><span class="val">${sp} mmWC</span></div>`;
+}
+function generateLldCAD(){
+  if(!selectedLld)return;
+  document.getElementById('lldCadPanel').style.display='block';
+  const D=selectedLld.dia,W=Math.round(D*0.55),H=Math.round(D*1.2),O=Math.round(D*0.35),M=Math.round(D*0.3);
+  const svg=`<svg viewBox="0 0 400 300" width="380" height="280" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="g3" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20 0 L0 0 0 20" fill="none" stroke="#e0e0e0" stroke-width="0.5"/></pattern></defs><rect width="100%" height="100%" fill="url(#g3)"/><rect x="260" y="260" width="130" height="35" fill="white" stroke="#333" stroke-width="1"/><text x="265" y="275" font-size="9" fill="#333" font-family="monospace">LLD BLOWER</text><text x="265" y="288" font-size="8" fill="#666" font-family="monospace">${selectedLld.model} / ${D}mm</text><rect x="${200-W}" y="${150-H*0.4}" width="${W*2}" height="${H*0.8}" rx="8" fill="none" stroke="#1a237e" stroke-width="2"/><ellipse cx="${200-W}" cy="150" rx="${O*0.5}" ry="${O*0.35}" fill="none" stroke="#333" stroke-width="1.5"/><ellipse cx="${200+W}" cy="150" rx="${O*0.5}" ry="${O*0.35}" fill="none" stroke="#333" stroke-width="1.5"/><circle cx="200" cy="150" r="${D*0.08}" fill="#e8eaf6" stroke="#333" stroke-width="1.5"/><rect x="${200-O*0.5}" y="${150-H*0.4-15}" width="${O}" height="15" fill="none" stroke="#333" stroke-width="1.5"/><rect x="${200-M*0.5}" y="${150-H*0.4-45}" width="${M}" height="25" rx="3" fill="#ddd" stroke="#333" stroke-width="1.5"/><text x="200" y="${150-H*0.4-28}" text-anchor="middle" font-size="8" fill="#1a237e" font-weight="bold">M</text><line x1="${200-M*0.3}" y1="${150-H*0.4-20}" x2="${200-M*0.3}" y2="${150-H*0.4-15}" stroke="#333" stroke-width="1"/><line x1="${200+M*0.3}" y1="${150-H*0.4-20}" x2="${200+M*0.3}" y2="${150-H*0.4-15}" stroke="#333" stroke-width="1"/><rect x="${200-W+10}" y="${150+H*0.4}" width="${W*2-20}" height="8" fill="#ddd" stroke="#333" stroke-width="1"/><line x1="${200-W+20}" y1="${150+H*0.4+8}" x2="${200-W+20}" y2="${150+H*0.4+18}" stroke="#333" stroke-width="1.5"/><line x1="${200+W-20}" y1="${150+H*0.4+8}" x2="${200+W-20}" y2="${150+H*0.4+18}" stroke="#333" stroke-width="1.5"/><line x1="200" y1="60" x2="200" y2="240" stroke="#999" stroke-width="0.5" stroke-dasharray="6,3"/><text x="205" y="65" font-size="7" fill="#999">CL</text></svg>`;
+  document.getElementById('lldCadDrawing').innerHTML=svg;
+  document.getElementById('lldCadDims').innerHTML=`<div class="cad-dim-item"><span class="dim-label">Impeller Ø</span><span class="dim-val">${D} mm</span></div><div class="cad-dim-item"><span class="dim-label">Casing W</span><span class="dim-val">${W*2} mm</span></div><div class="cad-dim-item"><span class="dim-label">Casing H</span><span class="dim-val">${Math.round(H*0.8)} mm</span></div><div class="cad-dim-item"><span class="dim-label">Inlet Ø</span><span class="dim-val">${O} mm</span></div><div class="cad-dim-item"><span class="dim-label">Outlet W</span><span class="dim-val">${O} mm</span></div><div class="cad-dim-item"><span class="dim-label">Motor W</span><span class="dim-val">${M} mm</span></div>`;
+}
+
+// ============================================================
+// AHU CALCULATION FUNCTIONS
+// ============================================================
+function ahuRecommendFan(cfm,sp){
+  for(let fan of AHU_FAN_DB){if(cfm<=fan.maxCFM&&sp<=fan.maxSP)return fan;}
+  return AHU_FAN_DB[AHU_FAN_DB.length-1];
+}
+function ahuEstimateFanPower(cfm,sp,fan){
+  const cfmM3s=cfm*0.0004719;const spPa=sp*9.80665;
+  return Math.max((cfmM3s*spPa)/(1000*fan.eff),fan.kwBase*0.5);
+}
+function ahuEstimateFanSpeed(cfm,sp,fan){
+  const cfmRatio=cfm/fan.maxCFM;const spRatio=sp/fan.maxSP;
+  const est=Math.round(fan.refRPM*Math.sqrt(cfmRatio*spRatio));
+  return Math.min(fan.maxRPM,Math.max(400,est));
+}
+function ahuFindPulleyPair(targetRatio,motorShaft,fanShaft,minMp,minSmall,section,designPower,motorRPM){
+  let best=null,bestError=Infinity,bestAny=null,bestAnyError=Infinity;
+  for(let mp of PULLEY_SIZES){
+    if(mp<Math.max(motorShaft+20,minMp))continue;
+    for(let fp of PULLEY_SIZES){
+      if(fp<fanShaft+20)continue;
+      if(Math.min(mp,fp)<minSmall)continue;
+      const ratio=mp/fp;const error=Math.abs(ratio-targetRatio);
+      if(error<bestAnyError){bestAnyError=error;bestAny={mp,fp,ratio,error};}
+      const d=Math.min(mp,fp);const v=Math.PI*mp*motorRPM/60000;
+      if(ahuRatedPowerPerBelt(section,v,d)<designPower/5)continue;
+      if(error<bestError){bestError=error;best={mp,fp,ratio,error};}
+    }
+  }
+  return best||bestAny;
+}
+function ahuCalcBeltLength(C,D,d){return 2*C+(Math.PI/2)*(D+d)+(D-d)*(D-d)/(4*C);}
+function ahuSolveCentre(L,D,d){
+  let C=(L-(Math.PI/2)*(D+d))/2;
+  for(let i=0;i<10;i++){
+    let f=2*C+(Math.PI/2)*(D+d)+(D-d)*(D-d)/(4*C)-L;
+    let fp=2-(D-d)*(D-d)/(4*C*C);
+    if(Math.abs(fp)<1e-10)break;C=C-f/fp;
+  }
+  return C;
+}
+function ahuSelectBeltSection(designKw,fasterRpm){
+  const s=fasterRpm/1440;
+  if(designKw<=3.7*s)return"A";if(designKw<=12*s)return"B";if(designKw<=30*s)return"C";if(designKw<=60*s)return"D";return"E";
+}
+function ahuGetServiceFactor(dutyClass,startType,hoursIdx,incRatio){
+  let sf=AHU_SF_TABLE[dutyClass][startType][hoursIdx];
+  if(incRatio>=3.5)sf*=1.25;else if(incRatio>=2.5)sf*=1.18;else if(incRatio>=1.75)sf*=1.11;else if(incRatio>=1.25)sf*=1.05;
+  return sf;
+}
+function ahuMinMotorPulley(kw,rpm){
+  const speeds=[2880,1440,960,720];
+  let bestRpm=speeds[0],bd=Infinity;
+  for(let s of speeds){const dd=Math.abs(s-rpm);if(dd<bd){bd=dd;bestRpm=s;}}
+  const row=AHU_MIN_PULLEY_TABLE[bestRpm];
+  const pts=[];let last=0;
+  for(let i=0;i<AHU_MIN_PULLEY_KW.length;i++){
+    if(row[i]==null)break;last=Math.max(last,row[i]);pts.push([AHU_MIN_PULLEY_KW[i],last]);
+  }
+  if(kw<=pts[0][0])return pts[0][1];
+  for(let i=1;i<pts.length;i++){
+    if(kw<=pts[i][0]){const k0=pts[i-1][0],p0=pts[i-1][1],k1=pts[i][0],p1=pts[i][1];return Math.round(p0+(p1-p0)*(kw-k0)/(k1-k0));}
+  }
+  return pts[pts.length-1][1];
+}
+function ahuRatedPowerPerBelt(section,v,d){
+  const c=AHU_BELT_PWR[section];return Math.max(0.2,v*(c.K1-c.K2/d)-c.K3*v*v*v);
+}
+function ahuArcFactor(alphaDeg){return 1.25*(1-Math.pow(5,-alphaDeg/180));}
+function ahuLengthFactor(Lmm){return Math.min(1.05,0.85+Lmm/12000);}
+function ahuFaceWidth(section,n){const s=AHU_SECTION_INFO[section];return Math.round((n-1)*s.facePitch+s.faceAdd);}
+function ahuSnapBeltLength(section,targetLenMm){
+  const s=AHU_SECTION_INFO[section];let code=Math.round(targetLenMm/25.4);
+  code=Math.max(s.lenMin,Math.min(s.lenMax,code));return{code:code,lenMm:Math.round(code*25.4)};
+}
+function ahuDesignDrive(section,targetRatio,motor,fan,designPower,motorRPM,userC){
+  const minMp=ahuMinMotorPulley(motor.kw,motorRPM);
+  const pulleys=ahuFindPulleyPair(targetRatio,motor.shaft,fan.shaft,minMp,AHU_SECTION_INFO[section].minDia,section,designPower,motorRPM);
+  const D=Math.max(pulleys.fp,pulleys.mp),d=Math.min(pulleys.fp,pulleys.mp);
+  const estC=(userC&&userC>0)?userC:Math.max(D,0.9*(D+d));
+  const estL=ahuCalcBeltLength(estC,D,d);
+  const belt=ahuSnapBeltLength(section,estL);
+  const actualC=Math.round(ahuSolveCentre(belt.lenMm,D,d));
+  const v=Math.PI*pulleys.mp*motorRPM/60000;
+  const alpha=ahuCalcWrapAngle(D,d,actualC);
+  const fa=ahuArcFactor(alpha),fl=ahuLengthFactor(belt.lenMm);
+  const rated=ahuRatedPowerPerBelt(section,v,d);
+  const nBelts=Math.max(1,Math.ceil(designPower/(rated*fa*fl)));
+  return{section:section,minMp:minMp,pulleys:pulleys,D:D,d:d,belt:belt,actualC:actualC,v:v,alpha:alpha,fa:fa,fl:fl,rated:rated,nBelts:nBelts};
+}
+function ahuCalcWrapAngle(D,d,C){const alpha=Math.asin((D-d)/(2*C));return 180-2*(alpha*180/Math.PI);}
+function ahuGetFanBush(shaft){if(shaft<=28)return"1610";if(shaft<=38)return"2012";if(shaft<=48)return"2517";return"3020";}
+function ahuGetMotorBush(shaft){if(shaft<=28)return"1610";if(shaft<=38)return"2012";if(shaft<=48)return"2517";return"3020";}
+
+function ahuCalculate(){
+  const cfm=parseFloat(document.getElementById('ahuCfm').value)||9500;
+  const sp=parseFloat(document.getElementById('ahuSp').value)||80;
+  const hp=parseFloat(document.getElementById('ahuHp').value)||7.5;
+  const motorRPM=parseFloat(document.getElementById('ahuMotorRpm').value)||1440;
+  const eff=parseFloat(document.getElementById('ahuEff').value)||85;
+  const pwrCorr=parseFloat(document.getElementById('ahuPwrCorr').value)||15;
+  const dutySel=document.getElementById('ahuDuty').value;
+  const startType=document.getElementById('ahuStart').value;
+  const hoursIdx=parseInt(document.getElementById('ahuHours').value)||0;
+
+  if(!ahuSelectedFan||!ahuFanLocked)ahuSelectedFan=ahuRecommendFan(cfm,sp);
+  const fan=ahuSelectedFan;
+
+  const fanPower=ahuEstimateFanPower(cfm,sp,fan);
+  const fanSpeed=ahuEstimateFanSpeed(cfm,sp,fan);
+  const requiredMotorKw=fanPower*(1+pwrCorr/100)/(eff/100);
+  const motor=AHU_MOTOR_DB[hp.toString()];
+  const powerMargin=((motor.kw-requiredMotorKw)/motor.kw*100).toFixed(0);
+  const bhpHp=fanPower*1.341;
+  const recMinHp=bhpHp*1.1;const recMaxHp=bhpHp*1.4;
+  const targetRatio=fanSpeed/motorRPM;
+  const incRatio=targetRatio>1?targetRatio:0;
+  const dc=dutySel==='auto'?(fanPower<=7.5?'1':'2'):dutySel;
+  const sf=ahuGetServiceFactor(dc,startType,hoursIdx,incRatio);
+  const designPower=fanPower*sf;
+  const fasterRpm=Math.max(motorRPM,fanSpeed);
+  let beltSection=ahuSelectBeltSection(designPower,fasterRpm);
+  const userC=parseFloat(document.getElementById('ahuCentre').value)||0;
+
+  let drive=null,bestScore=Infinity;
+  const order=['A','B','C','D','E'];const i0=order.indexOf(beltSection);
+  for(let i=Math.max(0,i0-1);i<=Math.min(i0+2,4);i++){
+    const dr=ahuDesignDrive(order[i],targetRatio,motor,fan,designPower,motorRPM,userC);
+    const score=Math.abs(dr.pulleys.ratio-targetRatio)*10+dr.nBelts*0.2+(dr.nBelts>4?(dr.nBelts-4)*1.5:0)+(dr.nBelts>6?(dr.nBelts-6)*5:0)+(i>i0?(i-i0)*0.6:(i0-i)*-0.4);
+    if(score<bestScore){bestScore=score;drive=dr;}
+  }
+
+  const pulleys=drive.pulleys;
+  const actualRatio=pulleys.mp/pulleys.fp;
+  const actualFanSpeed=Math.round(motorRPM*actualRatio);
+  const speedError=((actualFanSpeed-fanSpeed)/fanSpeed*100).toFixed(1);
+  const bearingLife=Math.round(100000*(motor.kw/fanPower)*(1400/fanSpeed));
+
+  ahuCalcResults={fan,cfm,sp,hp,motor,motorRPM,fanPower,fanSpeed,requiredMotorKw,pulleys,actualRatio,actualFanSpeed,speedError,beltSection:drive.section,beltCode:drive.belt.code,beltLen:drive.belt.lenMm,beltSpeed:drive.v,wrapAngle:drive.alpha,actualC:drive.actualC,sf,dc,designPower,ratedPerBelt:drive.rated,fa:drive.fa,fl:drive.fl,nBelts:drive.nBelts,minMp:drive.minMp,bhpHp,recMinHp,recMaxHp,bearingLife,powerMargin};
+
+  ahuUpdateResults();
+  ahuRenderFanCards();
+  ahuCalcSize();
+}
+
+function ahuUpdateResults(){
+  const r=ahuCalcResults;
+  document.getElementById('resAhuFanModel').value=r.fan.model;
+  document.getElementById('resAhuFanSpeed').value=r.actualFanSpeed+' rpm';
+  document.getElementById('resAhuFanPower').value=r.fanPower.toFixed(2)+' kW';
+  document.getElementById('resAhuFanEff').value=(r.fan.eff*100).toFixed(1)+'%';
+  document.getElementById('resAhuFanStatEff').value=(r.fan.eff*0.92*100).toFixed(1)+'%';
+  document.getElementById('resAhuFanVel').value=(r.cfm/r.fan.maxCFM*15).toFixed(1)+' m/s';
+  document.getElementById('resAhuFanLw').value=(85+r.fanPower*2).toFixed(1)+' dBA';
+  document.getElementById('resAhuFanMax').value=r.fan.maxRPM+' rpm';
+  document.getElementById('resAhuFanMargin').value=((r.fan.maxRPM-r.actualFanSpeed)/r.fan.maxRPM*100).toFixed(0)+'%';
+  document.getElementById('resAhuMp').value=r.pulleys.mp+' mm ('+r.nBelts+r.beltSection+')';
+  document.getElementById('resAhuFp').value=r.pulleys.fp+' mm ('+r.nBelts+r.beltSection+')';
+  document.getElementById('resAhuRatio').value=r.actualRatio.toFixed(3);
+  document.getElementById('resAhuCentre').value=r.actualC+' mm';
+  document.getElementById('resAhuBeltType').value=r.beltSection+' section';
+  document.getElementById('resAhuBeltQty').value=r.nBelts;
+  document.getElementById('resAhuBeltFenner').value=r.beltSection+'-'+r.beltCode+(r.nBelts>1?' x '+r.nBelts:'');
+  document.getElementById('resAhuBeltLen').value=r.beltLen+' mm';
+  document.getElementById('resAhuBeltSf').value=r.sf.toFixed(2)+' (Class '+r.dc+')';
+  document.getElementById('resAhuBeltPower').value=r.designPower.toFixed(2)+' kW';
+  document.getElementById('resAhuMotorHp').value=r.hp+' HP / '+r.motor.kw+' kW';
+  document.getElementById('resAhuMotorRpm').value=r.motorRPM+' rpm';
+  document.getElementById('resAhuMotorReq').value=r.requiredMotorKw.toFixed(2)+' kW';
+  document.getElementById('resAhuMotorMargin').value=r.powerMargin+'%';
+  document.getElementById('resAhuMotorFrame').value=r.motor.frame;
+  document.getElementById('resAhuMotorShaft').value=r.motor.shaft+' mm';
+}
+
+function ahuRenderFanCards(){
+  const cfm=parseFloat(document.getElementById('ahuCfm').value)||9500;
+  const sp=parseFloat(document.getElementById('ahuSp').value)||80;
+  const container=document.getElementById('ahuFanCards');container.innerHTML='';
+  AHU_FAN_DB.forEach(fan=>{
+    const canHandle=cfm<=fan.maxCFM&&sp<=fan.maxSP;
+    const isRecommended=fan===ahuRecommendFan(cfm,sp);
+    const isSelected=ahuSelectedFan&&fan.model===ahuSelectedFan.model;
+    const card=document.createElement('div');
+    card.className='fan-card'+(isSelected?' selected':'');
+    card.style.opacity=canHandle?'1':'0.4';
+    card.innerHTML=`<h4>${fan.model} ${isRecommended?'<span class="badge badge-exact">Recommended</span>':''}</h4><p>Max: ${fan.maxCFM.toLocaleString()} CFM | ${fan.maxSP} mmwg | ${fan.maxRPM} rpm</p><p>Shaft: ${fan.shaft}mm | Bush: ${fan.bush} | Outlet: ${fan.outlet} m²</p>`;
+    card.onclick=function(){ahuSelectedFan=fan;ahuFanLocked=true;document.querySelectorAll('.fan-card').forEach(c=>c.classList.remove('selected'));this.classList.add('selected');ahuCalculate();};
+    container.appendChild(card);
+  });
+}
+
+function ahuApplyPreset(){
+  const U=AHU_UNIT_TYPES[document.getElementById('ahuUnitType').value];
+  document.getElementById('ahuApp').value=U.app;
+  ahuApplyAppPreset();
+}
+function ahuApplyAppPreset(){
+  const app=document.getElementById('ahuApp').value;
+  const freshSections=['louver','prefilter','finefilter','waterwash','coil','heater','uvgi','elim','fan','access'];
+  const exhaustSections=['prefilter','fan','access'];
+  const sections=app==='fresh'?freshSections:exhaustSections;
+  AHU_SECTION_DEFS.forEach(def=>{
+    if(def.fixed)return;
+    const cb=document.getElementById('sec-'+def.id);
+    if(cb)cb.checked=sections.includes(def.id);
+  });
+  ahuCalcSize();
+}
+
+function ahuCalcSize(){
+  const cfm=parseFloat(document.getElementById('ahuCfm').value)||9500;
+  const faceVel=parseFloat(document.getElementById('ahuFaceVel').value)||2.0;
+  const maxW=parseFloat(document.getElementById('ahuMaxW').value)||2000;
+  const maxH=parseFloat(document.getElementById('ahuMaxH').value)||2000;
+  const maxL=parseFloat(document.getElementById('ahuMaxL').value)||4000;
+  const panel=parseFloat(document.getElementById('ahuPanel').value)||25;
+  const U=AHU_UNIT_TYPES[document.getElementById('ahuUnitType').value];
+
+  const m3s=cfm*0.0004719;
+  const requiredArea=m3s/faceVel;
+  const standardSizes=[[600,600],[800,800],[1000,1000],[1200,1200],[1400,1400],[1600,1200],[1600,1600],[1800,1400],[1800,1800],[2000,1600],[2000,2000]];
+  let bestSize=null,bestDiff=Infinity;
+  for(let[w,h]of standardSizes){
+    if(w>maxW||h>maxH)continue;
+    const area=(w*h)/1e6;
+    if(area>=requiredArea){const diff=area-requiredArea;if(diff<bestDiff){bestDiff=diff;bestSize=[w,h,area];}}
+  }
+  if(!bestSize)bestSize=[Math.min(maxW,2000),Math.min(maxH,2000),(Math.min(maxW,2000)*Math.min(maxH,2000))/1e6];
+  const[W,H,actualArea]=bestSize;
+  const actualVel=(m3s/actualArea).toFixed(2);
+
+  const fan=ahuCalcResults.fan||AHU_FAN_DB[3];
+  const fanDia=Math.sqrt(fan.outlet*4/Math.PI)*1000;
+  const fanLen=Math.max(600,Math.ceil(fanDia*1.5/50)*50);
+
+  let totalL=0;
+  AHU_SECTION_DEFS.forEach(def=>{
+    if(def.id==='fan'){totalL+=fanLen;return;}
+    const cb=document.getElementById('sec-'+def.id);
+    if(cb&&cb.checked)totalL+=def.len;
+  });
+
+  const volume=(W*H*totalL)/1e9;
+  const weight=Math.round(volume*(panel>=45?105:90));
+  const fits=W<=maxW&&H<=maxH&&totalL<=maxL;
+  const inRange=cfm>=U.minCFM&&cfm<=U.maxCFM;
+
+  document.getElementById('resAhuFaceArea').textContent=requiredArea.toFixed(2)+' m²';
+  document.getElementById('resAhuWh').textContent=W+' x '+H+' mm';
+  document.getElementById('resAhuActualVel').textContent=actualVel+' m/s';
+  document.getElementById('resAhuLen').textContent=totalL+' mm';
+  document.getElementById('resAhuVol').textContent=volume.toFixed(2)+' m³';
+  document.getElementById('resAhuWeight').textContent=weight+' kg';
+  const siteEl=document.getElementById('resAhuSiteCheck');
+  siteEl.textContent=fits?'FITS':'EXCEEDS LIMITS';
+  siteEl.className='result-value '+(fits?'success':'warning');
+}
+
+function ahuReset(){
+  document.getElementById('ahuCfm').value=9500;
+  document.getElementById('ahuSp').value=80;
+  document.getElementById('ahuHp').value=7.5;
+  document.getElementById('ahuMotorRpm').value=1440;
+  document.getElementById('ahuEff').value=85;
+  document.getElementById('ahuPwrCorr').value=15;
+  document.getElementById('ahuDuty').value='auto';
+  document.getElementById('ahuStart').value='soft';
+  document.getElementById('ahuHours').value=0;
+  document.getElementById('ahuCentre').value=0;
+  document.getElementById('ahuUnitType').value='fau';
+  document.getElementById('ahuPanel').value=25;
+  document.getElementById('ahuCoilType').value='CHW';
+  document.getElementById('ahuCoilRows').value=4;
+  ahuSelectedFan=null;ahuFanLocked=false;
+  ahuApplyPreset();
+}
+
+// ============================================================
+// GOOGLE SHEETS INTEGRATION
+// ============================================================
+function getGasUrl(){
+  const url=document.getElementById('gasUrl').value.trim();
+  if(url){localStorage.setItem('gasUrl',url);gasUrl=url;}
+  return gasUrl;
+}
+function setSyncStatus(online){
+  const el=document.getElementById('syncStatus');
+  if(online){el.textContent='● Online';el.className='sync-status online';}
+  else{el.textContent='● Offline';el.className='sync-status offline';}
+}
+async function testConnection(){
+  const url=getGasUrl();if(!url){alert('Please enter Google Apps Script URL first');return;}
+  try{const res=await fetch(url+'?action=getCustomers');const data=await res.json();if(data.success!==undefined){setSyncStatus(true);alert('Connected to Google Sheets!');}else{setSyncStatus(false);alert('Connection failed');}}
+  catch(e){setSyncStatus(false);alert('Error: '+e.message);}
+}
+async function gasPost(payload){
+  const url=getGasUrl();if(!url)return{success:false,error:'No GAS URL'};
+  try{const res=await fetch(url,{method:'POST',body:JSON.stringify(payload),headers:{'Content-Type':'text/plain;charset=utf-8'}});const data=await res.json();setSyncStatus(true);return data;}
+  catch(e){setSyncStatus(false);return{success:false,error:e.message};}
+}
+async function gasGet(params){
+  const url=getGasUrl();if(!url)return{success:false,error:'No GAS URL'};
+  try{const qs=new URLSearchParams(params).toString();const res=await fetch(url+'?'+qs);const data=await res.json();setSyncStatus(true);return data;}
+  catch(e){setSyncStatus(false);return{success:false,error:e.message};}
+}
+
+// ============================================================
+// CUSTOMER MANAGEMENT
+// ============================================================
+function getCustomerObj(){
+  return{
+    customerName:document.getElementById('customerName').value,
+    engineerName:document.getElementById('engineerName').value,
+    siteName:document.getElementById('siteName').value,
+    customerContact:document.getElementById('customerContact').value,
+    projectName:document.getElementById('projectName').value,
+    siteContactPerson:document.getElementById('siteContactPerson').value,
+    siteAddress:document.getElementById('siteAddress').value
+  };
+}
+function saveCustomerLocal(){
+  const c=getCustomerObj();if(!c.customerName){alert('Customer Name is required');return;}
+  let customers=JSON.parse(localStorage.getItem('customers')||'[]');
+  const idx=customers.findIndex(x=>x.customerName===c.customerName);
+  if(idx>=0)customers[idx]=c;else customers.push(c);
+  localStorage.setItem('customers',JSON.stringify(customers));
+  updateCustomerDatalist();populateTestCustomerDropdown();populateWarrantyCustomerDropdown();
+  alert('Customer saved locally');
+}
+async function saveCustomerToSheets(){
+  const c=getCustomerObj();if(!c.customerName){alert('Customer Name is required');return;}
+  const res=await gasPost({action:'saveCustomer',...c});
+  if(res.success){alert('Customer saved to Google Sheets');saveCustomerLocal();}
+  else alert('Failed: '+(res.error||'Unknown error'));
+}
+async function loadCustomerFromSheets(){
+  const name=document.getElementById('customerName').value;if(!name){alert('Enter a customer name first');return;}
+  const res=await gasGet({action:'getCustomerData',name});
+  if(res.success&&res.customer){
+    const c=res.customer;
+    document.getElementById('engineerName').value=c.engineerName||'';
+    document.getElementById('siteName').value=c.siteName||'';
+    document.getElementById('customerContact').value=c.customerContact||'';
+    document.getElementById('projectName').value=c.projectName||'';
+    document.getElementById('siteContactPerson').value=c.siteContactPerson||'';
+    document.getElementById('siteAddress').value=c.siteAddress||'';
+    alert('Customer data loaded from Sheets');
+  }else{alert('No data found for this customer in Sheets');}
+}
+function onCustomerChange(){
+  const name=document.getElementById('customerName').value;
+  const customers=JSON.parse(localStorage.getItem('customers')||'[]');
+  const c=customers.find(x=>x.customerName===name);
+  if(c){
+    document.getElementById('engineerName').value=c.engineerName||'';
+    document.getElementById('siteName').value=c.siteName||'';
+    document.getElementById('customerContact').value=c.customerContact||'';
+    document.getElementById('projectName').value=c.projectName||'';
+    document.getElementById('siteContactPerson').value=c.siteContactPerson||'';
+    document.getElementById('siteAddress').value=c.siteAddress||'';
+  }
+}
+function updateCustomerDatalist(){
+  const customers=JSON.parse(localStorage.getItem('customers')||'[]');
+  const dl=document.getElementById('customerList');dl.innerHTML='';
+  customers.forEach(c=>{const opt=document.createElement('option');opt.value=c.customerName;dl.appendChild(opt);});
+}
+function populateTestCustomerDropdown(){
+  const customers=JSON.parse(localStorage.getItem('customers')||'[]');
+  const sel=document.getElementById('testCustomer');const currentVal=sel.value;
+  sel.innerHTML='<option value="">-- Select Customer --</option>';
+  customers.forEach(c=>{const opt=document.createElement('option');opt.value=c.customerName;opt.textContent=c.customerName;sel.appendChild(opt);});
+  sel.value=currentVal;
+}
+function populateWarrantyCustomerDropdown(){
+  const customers=JSON.parse(localStorage.getItem('customers')||'[]');
+  const sel=document.getElementById('warrantyCustomer');const currentVal=sel.value;
+  sel.innerHTML='<option value="">-- Select Customer --</option>';
+  customers.forEach(c=>{const opt=document.createElement('option');opt.value=c.customerName;opt.textContent=c.customerName;sel.appendChild(opt);});
+  sel.value=currentVal;
+}
+
+// ============================================================
+// TESTING QUALITY
+// ============================================================
+function toggleBeltFields(){
+  const drive=document.getElementById('testDriveType').value;
+  const pulley=document.getElementById('fgPulley');const belts=document.getElementById('fgVBelts');
+  if(drive==='Belt Driven'){pulley.classList.remove('hidden-field');belts.classList.remove('hidden-field');}
+  else{pulley.classList.add('hidden-field');belts.classList.add('hidden-field');}
+}
+function calcVelAvg(){
+  const v1=parseFloat(document.getElementById('testVel1').value)||0;
+  const v2=parseFloat(document.getElementById('testVel2').value)||0;
+  const v3=parseFloat(document.getElementById('testVel3').value)||0;
+  const v4=parseFloat(document.getElementById('testVel4').value)||0;
+  const avg=(v1+v2+v3+v4)/4;
+  document.getElementById('testVelAvg').value=avg>0?avg.toFixed(2):'';
+}
+function getTestingObj(){
+  return{
+    customerName:document.getElementById('testCustomer').value,
+    engineerName:document.getElementById('testEngineer').value,
+    siteLocation:document.getElementById('testSiteLocation').value,
+    siteContact:document.getElementById('testSiteContact').value,
+    rotation:document.getElementById('testRotation').value,
+    driveType:document.getElementById('testDriveType').value,
+    pulley:document.getElementById('testPulley').value,
+    vBelts:document.getElementById('testVBelts').value,
+    staticPressure:document.getElementById('testStaticPressure').value,
+    vel1:document.getElementById('testVel1').value,
+    vel2:document.getElementById('testVel2').value,
+    vel3:document.getElementById('testVel3').value,
+    vel4:document.getElementById('testVel4').value,
+    velAvg:document.getElementById('testVelAvg').value,
+    cfm:document.getElementById('testCfm').value,
+    motorHP:document.getElementById('testMotorHP').value,
+    motorRPM:document.getElementById('testMotorRPM').value,
+    phase:document.getElementById('testPhase').value,
+    vibration:document.getElementById('testVibration').value,
+    noiseDB:document.getElementById('testNoise').value,
+    amps:document.getElementById('testAmps').value,
+    voltage:document.getElementById('testVoltage').value,
+    remarks:document.getElementById('testRemarks').value
+  };
+}
+function saveTestingLocal(){
+  const t=getTestingObj();if(!t.customerName){alert('Please select a Customer Name');return;}
+  let records=JSON.parse(localStorage.getItem('testingRecords')||'[]');
+  records.push({...t,timestamp:new Date().toISOString()});
+  localStorage.setItem('testingRecords',JSON.stringify(records));
+  alert('Testing record saved locally');renderLeaderboard();
+}
+async function saveTestingToSheets(){
+  const t=getTestingObj();if(!t.customerName){alert('Please select a Customer Name');return;}
+  const res=await gasPost({action:'saveTesting',...t});
+  if(res.success){alert('Testing record saved to Google Sheets');saveTestingLocal();}
+  else alert('Failed: '+(res.error||'Unknown error'));
+}
+async function loadTestingForCustomer(){
+  const customer=document.getElementById('testCustomer').value;if(!customer)return;
+  const records=JSON.parse(localStorage.getItem('testingRecords')||'[]');
+  const latest=records.filter(r=>r.customerName===customer).pop();
+  if(latest)fillTestingForm(latest);
+  const res=await gasGet({action:'getTesting',customer});
+  if(res.success&&res.records&&res.records.length>0)fillTestingForm(res.records[res.records.length-1]);
+}
+function fillTestingForm(t){
+  document.getElementById('testEngineer').value=t.engineerName||'';
+  document.getElementById('testSiteLocation').value=t.siteLocation||'';
+  document.getElementById('testSiteContact').value=t.siteContact||'';
+  document.getElementById('testRotation').value=t.rotation||'';
+  document.getElementById('testDriveType').value=t.driveType||'';
+  document.getElementById('testPulley').value=t.pulley||'';
+  document.getElementById('testVBelts').value=t.vBelts||'';
+  document.getElementById('testStaticPressure').value=t.staticPressure||'';
+  document.getElementById('testVel1').value=t.vel1||'';
+  document.getElementById('testVel2').value=t.vel2||'';
+  document.getElementById('testVel3').value=t.vel3||'';
+  document.getElementById('testVel4').value=t.vel4||'';
+  document.getElementById('testVelAvg').value=t.velAvg||'';
+  document.getElementById('testCfm').value=t.cfm||'';
+  document.getElementById('testMotorHP').value=t.motorHP||'';
+  document.getElementById('testMotorRPM').value=t.motorRPM||'';
+  document.getElementById('testPhase').value=t.phase||'';
+  document.getElementById('testVibration').value=t.vibration||'';
+  document.getElementById('testNoise').value=t.noiseDB||'';
+  document.getElementById('testAmps').value=t.amps||'';
+  document.getElementById('testVoltage').value=t.voltage||'';
+  document.getElementById('testRemarks').value=t.remarks||'';
+  toggleBeltFields();
+}
+function clearTestingForm(){
+  document.querySelectorAll('#tab-testing input,#tab-testing select,#tab-testing textarea').forEach(el=>el.value='');
+  toggleBeltFields();
+}
+
+// ============================================================
+// WARRANTY
+// ============================================================
+function calcWarrantyExpiry(){
+  const supplyDate=document.getElementById('warrantySupplyDate').value;
+  const periodMonths=parseInt(document.getElementById('warrantyPeriod').value)||12;
+  if(!supplyDate)return;
+  const d=new Date(supplyDate);
+  d.setMonth(d.getMonth()+periodMonths);
+  const expiryStr=d.toISOString().split('T')[0];
+  document.getElementById('warrantyExpiryDate').value=expiryStr;
+  const today=new Date();
+  const daysLeft=Math.ceil((d-today)/(1000*60*60*24));
+  const statusEl=document.getElementById('warrantyStatus');
+  if(daysLeft<0){statusEl.value='EXPIRED';statusEl.style.color='#c62828';statusEl.style.background='#ffebee';}
+  else if(daysLeft<=30){statusEl.value='EXPIRING SOON';statusEl.style.color='#e65100';statusEl.style.background='#fff3e0';}
+  else{statusEl.value='ACTIVE';statusEl.style.color='#2e7d32';statusEl.style.background='#e8f5e9';}
+}
+function onWarrantyCustomerChange(){
+  const name=document.getElementById('warrantyCustomer').value;
+  const customers=JSON.parse(localStorage.getItem('customers')||'[]');
+  const c=customers.find(x=>x.customerName===name);
+  if(c){
+    document.getElementById('warrantySiteLocation').value=c.siteAddress||'';
+    document.getElementById('warrantyEngineer').value=c.engineerName||'';
+  }
+}
+function getWarrantyObj(){
+  return{
+    customerName:document.getElementById('warrantyCustomer').value,
+    productType:document.getElementById('warrantyProductType').value,
+    productModel:document.getElementById('warrantyProductModel').value,
+    serialNumber:document.getElementById('warrantySerial').value,
+    supplyDate:document.getElementById('warrantySupplyDate').value,
+    periodMonths:document.getElementById('warrantyPeriod').value,
+    expiryDate:document.getElementById('warrantyExpiryDate').value,
+    status:document.getElementById('warrantyStatus').value,
+    engineerName:document.getElementById('warrantyEngineer').value,
+    siteLocation:document.getElementById('warrantySiteLocation').value,
+    remarks:document.getElementById('warrantyRemarks').value
+  };
+}
+function saveWarrantyLocal(){
+  const w=getWarrantyObj();if(!w.customerName){alert('Please select a Customer Name');return;}
+  if(!w.supplyDate){alert('Please enter Date of Supply');return;}
+  let records=JSON.parse(localStorage.getItem('warrantyRecords')||'[]');
+  records.push({...w,timestamp:new Date().toISOString()});
+  localStorage.setItem('warrantyRecords',JSON.stringify(records));
+  alert('Warranty record saved locally');renderWarrantyDashboard();
+}
+async function saveWarrantyToSheets(){
+  const w=getWarrantyObj();if(!w.customerName){alert('Please select a Customer Name');return;}
+  const res=await gasPost({action:'saveWarranty',...w});
+  if(res.success){alert('Warranty saved to Google Sheets');saveWarrantyLocal();}
+  else alert('Failed: '+(res.error||'Unknown error'));
+}
+async function loadWarrantyForCustomer(){
+  const customer=document.getElementById('warrantyCustomer').value;if(!customer)return;
+  const records=JSON.parse(localStorage.getItem('warrantyRecords')||'[]');
+  const latest=records.filter(r=>r.customerName===customer).pop();
+  if(latest)fillWarrantyForm(latest);
+}
+function fillWarrantyForm(w){
+  document.getElementById('warrantyProductType').value=w.productType||'SISW Blower';
+  document.getElementById('warrantyProductModel').value=w.productModel||'';
+  document.getElementById('warrantySerial').value=w.serialNumber||'';
+  document.getElementById('warrantySupplyDate').value=w.supplyDate||'';
+  document.getElementById('warrantyPeriod').value=w.periodMonths||'12';
+  document.getElementById('warrantyEngineer').value=w.engineerName||'';
+  document.getElementById('warrantySiteLocation').value=w.siteLocation||'';
+  document.getElementById('warrantyRemarks').value=w.remarks||'';
+  calcWarrantyExpiry();
+}
+function clearWarrantyForm(){
+  document.querySelectorAll('#tab-warranty input,#tab-warranty select,#tab-warranty textarea').forEach(el=>{if(!el.readOnly)el.value='';});
+  document.getElementById('warrantyStatus').value='';document.getElementById('warrantyStatus').style.color='';document.getElementById('warrantyStatus').style.background='';
+}
+function renderWarrantyDashboard(){
+  let records=JSON.parse(localStorage.getItem('warrantyRecords')||'[]');
+  const fStatus=document.getElementById('warrantyFilterStatus').value;
+  const fCust=document.getElementById('warrantyFilterCustomer').value.toLowerCase();
+  const fProduct=document.getElementById('warrantyFilterProduct').value;
+  const today=new Date();
+  records=records.filter(r=>{
+    if(!r.expiryDate)return true;
+    const exp=new Date(r.expiryDate);
+    const daysLeft=Math.ceil((exp-today)/(1000*60*60*24));
+    let statusMatch=true;
+    if(fStatus==='Active')statusMatch=daysLeft>30;
+    else if(fStatus==='Expiring Soon')statusMatch=daysLeft>=0&&daysLeft<=30;
+    else if(fStatus==='Expired')statusMatch=daysLeft<0;
+    return statusMatch&&(!fCust||(r.customerName||'').toLowerCase().includes(fCust))&&(!fProduct||r.productType===fProduct);
+  });
+  records.sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp));
+  const container=document.getElementById('warrantyDashboard');
+  if(records.length===0){container.innerHTML='<div style="text-align:center;color:#999;padding:20px">No warranty records yet.</div>';return;}
+  container.innerHTML='';
+  records.forEach(r=>{
+    const exp=new Date(r.expiryDate);const daysLeft=Math.ceil((exp-today)/(1000*60*60*24));
+    let cardClass='warranty-card';let badgeClass='badge-warranty-active';let statusText='ACTIVE';
+    if(daysLeft<0){cardClass+=' expired';badgeClass='badge-warranty-expired';statusText='EXPIRED';}
+    else if(daysLeft<=30){cardClass+=' warning';badgeClass='badge-warranty-warning';statusText='EXPIRING SOON ('+daysLeft+' days)';}
+    else{statusText='ACTIVE ('+daysLeft+' days left)';}
+    const card=document.createElement('div');card.className=cardClass;
+    card.innerHTML=`<h4>${r.productType} — ${r.productModel||'N/A'} <span class="badge ${badgeClass}">${statusText}</span></h4><div class="warranty-meta"><span>👤 ${r.customerName}</span><span>📅 Supply: ${r.supplyDate}</span><span>🔚 Expiry: ${r.expiryDate}</span><span>🔧 ${r.engineerName||'-'}</span><span>📍 ${r.siteLocation||'-'}</span><span>🔢 ${r.serialNumber||'-'}</span></div>${r.remarks?'<div style="margin-top:6px;font-size:.8rem;color:#666">'+r.remarks+'</div>':''}`;
+    container.appendChild(card);
+  });
+}
+async function loadAllWarrantyFromSheets(){
+  const res=await gasGet({action:'getAllWarranty'});
+  if(res.success&&res.records){
+    let local=JSON.parse(localStorage.getItem('warrantyRecords')||'[]');
+    res.records.forEach(r=>{if(!local.find(x=>x.timestamp===r.timestamp&&x.customerName===r.customerName))local.push(r);});
+    localStorage.setItem('warrantyRecords',JSON.stringify(local));
+    renderWarrantyDashboard();alert('Loaded '+res.records.length+' warranty records from Sheets');
+  }else{alert('Failed to load from Sheets');}
+}
+function exportWarrantyCSV(){
+  const records=JSON.parse(localStorage.getItem('warrantyRecords')||'[]');
+  if(records.length===0){alert('No records to export');return;}
+  let csv="Customer,ProductType,ProductModel,SerialNumber,SupplyDate,PeriodMonths,ExpiryDate,Status,Engineer,SiteLocation,Remarks\n";
+  records.forEach(r=>{csv+=`${esc(r.customerName)},${esc(r.productType)},${esc(r.productModel)},${esc(r.serialNumber)},${r.supplyDate},${r.periodMonths},${r.expiryDate},${esc(r.status)},${esc(r.engineerName)},${esc(r.siteLocation)},${esc(r.remarks)}\n`;});
+  downloadCSV(csv,'Warranty_Records.csv');
+}
+
+// ============================================================
+// AHU SAVE
+// ============================================================
+function saveAhuLocal(){
+  const cfm=document.getElementById('ahuCfm').value;
+  const sp=document.getElementById('ahuSp').value;
+  const fanModel=document.getElementById('resAhuFanModel').value;
+  const customer=document.getElementById('customerName').value||'Unknown';
+  let ahuData=JSON.parse(localStorage.getItem('ahuData')||'[]');
+  ahuData.push({customer,cfm,sp,fanModel,timestamp:new Date().toISOString()});
+  localStorage.setItem('ahuData',JSON.stringify(ahuData));
+  alert('AHU data saved locally');
+}
+async function saveAhuToSheets(){
+  const customer=document.getElementById('customerName').value||'Unknown';
+  const data={
+    customerName:customer,cfm:document.getElementById('ahuCfm').value,sp:document.getElementById('ahuSp').value,
+    fanModel:document.getElementById('resAhuFanModel').value,motorHp:document.getElementById('ahuHp').value,
+    motorRpm:document.getElementById('ahuMotorRpm').value,unitType:document.getElementById('ahuUnitType').value
+  };
+  const res=await gasPost({action:'saveAHU',...data});
+  if(res.success){alert('AHU saved to Google Sheets');saveAhuLocal();}
+  else alert('Failed: '+(res.error||'Unknown error'));
+}
+
+// ============================================================
+// LEADERBOARD
+// ============================================================
+function renderLeaderboard(){
+  let records=JSON.parse(localStorage.getItem('testingRecords')||'[]');
+  const fCust=document.getElementById('lbFilterCustomer').value.toLowerCase();
+  const fEng=document.getElementById('lbFilterEngineer').value.toLowerCase();
+  const fFrom=document.getElementById('lbFilterFrom').value;
+  const fTo=document.getElementById('lbFilterTo').value;
+  records=records.filter(r=>{
+    const d=new Date(r.timestamp);
+    return(!fCust||(r.customerName||'').toLowerCase().includes(fCust))&&
+           (!fEng||(r.engineerName||'').toLowerCase().includes(fEng))&&
+           (!fFrom||d>=new Date(fFrom))&&
+           (!fTo||d<=new Date(fTo+'T23:59:59'));
+  });
+  records.sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp));
+  const tbody=document.getElementById('leaderboardBody');
+  if(records.length===0){tbody.innerHTML='<tr><td colspan="17" style="text-align:center;color:#999;padding:20px">No records yet.</td></tr>';return;}
+  tbody.innerHTML='';
+  records.forEach((r,i)=>{
+    const tr=document.createElement('tr');
+    const dateStr=r.timestamp?new Date(r.timestamp).toLocaleDateString():'-';
+    tr.innerHTML=`<td>${i+1}</td><td>${dateStr}</td><td>${r.customerName||'-'}</td><td>${r.engineerName||'-'}</td><td>${r.siteLocation||'-'}</td><td>${r.rotation||'-'}</td><td>${r.driveType||'-'}</td><td>${r.staticPressure||'-'}</td><td>${r.cfm||'-'}</td><td>${r.velAvg||'-'}</td><td>${r.motorHP||'-'}</td><td>${r.motorRPM||'-'}</td><td>${r.phase||'-'}</td><td>${r.vibration||'-'}</td><td>${r.noiseDB||'-'}</td><td>${r.amps||'-'}/${r.voltage||'-'}</td><td>${(r.remarks||'').substring(0,30)}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+async function loadAllTestingFromSheets(){
+  const res=await gasGet({action:'getAllTesting'});
+  if(res.success&&res.records){
+    let local=JSON.parse(localStorage.getItem('testingRecords')||'[]');
+    res.records.forEach(r=>{if(!local.find(x=>x.timestamp===r.timestamp&&x.customerName===r.customerName))local.push(r);});
+    localStorage.setItem('testingRecords',JSON.stringify(local));
+    renderLeaderboard();alert('Loaded '+res.records.length+' records from Sheets');
+  }else{alert('Failed to load from Sheets');}
+}
+function exportLeaderboardCSV(){
+  const records=JSON.parse(localStorage.getItem('testingRecords')||'[]');
+  if(records.length===0){alert('No records to export');return;}
+  let csv="Date,Customer,Engineer,Site,Rotation,Drive,Pulley,VBelts,StaticPressure,Vel1,Vel2,Vel3,Vel4,VelAvg,CFM,MotorHP,MotorRPM,Phase,Vibration,NoiseDB,Amps,Voltage,Remarks\n";
+  records.forEach(r=>{csv+=`${r.timestamp||''},${esc(r.customerName)},${esc(r.engineerName)},${esc(r.siteLocation)},${esc(r.rotation)},${esc(r.driveType)},${esc(r.pulley)},${esc(r.vBelts)},${r.staticPressure},${r.vel1},${r.vel2},${r.vel3},${r.vel4},${r.velAvg},${r.cfm},${esc(r.motorHP)},${r.motorRPM},${esc(r.phase)},${esc(r.vibration)},${r.noiseDB},${r.amps},${r.voltage},${esc(r.remarks)}\n`;});
+  downloadCSV(csv,'Testing_Leaderboard.csv');
+}
+function clearLocalTesting(){if(!confirm('Clear all local testing records?'))return;localStorage.removeItem('testingRecords');renderLeaderboard();alert('Local testing records cleared');}
+
+// ============================================================
+// SYNC ALL
+// ============================================================
+async function syncAllToSheets(){
+  await saveCustomerToSheets();
+  if(selectedSisw)await gasPost({action:'saveSelection',type:'SISW',customerName:document.getElementById('customerName').value,selection:selectedSisw});
+  if(selectedAxial)await gasPost({action:'saveSelection',type:'Axial',customerName:document.getElementById('customerName').value,selection:selectedAxial});
+  if(selectedLld)await gasPost({action:'saveSelection',type:'LLD',customerName:document.getElementById('customerName').value,selection:selectedLld});
+  alert('All data synced to Google Sheets');
+}
+async function loadAllFromSheets(){
+  const name=document.getElementById('customerName').value;if(!name){alert('Enter customer name first');return;}
+  await loadCustomerFromSheets();
+  await loadAllTestingFromSheets();
+  await loadAllWarrantyFromSheets();
+  alert('All data loaded from Google Sheets');
+}
+
+// ============================================================
+// PREVIEW / EXPORT / PRINT
+// ============================================================
+function getFormData(){
+  return{
+    engineerName:document.getElementById('engineerName').value,
+    siteName:document.getElementById('siteName').value,
+    customerName:document.getElementById('customerName').value,
+    customerContact:document.getElementById('customerContact').value,
+    projectName:document.getElementById('projectName').value,
+    siteContactPerson:document.getElementById('siteContactPerson').value,
+    siteAddress:document.getElementById('siteAddress').value,
+    sisw:selectedSisw,siswOrientation:selectedSiswOrientation,siswDrive:document.getElementById('siswDrive').value,
+    axial:selectedAxial,axialCategory:selectedAxialCategory,
+    lld:selectedLld,lldDrive:document.getElementById('lldDrive').value,lldSp:document.getElementById('lldSp').value
+  };
+}
+function buildSummaryText(){
+  const d=getFormData();
+  const lines=[];
+  lines.push("═══════════════════════════════════════════════════");
+  lines.push("         BLOWER & FAN SELECTION SHEET");
+  lines.push("═══════════════════════════════════════════════════");
+  lines.push("");lines.push("📋 PROJECT INFORMATION");
+  lines.push("───────────────────────────────────────────────────");
+  lines.push(`Engineer Name:        ${d.engineerName||'-'}`);
+  lines.push(`Team / Site Name:     ${d.siteName||'-'}`);
+  lines.push(`Customer Name:        ${d.customerName||'-'}`);
+  lines.push(`Customer Contact:     ${d.customerContact||'-'}`);
+  lines.push(`Project Name:         ${d.projectName||'-'}`);
+  lines.push(`Site Contact Person:  ${d.siteContactPerson||'-'}`);
+  lines.push(`Site Address:         ${d.siteAddress||'-'}`);
+  lines.push("");lines.push("⚙️ SISW CENTRIFUGAL BLOWER");
+  lines.push("───────────────────────────────────────────────────");
+  if(d.sisw){lines.push(`Config:       ${d.sisw.config}`);lines.push(`Casing:       ${d.sisw.casing}`);if(d.sisw.inletDia){lines.push(`Inlet Ø:      ${d.sisw.inletDia} mm`);lines.push(`Blower Out:   ${d.sisw.outletW} x ${d.sisw.outletD} mm (W x D)`);lines.push(`Duct Outlet:  ${d.sisw.ductW} x ${d.sisw.ductH} mm`);}lines.push(`RPM:          ${d.sisw.rpm}`);lines.push(`Pole:         ${d.sisw.pole} Pole`);lines.push(`CFM Range:    ${d.sisw.cfmRange}`);lines.push(`Curve:        ${d.sisw.curve} Curve`);lines.push(`Drive:        ${d.siswDrive}`);lines.push(`Orientation:  ${d.siswOrientation||'Not selected'}`);}
+  else{lines.push(`Selected:     Not selected`);}
+  lines.push("");lines.push("🌀 AXIAL FLOW FAN");
+  lines.push("───────────────────────────────────────────────────");
+  if(d.axial){lines.push(`Category:     ${d.axialCategory}`);lines.push(`Diameter:     ${d.axial.diaIn}" (${d.axial.diaMm} mm)`);lines.push(`RPM:          ${d.axial.rpm}`);lines.push(`HP:           ${d.axial.hp||'-'}`);lines.push(`Phase:        ${d.axial.phase}`);lines.push(`CFM:          ${d.axial.cfm}`);lines.push(`Velocity:     ${d.axial.vel} m/s`);lines.push(`Static Press: ${d.axial.sp||'-'} mm`);lines.push(`Price:        ${d.axial.price?'₹'+d.axial.price:'-'}`);}
+  else{lines.push(`Selected:     Not selected`);}
+  lines.push("");lines.push("🔧 LLD LIMIT LOAD BLOWER");
+  lines.push("───────────────────────────────────────────────────");
+  if(d.lld){lines.push(`Model:        ${d.lld.model}`);lines.push(`Impeller Ø:   ${d.lld.dia} mm`);lines.push(`Motor Power:  ${d.lld.power}`);lines.push(`Airflow:      ${d.lld.cfmMin.toLocaleString()} - ${d.lld.cfmMax.toLocaleString()} CFM`);lines.push(`Efficiency:   ${d.lld.eff}`);lines.push(`Drive:        ${d.lldDrive}`);lines.push(`SP Range:     ${d.lldSp} mmWC`);}
+  else{lines.push(`Selected:     Not selected`);}
+  lines.push("");lines.push("═══════════════════════════════════════════════════");
+  lines.push("Generated: "+new Date().toLocaleString());
+  lines.push("═══════════════════════════════════════════════════");
+  return lines.join("\n");
+}
+function generatePreview(){document.getElementById('previewContent').textContent=buildSummaryText();document.getElementById('previewModal').classList.add('active');}
+function closeModal(){document.getElementById('previewModal').classList.remove('active');}
+function printDocument(){window.print();}
+function shareWhatsApp(){window.open(`https://wa.me/?text=${encodeURIComponent(buildSummaryText())}`,'_blank');}
+function shareEmail(){
+  const d=getFormData();
+  window.location.href=`mailto:?subject=${encodeURIComponent('Blower Selection - '+(d.projectName||'New Project'))}&body=${encodeURIComponent(buildSummaryText())}`;
+}
+function exportToExcel(){
+  const d=getFormData();
+  let csv="BLOWER & FAN SELECTION\n";csv+="Field,Value\n";
+  csv+=`Engineer Name,${d.engineerName}\n`;csv+=`Team / Site Name,${d.siteName}\n`;csv+=`Customer Name,${d.customerName}\n`;csv+=`Customer Contact,${d.customerContact}\n`;csv+=`Project Name,${d.projectName}\n`;csv+=`Site Contact Person,${d.siteContactPerson}\n`;csv+=`Site Address,${d.siteAddress}\n`;
+  csv+=`SISW Blower,${d.sisw?d.sisw.config:''}\n`;csv+=`SISW Casing,${d.sisw?d.sisw.casing:''}\n`;csv+=`SISW Inlet Dia (mm),${d.sisw&&d.sisw.inletDia?d.sisw.inletDia:''}\n`;csv+=`SISW Blower Outlet W x D (mm),${d.sisw&&d.sisw.outletW?d.sisw.outletW+' x '+d.sisw.outletD:''}\n`;csv+=`SISW Duct Outlet W x H (mm),${d.sisw&&d.sisw.ductW?d.sisw.ductW+' x '+d.sisw.ductH:''}\n`;csv+=`SISW Orientation,${d.siswOrientation||''}\n`;csv+=`SISW Drive,${d.siswDrive}\n`;
+  csv+=`Axial Fan Category,${d.axialCategory}\n`;csv+=`Axial Fan Diameter,${d.axial?d.axial.diaMm+'mm':''}\n`;csv+=`Axial Fan CFM,${d.axial?d.axial.cfm:''}\n`;csv+=`Axial Fan Price,${d.axial&&d.axial.price?d.axial.price:''}\n`;
+  csv+=`LLD Model,${d.lld?d.lld.model:''}\n`;csv+=`LLD Impeller Ø,${d.lld?d.lld.dia+'mm':''}\n`;csv+=`LLD Airflow Range,${d.lld?d.lld.cfmMin+'-'+d.lld.cfmMax+' CFM':''}\n`;csv+=`LLD Drive,${d.lldDrive}\n`;
+  csv+=`Generated,${new Date().toLocaleString()}\n`;
+  downloadCSV(csv,`Blower_Selection_${(d.projectName||'Export').replace(/\s+/g,'_')}.csv`);
+}
+function downloadCSV(csv,filename){
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  const link=document.createElement('a');link.href=URL.createObjectURL(blob);link.download=filename;
+  document.body.appendChild(link);link.click();document.body.removeChild(link);
+}
+function esc(s){return'"'+(s||'').replace(/"/g,'""')+'"';}
+function resetForm(){
+  document.querySelectorAll('input,select,textarea').forEach(el=>{
+    if(el.id==='siswDrive')el.value='Direct Driven';
+    else if(el.id==='lldDrive')el.value='Belt Drive (Arr 3/7)';
+    else if(el.id==='lldSp')el.value='50-150';
+    else if(el.id==='ahuUnitType')el.value='fau';
+    else if(el.id==='ahuApp')el.value='fresh';
+    else if(el.id==='ahuPanel')el.value='25';
+    else if(el.id==='ahuCoilType')el.value='CHW';
+    else if(el.id==='ahuCoilRows')el.value='4';
+    else if(el.id==='ahuDuty')el.value='auto';
+    else if(el.id==='ahuStart')el.value='soft';
+    else if(el.id==='ahuHours')el.value='0';
+    else if(el.id==='ahuFaceVel')el.value='2.0';
+    else if(el.id==='warrantyPeriod')el.value='12';
+    else if(el.id==='warrantyProductType')el.value='SISW Blower';
+    else if(el.tagName==='SELECT')el.value='';
+    else if(!el.readOnly)el.value='';
+  });
+  document.querySelectorAll('.blower-table tr').forEach(r=>r.classList.remove('selected'));
+  document.querySelectorAll('.orientation-card').forEach(c=>c.classList.remove('selected'));
+  selectedSisw=null;selectedSiswOrientation=null;selectedAxial=null;selectedAxialCategory='';selectedLld=null;
+  ahuSelectedFan=null;ahuFanLocked=false;
+  document.getElementById('siswSummary').style.display='none';
+  document.getElementById('siswCadPanel').style.display='none';
+  document.getElementById('siswRecBox').style.display='none';
+  document.getElementById('axialSummary').style.display='none';
+  document.getElementById('axialCadPanel').style.display='none';
+  document.getElementById('lldSummary').style.display='none';
+  document.getElementById('lldCadPanel').style.display='none';
+  document.getElementById('warrantyStatus').value='';document.getElementById('warrantyStatus').style.color='';document.getElementById('warrantyStatus').style.background='';
+  filterSisw();filterAxial();filterLld();ahuApplyPreset();
+}
+
+// ============================================================
+// INIT
+// ============================================================
+updateCustomerDatalist();
+populateTestCustomerDropdown();
+populateWarrantyCustomerDropdown();
+filterSisw();filterAxial();filterLld();
+ahuApplyPreset();
+if(gasUrl)testConnection();
+</script>
+</body>
+</html>
