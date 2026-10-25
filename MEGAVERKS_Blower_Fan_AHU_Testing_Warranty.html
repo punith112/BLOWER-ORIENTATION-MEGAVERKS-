@@ -177,6 +177,16 @@
     header h1{font-size:1.1rem}
     .tabs{flex-wrap:wrap}
   }
+  .mv-lock{position:fixed;inset:0;z-index:9999;background:linear-gradient(160deg,#1a237e 0%,#0d1450 100%);display:flex;align-items:center;justify-content:center;padding:20px}
+  .mv-lock[hidden]{display:none}
+  .mv-lock-card{background:#fff;border-radius:16px;padding:26px 22px;width:100%;max-width:380px;text-align:center;box-shadow:0 20px 50px rgba(0,0,0,.35)}
+  .mv-lock-card h2{color:#1a237e;margin:0 0 4px;font-size:1.35rem}
+  .mv-lock-card h3{color:#e65100;margin:0 0 12px;font-size:1rem;font-weight:600}
+  .mv-lock-card p{color:#555;font-size:.88rem;margin:0 0 14px}
+  .mv-lock-card input{width:100%;padding:12px;font-size:1.4rem;letter-spacing:.3em;text-align:center;border:1.5px solid #c5cae9;border-radius:8px;font-weight:700;box-sizing:border-box}
+  .mv-lock-card .btn{width:100%;justify-content:center;margin-top:12px}
+  .mv-lock-err{color:#c62828;font-size:.85rem;font-weight:600;min-height:1.2em;margin-top:8px}
+  @media print{.mv-lock{display:none!important}}
 </style>
 </head>
 <body>
@@ -195,6 +205,10 @@
     <button class="btn btn-primary" onclick="testConnection()" style="padding:7px 12px;font-size:.78rem">Test</button>
     <button class="btn btn-success" onclick="syncAllToSheets()" style="padding:7px 12px;font-size:.78rem">☁️ Sync All</button>
     <button class="btn btn-info" onclick="loadAllFromSheets()" style="padding:7px 12px;font-size:.78rem">📥 Load All</button>
+    <button class="btn btn-warning" onclick="saveUrlForAll()" style="padding:7px 12px;font-size:.78rem" title="Save this URL in the Google Sheet for every user (admin PIN)">💾 Save URL for all</button>
+    <button class="btn btn-warning" onclick="changePasscodeFlow()" style="padding:7px 12px;font-size:.78rem" title="Change the team passcode (admin PIN)">🔑 Change Passcode</button>
+    <button class="btn btn-warning" onclick="changePinFlow()" style="padding:7px 12px;font-size:.78rem" title="Change the admin PIN">🛡️ Change PIN</button>
+    <button class="btn btn-danger" onclick="lockDevice()" style="padding:7px 12px;font-size:.78rem">🔒 Lock</button>
   </div>
 
   <!-- PROJECT INFO -->
@@ -278,9 +292,9 @@
         <div class="form-group"><label>HP</label><select id="axialHp" onchange="filterAxial()"><option value="">All</option><option value="0.5">0.5 HP</option><option value="1">1 HP</option><option value="2">2 HP</option><option value="3">3 HP</option><option value="5">5 HP</option><option value="7.5">7.5 HP</option><option value="10">10 HP</option><option value="15">15 HP</option><option value="20">20 HP</option><option value="25">25 HP</option></select></div>
         <div class="form-group"><label>Phase</label><select id="axialPhase" onchange="filterAxial()"><option value="">All</option><option value="Single">Single Phase</option><option value="3 Phase">3 Phase</option></select></div>
       </div>
-      <h3>🔹 Inbuilt Motors</h3><table class="blower-table"><thead><tr><th>SL</th><th>Dia</th><th>RPM</th><th>HP</th><th>Phase</th><th>CFM</th><th>Vel</th><th>SP</th><th>Price</th></tr></thead><tbody id="axialTable1"></tbody></table>
-      <h3>🔹 Low CFM Leafs</h3><table class="blower-table"><thead><tr><th>SL</th><th>Dia</th><th>RPM</th><th>HP</th><th>Phase</th><th>CFM</th><th>Vel</th><th>SP</th><th>Price</th></tr></thead><tbody id="axialTable2"></tbody></table>
-      <h3>🔹 High CFM Leafs</h3><table class="blower-table"><thead><tr><th>SL</th><th>Dia</th><th>RPM</th><th>HP</th><th>Phase</th><th>CFM</th><th>Vel</th><th>SP</th><th>Price</th></tr></thead><tbody id="axialTable3"></tbody></table>
+      <h3>🔹 Inbuilt Motors</h3><table class="blower-table"><thead><tr><th>SL</th><th>Dia</th><th>RPM</th><th>HP</th><th>Phase</th><th>CFM</th><th>Vel</th><th>SP</th></tr></thead><tbody id="axialTable1"></tbody></table>
+      <h3>🔹 Low CFM Leafs</h3><table class="blower-table"><thead><tr><th>SL</th><th>Dia</th><th>RPM</th><th>HP</th><th>Phase</th><th>CFM</th><th>Vel</th><th>SP</th></tr></thead><tbody id="axialTable2"></tbody></table>
+      <h3>🔹 High CFM Leafs</h3><table class="blower-table"><thead><tr><th>SL</th><th>Dia</th><th>RPM</th><th>HP</th><th>Phase</th><th>CFM</th><th>Vel</th><th>SP</th></tr></thead><tbody id="axialTable3"></tbody></table>
       <div class="summary-box" id="axialSummary" style="display:none"><h3>Selected Axial Fan</h3><div id="axialSummaryContent"></div></div>
       <div class="cad-panel" id="axialCadPanel" style="display:none"><h3>📐 Axial Fan CAD View</h3><div class="cad-drawing" id="axialCadDrawing"></div><div class="cad-dims" id="axialCadDims"></div></div>
     </div>
@@ -550,6 +564,17 @@
   </div>
 </div>
 
+<div class="mv-lock" id="mvLock" hidden>
+  <form class="mv-lock-card" id="mvLockForm" onsubmit="unlockApp();return false" autocomplete="off">
+    <h2>MEGAVERKS</h2>
+    <h3>Blower · Fan · AHU · Testing · Warranty</h3>
+    <p id="mvLockMsg">Enter the team passcode to open the app.</p>
+    <input type="password" id="mvLockPass" inputmode="numeric" maxlength="20" placeholder="••••••" aria-label="Passcode">
+    <div class="mv-lock-err" id="mvLockErr"></div>
+    <button type="submit" class="btn btn-primary" id="mvUnlockBtn">Unlock</button>
+    <button type="button" class="btn btn-info" id="mvOfflineBtn" onclick="continueOffline()" hidden>Continue offline (this device's data only)</button>
+  </form>
+</div>
 <script>
 // ============================================================
 // DATA
@@ -705,8 +730,12 @@ let selectedSisw=null,selectedSiswOrientation=null;
 let selectedAxial=null,selectedAxialCategory="";
 let selectedLld=null;
 let ahuSelectedFan=null,ahuFanLocked=false,ahuCalcResults={};
-let gasUrl=localStorage.getItem('gasUrl')||'';
-if(gasUrl)document.getElementById('gasUrl').value=gasUrl;
+// Google Apps Script web app — built in (same sheet + passcode as the Blower Selector). Change it with "Save URL for all".
+const DEFAULT_GAS_URL='https://script.google.com/macros/s/AKfycbyZWEGKZhgdlkesoiMyvn9xhyGj2bM2TUXMNnAiAULT08RqOImQtrvy7jJ_GU2mj7Cl/exec';
+const MIN_BACKEND_MAJOR=2;
+const GAS_URL_RE=/^https:\/\/script\.google\.com\/(a\/[^\/\s]+\/)?macros\/s\/[A-Za-z0-9_-]{20,}\/exec$/;
+let gasUrl=localStorage.getItem('gasUrl')||DEFAULT_GAS_URL;
+document.getElementById('gasUrl').value=gasUrl;
 
 // ============================================================
 // TABS
@@ -812,7 +841,7 @@ function renderAxialTable(data,tbodyId,category){
   filtered.forEach(b=>{
     const tr=document.createElement('tr');tr.onclick=()=>selectAxial(tr,b,category);
     const badge=b.phase==="Single"?'<span class="badge badge-1ph">1φ</span>':'<span class="badge badge-3ph">3φ</span>';
-    tr.innerHTML=`<td>${b.sl}</td><td>${b.diaIn}" (${b.diaMm})</td><td>${b.rpm}</td><td>${b.hp||'-'}</td><td>${badge}</td><td>${b.cfm}</td><td>${b.vel}</td><td>${b.sp||'-'}</td><td>${b.price?'₹'+b.price:'-'}</td>`;
+    tr.innerHTML=`<td>${b.sl}</td><td>${b.diaIn}" (${b.diaMm})</td><td>${b.rpm}</td><td>${b.hp||'-'}</td><td>${badge}</td><td>${b.cfm}</td><td>${b.vel}</td><td>${b.sp||'-'}</td>`;
     tbody.appendChild(tr);
   });
 }
@@ -823,14 +852,14 @@ function filterAxial(){
 }
 function selectAxial(row,fan,category){
   document.querySelectorAll('#tab-axial .blower-table tr').forEach(r=>r.classList.remove('selected'));
-  row.classList.add('selected');selectedAxial=fan;selectedAxialCategory=category;
+  row.classList.add('selected');selectedAxial=Object.assign({},fan);delete selectedAxial.price;selectedAxialCategory=category;
   updateAxialSummary();generateAxialCAD();
 }
 function updateAxialSummary(){
   const box=document.getElementById('axialSummary');const content=document.getElementById('axialSummaryContent');
   if(!selectedAxial){box.style.display='none';return;}
   box.style.display='block';
-  content.innerHTML=`<div class="summary-item"><span class="key">Category:</span><span class="val">${selectedAxialCategory}</span></div><div class="summary-item"><span class="key">Diameter:</span><span class="val">${selectedAxial.diaIn}" (${selectedAxial.diaMm} mm)</span></div><div class="summary-item"><span class="key">RPM:</span><span class="val">${selectedAxial.rpm}</span></div><div class="summary-item"><span class="key">HP:</span><span class="val">${selectedAxial.hp||'-'}</span></div><div class="summary-item"><span class="key">Phase:</span><span class="val">${selectedAxial.phase}</span></div><div class="summary-item"><span class="key">CFM:</span><span class="val">${selectedAxial.cfm}</span></div><div class="summary-item"><span class="key">Velocity:</span><span class="val">${selectedAxial.vel} m/s</span></div><div class="summary-item"><span class="key">SP:</span><span class="val">${selectedAxial.sp||'-'} mm</span></div><div class="summary-item"><span class="key">Price:</span><span class="val">${selectedAxial.price?'₹'+selectedAxial.price:'-'}</span></div>`;
+  content.innerHTML=`<div class="summary-item"><span class="key">Category:</span><span class="val">${selectedAxialCategory}</span></div><div class="summary-item"><span class="key">Diameter:</span><span class="val">${selectedAxial.diaIn}" (${selectedAxial.diaMm} mm)</span></div><div class="summary-item"><span class="key">RPM:</span><span class="val">${selectedAxial.rpm}</span></div><div class="summary-item"><span class="key">HP:</span><span class="val">${selectedAxial.hp||'-'}</span></div><div class="summary-item"><span class="key">Phase:</span><span class="val">${selectedAxial.phase}</span></div><div class="summary-item"><span class="key">CFM:</span><span class="val">${selectedAxial.cfm}</span></div><div class="summary-item"><span class="key">Velocity:</span><span class="val">${selectedAxial.vel} m/s</span></div><div class="summary-item"><span class="key">SP:</span><span class="val">${selectedAxial.sp||'-'} mm</span></div>`;
 }
 function generateAxialCAD(){
   if(!selectedAxial)return;
@@ -1173,19 +1202,136 @@ function setSyncStatus(online){
   if(online){el.textContent='● Online';el.className='sync-status online';}
   else{el.textContent='● Offline';el.className='sync-status offline';}
 }
+// ---- passcode (shared with the Blower Selector on this device) ----
+function getPass(){
+  try{return localStorage.getItem('mvsys.pass')||(JSON.parse(localStorage.getItem('mv.settings')||'{}').pass)||'';}catch(e){return '';}
+}
+function setPass(v){
+  try{
+    if(v)localStorage.setItem('mvsys.pass',v);else localStorage.removeItem('mvsys.pass');
+    const st=JSON.parse(localStorage.getItem('mv.settings')||'{}');st.pass=v||'';localStorage.setItem('mv.settings',JSON.stringify(st));
+  }catch(e){}
+}
+function normalizeRes(d){
+  if(!d||typeof d!=='object')return{success:false,error:'Unexpected reply from Google'};
+  if(d.success===undefined)d.success=d.ok!==false&&!d.error;
+  if(d.error&&/^Unknown action/.test(d.error))d.error+=' — the Google Apps Script is out of date: paste the new Code.gs and redeploy (see README).';
+  return d;
+}
+function handleAuth(d){
+  if(d&&d.code==='AUTH'){
+    setPass('');setSyncStatus(false);
+    showLock(/No passcode set/i.test(d.error||'')?d.error:'The passcode has changed. Enter the new team passcode.');
+    return true;
+  }
+  return false;
+}
+async function pingUrl(url,pass){
+  const res=await fetch(url+'?action=ping&pass='+encodeURIComponent(pass)+'&_='+Date.now());
+  const text=await res.text();
+  try{return JSON.parse(text);}catch(e){throw new Error(/<html/i.test(text)?'Google returned a sign-in page — the script must be deployed with access "Anyone".':'Unexpected reply from Google');}
+}
+function backendOk(d){return d&&d.version&&parseInt(String(d.version).split('.')[0],10)>=MIN_BACKEND_MAJOR;}
+let backendWarned=false;
+function warnOldBackend(d){
+  if(backendOk(d)||backendWarned)return;backendWarned=true;
+  alert('The Google Apps Script is still version '+(d&&d.version||'?')+'.\nPaste the new Code.gs into Apps Script and redeploy (Manage deployments → Edit → New version) so Customers, Testing, Warranty and Selections can sync.');
+}
+// If an admin saved a new script URL in the sheet, every device switches to it automatically.
+async function adoptSheetUrl(d){
+  const u=d&&d.scriptUrl;if(!u||u===gasUrl||!GAS_URL_RE.test(u))return;
+  try{const t=await pingUrl(u,getPass());if(t&&t.ok){gasUrl=u;localStorage.setItem('gasUrl',u);document.getElementById('gasUrl').value=u;}}catch(e){}
+}
+function hasLocalData(){
+  return ['customers','testingRecords','warrantyRecords','ahuData'].some(k=>{try{return JSON.parse(localStorage.getItem(k)||'[]').length>0;}catch(e){return false;}});
+}
+function showLock(msg){
+  const box=document.getElementById('mvLock');const was=box.hidden;box.hidden=false;
+  document.getElementById('mvLockMsg').textContent=msg||'Enter the team passcode to open the app.';
+  document.getElementById('mvLockErr').textContent='';
+  document.getElementById('mvOfflineBtn').hidden=!hasLocalData();
+  if(was){document.getElementById('mvLockPass').value='';setTimeout(()=>document.getElementById('mvLockPass').focus(),60);}
+}
+async function unlockApp(){
+  const v=document.getElementById('mvLockPass').value.trim();const err=document.getElementById('mvLockErr');const btn=document.getElementById('mvUnlockBtn');
+  if(!v){err.textContent='Enter the passcode';return;}
+  btn.disabled=true;btn.textContent='Checking…';err.textContent='';
+  try{
+    const d=await pingUrl(getGasUrl(),v);
+    if(d&&d.ok){setPass(v);document.getElementById('mvLock').hidden=true;setSyncStatus(true);warnOldBackend(d);adoptSheetUrl(d);}
+    else if(d&&d.code==='AUTH'){err.textContent=/No passcode set/i.test(d.error||'')?d.error:'Wrong passcode — try again';document.getElementById('mvLockPass').select();}
+    else err.textContent=(d&&d.error)||'Could not check the passcode';
+  }catch(e){err.textContent=navigator.onLine?('Cannot reach Google: '+e.message):'You are offline.';}
+  finally{btn.disabled=false;btn.textContent='Unlock';}
+}
+function continueOffline(){document.getElementById('mvLock').hidden=true;setSyncStatus(false);}
+function lockDevice(){
+  if(!confirm('Lock this device? The team passcode will be needed again (also for the Blower Selector on this device).'))return;
+  setPass('');showLock();
+}
+async function initLock(){
+  if(!getPass()){showLock();return;}
+  try{
+    const d=await pingUrl(getGasUrl(),getPass());
+    if(d&&d.ok){setSyncStatus(true);warnOldBackend(d);adoptSheetUrl(d);}
+    else if(d&&d.code==='AUTH')handleAuth(d);
+    else setSyncStatus(false);
+  }catch(e){setSyncStatus(false);}
+}
 async function testConnection(){
   const url=getGasUrl();if(!url){alert('Please enter Google Apps Script URL first');return;}
-  try{const res=await fetch(url+'?action=getCustomers');const data=await res.json();if(data.success!==undefined){setSyncStatus(true);alert('Connected to Google Sheets!');}else{setSyncStatus(false);alert('Connection failed');}}
-  catch(e){setSyncStatus(false);alert('Error: '+e.message);}
+  if(!getPass()){showLock();return;}
+  try{
+    const d=await pingUrl(url,getPass());
+    if(d&&d.ok){setSyncStatus(true);alert('Connected to Google Sheets!\nSheet: '+d.spreadsheet+'\nScript version: '+d.version);warnOldBackend(d);}
+    else if(!handleAuth(d)){setSyncStatus(false);alert('Connection failed: '+((d&&d.error)||'unknown error'));}
+  }catch(e){setSyncStatus(false);alert('Error: '+e.message);}
+}
+// ---- admin: change options (saved back in the Google Sheet "App Settings" tab, apply to all logins) ----
+async function adminPost(payload){
+  const d=await gasPost(payload);
+  if(d.success)return d;
+  if(!d.code)alert('Failed: '+(d.error||'Unknown error'));
+  return null;
+}
+async function changePasscodeFlow(){
+  if(!getPass()){showLock();return;}
+  const pin=prompt('Admin PIN');if(!pin)return;
+  const np=prompt('New team passcode (4–20 letters or digits)');if(!np)return;
+  if(prompt('Type the new passcode again')!==np){alert('The two entries do not match — nothing changed.');return;}
+  const d=await adminPost({action:'changePasscode',pin:pin.trim(),newPass:np.trim()});
+  if(d){setPass(np.trim());alert('Passcode changed for everyone and saved in the Google Sheet.\nShare the new passcode with your team.');}
+}
+async function changePinFlow(){
+  if(!getPass()){showLock();return;}
+  const pin=prompt('Current admin PIN');if(!pin)return;
+  const np=prompt('New admin PIN (4–20 letters or digits)');if(!np)return;
+  if(prompt('Type the new admin PIN again')!==np){alert('The two entries do not match — nothing changed.');return;}
+  const d=await adminPost({action:'changePin',pin:pin.trim(),newPin:np.trim()});
+  if(d)alert('Admin PIN changed and saved in the Google Sheet.');
+}
+async function saveUrlForAll(){
+  if(!getPass()){showLock();return;}
+  const url=document.getElementById('gasUrl').value.trim();
+  if(!GAS_URL_RE.test(url)){alert('Enter a valid Apps Script URL ending with /exec');return;}
+  let d;try{d=await pingUrl(url,getPass());}catch(e){alert('That URL does not respond: '+e.message);return;}
+  if(!d||!d.ok){if(!handleAuth(d))alert('That URL does not respond correctly: '+((d&&d.error)||'unknown error'));return;}
+  if(!backendOk(d)){alert('That script is version '+d.version+'. Update it with the new Code.gs first.');return;}
+  const pin=prompt('Admin PIN');if(!pin)return;
+  gasUrl=url;localStorage.setItem('gasUrl',url);
+  const r=await adminPost({action:'setScriptUrl',pin:pin.trim(),url});
+  if(r)alert('Saved in the Google Sheet — every device will use this URL from now on.');
 }
 async function gasPost(payload){
   const url=getGasUrl();if(!url)return{success:false,error:'No GAS URL'};
-  try{const res=await fetch(url,{method:'POST',body:JSON.stringify(payload),headers:{'Content-Type':'text/plain;charset=utf-8'}});const data=await res.json();setSyncStatus(true);return data;}
+  if(!getPass()){showLock();return{success:false,error:'Locked — enter the team passcode',code:'AUTH'};}
+  try{const res=await fetch(url,{method:'POST',body:JSON.stringify(Object.assign({},payload,{pass:getPass()})),headers:{'Content-Type':'text/plain;charset=utf-8'}});const data=normalizeRes(await res.json());if(handleAuth(data))return data;setSyncStatus(true);return data;}
   catch(e){setSyncStatus(false);return{success:false,error:e.message};}
 }
 async function gasGet(params){
   const url=getGasUrl();if(!url)return{success:false,error:'No GAS URL'};
-  try{const qs=new URLSearchParams(params).toString();const res=await fetch(url+'?'+qs);const data=await res.json();setSyncStatus(true);return data;}
+  if(!getPass()){showLock();return{success:false,error:'Locked — enter the team passcode',code:'AUTH'};}
+  try{const qs=new URLSearchParams(Object.assign({},params,{pass:getPass()})).toString();const res=await fetch(url+'?'+qs);const data=normalizeRes(await res.json());if(handleAuth(data))return data;setSyncStatus(true);return data;}
   catch(e){setSyncStatus(false);return{success:false,error:e.message};}
 }
 
@@ -1611,7 +1757,7 @@ function buildSummaryText(){
   else{lines.push(`Selected:     Not selected`);}
   lines.push("");lines.push("🌀 AXIAL FLOW FAN");
   lines.push("───────────────────────────────────────────────────");
-  if(d.axial){lines.push(`Category:     ${d.axialCategory}`);lines.push(`Diameter:     ${d.axial.diaIn}" (${d.axial.diaMm} mm)`);lines.push(`RPM:          ${d.axial.rpm}`);lines.push(`HP:           ${d.axial.hp||'-'}`);lines.push(`Phase:        ${d.axial.phase}`);lines.push(`CFM:          ${d.axial.cfm}`);lines.push(`Velocity:     ${d.axial.vel} m/s`);lines.push(`Static Press: ${d.axial.sp||'-'} mm`);lines.push(`Price:        ${d.axial.price?'₹'+d.axial.price:'-'}`);}
+  if(d.axial){lines.push(`Category:     ${d.axialCategory}`);lines.push(`Diameter:     ${d.axial.diaIn}" (${d.axial.diaMm} mm)`);lines.push(`RPM:          ${d.axial.rpm}`);lines.push(`HP:           ${d.axial.hp||'-'}`);lines.push(`Phase:        ${d.axial.phase}`);lines.push(`CFM:          ${d.axial.cfm}`);lines.push(`Velocity:     ${d.axial.vel} m/s`);lines.push(`Static Press: ${d.axial.sp||'-'} mm`);}
   else{lines.push(`Selected:     Not selected`);}
   lines.push("");lines.push("🔧 LLD LIMIT LOAD BLOWER");
   lines.push("───────────────────────────────────────────────────");
@@ -1635,7 +1781,7 @@ function exportToExcel(){
   let csv="BLOWER & FAN SELECTION\n";csv+="Field,Value\n";
   csv+=`Engineer Name,${d.engineerName}\n`;csv+=`Team / Site Name,${d.siteName}\n`;csv+=`Customer Name,${d.customerName}\n`;csv+=`Customer Contact,${d.customerContact}\n`;csv+=`Project Name,${d.projectName}\n`;csv+=`Site Contact Person,${d.siteContactPerson}\n`;csv+=`Site Address,${d.siteAddress}\n`;
   csv+=`SISW Blower,${d.sisw?d.sisw.config:''}\n`;csv+=`SISW Casing,${d.sisw?d.sisw.casing:''}\n`;csv+=`SISW Inlet Dia (mm),${d.sisw&&d.sisw.inletDia?d.sisw.inletDia:''}\n`;csv+=`SISW Blower Outlet W x D (mm),${d.sisw&&d.sisw.outletW?d.sisw.outletW+' x '+d.sisw.outletD:''}\n`;csv+=`SISW Duct Outlet W x H (mm),${d.sisw&&d.sisw.ductW?d.sisw.ductW+' x '+d.sisw.ductH:''}\n`;csv+=`SISW Orientation,${d.siswOrientation||''}\n`;csv+=`SISW Drive,${d.siswDrive}\n`;
-  csv+=`Axial Fan Category,${d.axialCategory}\n`;csv+=`Axial Fan Diameter,${d.axial?d.axial.diaMm+'mm':''}\n`;csv+=`Axial Fan CFM,${d.axial?d.axial.cfm:''}\n`;csv+=`Axial Fan Price,${d.axial&&d.axial.price?d.axial.price:''}\n`;
+  csv+=`Axial Fan Category,${d.axialCategory}\n`;csv+=`Axial Fan Diameter,${d.axial?d.axial.diaMm+'mm':''}\n`;csv+=`Axial Fan CFM,${d.axial?d.axial.cfm:''}\n`;
   csv+=`LLD Model,${d.lld?d.lld.model:''}\n`;csv+=`LLD Impeller Ø,${d.lld?d.lld.dia+'mm':''}\n`;csv+=`LLD Airflow Range,${d.lld?d.lld.cfmMin+'-'+d.lld.cfmMax+' CFM':''}\n`;csv+=`LLD Drive,${d.lldDrive}\n`;
   csv+=`Generated,${new Date().toLocaleString()}\n`;
   downloadCSV(csv,`Blower_Selection_${(d.projectName||'Export').replace(/\s+/g,'_')}.csv`);
@@ -1688,7 +1834,7 @@ populateTestCustomerDropdown();
 populateWarrantyCustomerDropdown();
 filterSisw();filterAxial();filterLld();
 ahuApplyPreset();
-if(gasUrl)testConnection();
+initLock();
 </script>
 </body>
 </html>

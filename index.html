@@ -453,6 +453,10 @@ a{color:var(--navy-2)}
       <button type="button" class="btn" id="btnCopyApp">🔗 Copy app link</button>
       <button type="button" class="btn danger" id="btnLockNow">🔒 Lock this device</button>
     </div>
+    <div class="toolbar">
+      <button type="button" class="btn sm" id="btnChangePass">🔑 Change passcode</button>
+      <button type="button" class="btn sm" id="btnChangePin">🛡️ Change admin PIN</button>
+    </div>
     <div class="steps" id="testSteps"></div>
     <details class="chart" style="margin-top:14px">
       <summary>Advanced (admin)</summary>
@@ -460,9 +464,9 @@ a{color:var(--navy-2)}
         <label class="f c12"><span>Apps Script Web App URL</span>
           <input class="in mono" id="setApi" placeholder="https://script.google.com/macros/s/XXXX/exec" spellcheck="false">
           <span class="errmsg" id="apiErr"></span></label>
-        <div class="c12"><button type="button" class="btn primary sm" id="btnSaveConn">Save URL on this device</button></div>
+        <div class="c12" style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="btn primary sm" id="btnSaveConn">Save URL on this device</button><button type="button" class="btn orange sm" id="btnSaveUrlAll">💾 Save URL for everyone</button></div>
       </div>
-      <p class="note">The passcode and admin PIN are kept only in the “App Settings” tab of the Google Sheet. Change them there; every phone is asked for the new passcode.</p>
+      <p class="note">The passcode, admin PIN and script URL are kept in the “App Settings” tab of the Google Sheet and apply to all logins (this app and the Testing &amp; Warranty app). Change them here (admin PIN) or in the sheet; every phone follows automatically.</p>
     </details>
   </div>
 
@@ -563,7 +567,7 @@ const CONFIG = {
   COMPANY: 'MEGAVERKS TECHNOLOGIES',
   ADDRESS: 'Rajajinagar Industrial Estate, Bengaluru',
   COUNTRY_CODE: '91',
-  APP_VERSION: '1.2.0'
+  APP_VERSION: '1.4.0'
 };
 
 /* Casing rules: inlet Ø = casing x 10 mm, outlet W = 75 % and D = 100 % of casing Ø.
@@ -576,17 +580,18 @@ function casingFormula(c){
 }
 const DEFAULT_MASTER = {
   blowers: [
-    { id:'2HP-1440',   label:'2 HP',   hp:2,   rpm:1440, casing:30, active:true },
-    { id:'3HP-1440',   label:'3 HP',   hp:3,   rpm:1440, casing:40, active:true },
-    { id:'3HP-960',    label:'3 HP',   hp:3,   rpm:960,  casing:45, active:true },
-    { id:'5HP-1440',   label:'5 HP',   hp:5,   rpm:1440, casing:45, active:true },
-    { id:'5HP-960',    label:'5 HP',   hp:5,   rpm:960,  casing:50, active:true },
-    { id:'7.5HP-1440', label:'7.5 HP', hp:7.5, rpm:1440, casing:50, active:true },
-    { id:'7.5HP-960',  label:'7.5 HP', hp:7.5, rpm:960,  casing:55, active:true },
-    { id:'10HP-1440',  label:'10 HP',  hp:10,  rpm:1440, casing:60, active:true },
-    { id:'10HP-960',   label:'10 HP',  hp:10,  rpm:960,  casing:70, active:true }
+    { id:'2HP-1440',   label:'2 HP',        hp:2,   rpm:1440, casing:35, active:true },
+    { id:'3HP-1440',   label:'3 HP',        hp:3,   rpm:1440, casing:40, active:true },
+    { id:'3HP-960',    label:'3 HP',        hp:3,   rpm:960,  casing:45, active:true },
+    { id:'5HP-1440',   label:'5 HP',        hp:5,   rpm:1440, casing:45, active:true },
+    { id:'5HP-960',    label:'5 HP',        hp:5,   rpm:960,  casing:50, active:true },
+    { id:'7.5HP-1440', label:'7.5 HP',      hp:7.5, rpm:1440, casing:50, active:true },
+    { id:'7.5HP-960',  label:'7.5 HP',      hp:7.5, rpm:960,  casing:55, active:true },
+    { id:'10HP-1440',  label:'10 HP',       hp:10,  rpm:1440, casing:55, active:true },
+    { id:'10HP-960',   label:'10 / 12.5 HP', hp:12.5, rpm:960, casing:70, active:true },
+    { id:'15HP-960',   label:'15 HP',       hp:15,  rpm:960,  casing:75, active:true }
   ],
-  casings: [30,40,45,50,55,60,70].map(casingFormula)
+  casings: [35,40,45,50,55,60,70,75].map(casingFormula)
 };
 const HP_OPTIONS = [0.5,1,1.5,2,3,5,7.5,10,12.5,15,20,25];
 const FORM_INFO = { 1:'Bottom horizontal', 2:'Top vertical (up-blast)', 3:'Top horizontal', 4:'Bottom vertical (down-blast)' };
@@ -618,10 +623,15 @@ function busy(on, text='Working…'){ $('#busy').hidden = !on; $('#busyText').te
 /* ------------------------------------------------------------- settings */
 let settings = Object.assign({ api:'', pass:'', storePdf:true, engineers:'' }, lsGet(LS.settings, {}));
 delete settings.token;
+try { if (!settings.pass && localStorage.getItem('mvsys.pass')) settings.pass = localStorage.getItem('mvsys.pass'); } catch(e) {}   // one passcode for all Megaverks apps on this device
 const apiUrl = () => (settings.api || CONFIG.API_URL || '').trim();
 const apiPass = () => String(settings.pass || '').trim();
 const appUrl = () => /^https?:$/.test(location.protocol) ? location.origin + location.pathname : '';
-function saveSettings(){ lsSet(LS.settings, settings); }
+function saveSettings(){
+  lsSet(LS.settings, settings);
+  try { if (settings.pass) localStorage.setItem('mvsys.pass', settings.pass); else localStorage.removeItem('mvsys.pass'); } catch(e) {}
+}
+const GAS_URL_RE = /^https:\/\/script\.google\.com\/(a\/[^\/\s]+\/)?macros\/s\/[A-Za-z0-9_-]{20,}\/exec$/;
 
 /* ------------------------------------------------------- blower master */
 function validMaster(m){ return !!(m && Array.isArray(m.blowers) && m.blowers.length && Array.isArray(m.casings) && m.casings.length); }
@@ -999,7 +1009,11 @@ async function loadCloud({ quiet=false } = {}){
   if (!apiPass()) { showLock(); return false; }
   setConn(conn.state === 'ok' ? 'ok' : 'none', 'Syncing…');
   try {
-    const [list, ms] = await Promise.all([ apiGet({ action:'list' }, 30000), apiGet({ action:'master' }, 30000).catch(() => null) ]);
+    const [list, ms, pg] = await Promise.all([ apiGet({ action:'list' }, 30000), apiGet({ action:'master' }, 30000).catch(() => null), apiGet({ action:'ping' }, 30000).catch(() => null) ]);
+    if (pg && pg.scriptUrl && pg.scriptUrl !== apiUrl() && GAS_URL_RE.test(pg.scriptUrl)) {   // admin saved a new script URL in the sheet
+      const prev = settings.api; settings.api = pg.scriptUrl;
+      try { await apiGet({ action:'ping' }, 20000); saveSettings(); } catch(e) { settings.api = prev; }
+    }
     records = (list.records || []).filter(r => r && r.id);
     Object.values(pending).forEach(p => { const i = records.findIndex(x => x.id === p.id); const pr = { ...p, _pending:true }; if (i >= 0) records[i] = pr; else records.unshift(pr); });
     lastSync = new Date().toISOString(); cacheRecords();
@@ -1575,6 +1589,34 @@ function wire(){
   $('#histList').addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.matches('.hrow')) openRecord(e.target.dataset.id); });
   // settings
   $('#btnSaveConn').addEventListener('click', () => saveConn(true));
+  const adminChange = async (action, label, key) => {
+    if (!apiUrl() || !apiPass()) { showLock(); return; }
+    const pin = prompt(action === 'changePin' ? 'Current admin PIN' : 'Admin PIN'); if (!pin) return;
+    const nv = prompt(`New ${label} (4–20 letters or digits)`); if (!nv) return;
+    if (prompt(`Type the new ${label} again`) !== nv) { toast('The two entries do not match — nothing changed', 'bad'); return; }
+    busy(true, 'Saving…');
+    try {
+      await apiPost({ action, pin: pin.trim(), [key]: nv.trim() });
+      if (action === 'changePasscode') { settings.pass = nv.trim(); saveSettings(); }
+      toast(`${label[0].toUpperCase() + label.slice(1)} changed for everyone and saved in the Google Sheet ✓`, 'ok', 4500);
+    } catch(e) { if (e.code === 'AUTH') authFailed(e.message); else toast(friendlyError(e), 'bad', 5000); }
+    finally { busy(false); }
+  };
+  $('#btnChangePass').addEventListener('click', () => adminChange('changePasscode', 'passcode', 'newPass'));
+  $('#btnChangePin').addEventListener('click', () => adminChange('changePin', 'admin PIN', 'newPin'));
+  $('#btnSaveUrlAll').addEventListener('click', async () => {
+    const url = $('#setApi').value.trim();
+    if (!GAS_URL_RE.test(url)) { $('#apiErr').textContent = 'Enter a valid Apps Script URL ending with /exec'; return; }
+    if (!apiPass()) { showLock(); return; }
+    const prev = settings.api; settings.api = url;
+    try { await apiGet({ action:'ping' }, 25000); }
+    catch(e) { settings.api = prev; toast('That URL does not respond: ' + friendlyError(e), 'bad', 5000); return; }
+    const pin = prompt('Admin PIN'); if (!pin) { settings.api = prev; return; }
+    busy(true, 'Saving…');
+    try { await apiPost({ action:'setScriptUrl', pin: pin.trim(), url }); saveSettings(); toast('Saved in the Google Sheet — every device will use this URL ✓', 'ok', 4500); loadCloud({ quiet:true }); }
+    catch(e) { settings.api = prev; if (e.code === 'AUTH') authFailed(e.message); else toast(friendlyError(e), 'bad', 5000); }
+    finally { busy(false); }
+  });
   $('#btnTest').addEventListener('click', () => runTest().catch(e => toast(friendlyError(e), 'bad')));
   const copy = async (text, label) => { try { await navigator.clipboard.writeText(text); toast(label + ' copied', 'ok', 1800); } catch(e) { prompt('Copy this link:', text); } };
   $('#btnCopyApp').addEventListener('click', () => { const u = new URL(location.href); u.search = ''; u.hash = ''; if (settings.api && settings.api !== CONFIG.API_URL) u.searchParams.set('api', settings.api); copy(u.toString(), 'App link'); });

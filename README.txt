@@ -27,34 +27,29 @@ All data syncs across devices via Google Sheets:
   • SISW/Axial/LLD   — Selections per customer
   • AHU              — AHU selections per customer
 
-SETUP INSTRUCTIONS
-------------------
+SETUP INSTRUCTIONS  (v1.1 — same Google Sheet, same script URL, same passcode as the Blower Selector)
+------------------------------------------------------------------------------------------------------
+Data is saved in the existing Google Sheet "BLOWERS ORIENTATION MEGAVERKS" through the existing
+Apps Script web app. The script URL is BUILT INTO the app — nobody has to paste it.
 
-STEP 1: CREATE GOOGLE SHEET
----------------------------
-1. Open Google Drive → New → Google Sheets
-2. Name it "MEGAVERKS Blower Database"
-3. Leave the first sheet empty — Apps Script will auto-create all sheets
+ONLY STEP: UPDATE THE GOOGLE APPS SCRIPT (once)
+1. Open the Apps Script project of "BLOWERS ORIENTATION MEGAVERKS" (Extensions → Apps Script).
+2. Select ALL the code in Code.gs, delete it, and paste the ENTIRE new Code.gs
+   (apps-script-backend.js in this folder is the same file). Click Save.
+3. Choose "setup" in the function list and click Run (adds the new tabs: Customers, Testing,
+   Warranty, SISW_Selections, Axial_Selections, LLD_Selections, AHU). Allow permissions if asked.
+4. Deploy → MANAGE DEPLOYMENTS → ✏️ (edit) → Version: "New version" → Deploy.
+   IMPORTANT: do NOT use "New deployment" — that creates a different URL.
 
-STEP 2: ADD GOOGLE APPS SCRIPT
-------------------------------
-1. In your Google Sheet, go to Extensions → Apps Script
-2. Delete the default myFunction() code
-3. Copy the ENTIRE contents of "apps-script-backend.js" into the editor
-4. Save the project (Ctrl+S or click the disk icon)
-5. Click "Deploy" → "New deployment"
-6. Type: Web app
-7. Execute as: Me
-8. Who has access: Anyone
-9. Click "Deploy" and authorize all permissions (click through warnings)
-10. Copy the Web App URL (looks like: https://script.google.com/macros/s/XXXXXXXX/exec)
-
-STEP 3: CONNECT THE HTML APP
-----------------------------
-1. Open "MEGAVERKS_Blower_Fan_AHU_Testing_Warranty.html" in any browser
-2. In the orange settings bar at the top, paste your Web App URL
-3. Click "Test" → status turns green "● Online"
-4. The app now syncs with Google Sheets in real-time
+PASSCODE / ADMIN PIN / SCRIPT URL  (one set for all logins and both apps)
+- Kept in the "App Settings" tab of the sheet: Passcode, Admin PIN, Script URL.
+- Every device asks for the team passcode once (the Blower Selector and this app share it).
+- 🔑 Change Passcode / 🛡️ Change PIN buttons (orange bar) — need the admin PIN; saved in the sheet;
+  all other devices are asked for the new passcode automatically.
+- 💾 Save URL for all — paste a new /exec URL in the orange bar, enter the admin PIN; it is saved in
+  the sheet and every device switches to it. Or type it in the "Script URL" row of App Settings.
+- 🔒 Lock — locks this device (both apps).
+- Prices are hidden in the app (Axial tab).
 
 HOW TO USE
 ----------
@@ -103,7 +98,7 @@ CROSS-DEVICE SYNC
 - Google Sheets sync is optional but recommended for cross-device access
 - If no internet, data stays in localStorage
 - When connection returns, click "Sync All" to push everything to the cloud
-- On a new device, paste the same GAS URL and click "Load All" to pull all data
+- On a new device, open the link, enter the passcode and click "Load All" to pull all data
 
 GOOGLE SHEETS STRUCTURE (Auto-created)
 --------------------------------------
@@ -120,11 +115,12 @@ OFFLINE MODE
 - Fully functional without internet
 - All selections, testing, warranty data stored in browser localStorage
 - Google Sheets sync happens only when you explicitly click sync buttons
-- No server required — open the HTML file directly in any browser
+- Open the GitHub link in any browser; enter the team passcode once per device
 
 TROUBLESHOOTING
 ---------------
-- "No GAS URL" → Paste your Apps Script Web App URL in the orange settings bar
+- "Unknown action … out of date" → the Apps Script still has the old code: paste the new Code.gs and redeploy (step 4)
+- "Wrong passcode" → check the Passcode in the App Settings tab of the sheet
 - "Connection failed" → Check deployment is set to "Anyone" (not "Only myself")
 - Data not loading → Customer name must match exactly (case-sensitive in Sheets)
 - CORS errors → Ensure Apps Script is deployed as "Web App", not "API Executable"
@@ -147,4 +143,4 @@ IMPORTANT NOTES
 SUPPORT
 -------
 For issues or feature requests, contact your system administrator.
-Keep your Google Apps Script URL private — it controls access to your data.
+All Google Sheets access needs the team passcode. Keep the passcode and admin PIN private.
